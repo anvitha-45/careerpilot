@@ -5,12 +5,15 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 
+# Load environment variables so python can see GEMINI_API_KEY
 load_dotenv()
 
 class VectorPipeline:
     def __init__(self):
+        # Fetch your specific key name
         api_key = os.getenv("GEMINI_API_KEY")
         
+        # Updated to use Gemini 3.5 Flash
         self.language_model = ChatGoogleGenerativeAI(
             model="gemini-3.5-flash", 
             temperature=0.1,
@@ -25,10 +28,11 @@ class VectorPipeline:
         resume_content = pipeline_state.get("resumeText", "")
         job_requirements = pipeline_state.get("jobDescription", "")
         
-        # 1. Extract required skills
+        # 1. Extract required skills from the Job Description
         extraction_prompt = f"Extract a comma-separated list of core technical skills from this job description. Only output the list.\n\n{job_requirements}"
         extracted_skills_response = await self.language_model.ainvoke(extraction_prompt)
         
+        # Safely handle both string and list responses from Gemini
         raw_content = extracted_skills_response.content
         if isinstance(raw_content, list):
             text_content = "".join([block.get("text", "") if isinstance(block, dict) else str(block) for block in raw_content])
@@ -37,48 +41,26 @@ class VectorPipeline:
             
         target_skills = [skill.strip() for skill in text_content.split(',') if skill.strip()]
         
-        # 2. Vectorize the Resume
+        # 2. Vectorize the Resume and compare skills
         candidate_document = [Document(page_content=resume_content)]
         vector_database = FAISS.from_documents(candidate_document, self.embedding_model)
         
         verified_capabilities = []
         identified_gaps = []
         
-        # --- NEW: Weighted ATS Scoring Logic ---
-        total_skills_count = len(target_skills)
-        earned_points = 0
-        
         for skill in target_skills:
             search_results = vector_database.similarity_search_with_score(skill, k=1)
             if search_results:
                 _, similarity_score = search_results[0]
-                
-                # Exact / Very Close Match
-                if similarity_score < 0.3:
+                # Lower score means mathematically closer/more similar
+                if similarity_score < 0.7:
                     verified_capabilities.append(skill)
-                    earned_points += 100
-                # Strong Semantic Match
-                elif similarity_score < 0.5:
-                    verified_capabilities.append(skill)
-                    earned_points += 85
-                # Loose Match
-                elif similarity_score < 0.7:
-                    verified_capabilities.append(skill)
-                    earned_points += 50
-                # Missing
                 else:
                     identified_gaps.append(skill)
             else:
                 identified_gaps.append(skill)
                 
-        # Calculate the final percentage
-        if total_skills_count > 0:
-            overall_ats_score = int(earned_points / total_skills_count)
-        else:
-            overall_ats_score = 0
-        # ---------------------------------------
-                
-        # 3. Generate tailored materials
+        # 3. Generate tailored materials using the verified data
         generation_prompt = f"""
         Write 3 optimized resume bullets and a cover letter for this job.
         Verified skills: {', '.join(verified_capabilities)}
@@ -94,6 +76,7 @@ class VectorPipeline:
         materials_response = await self.language_model.ainvoke(generation_prompt)
         
         try:
+            # Safely handle string vs list for the final JSON extraction
             materials_content = materials_response.content
             if isinstance(materials_content, list):
                 materials_text = "".join([block.get("text", "") if isinstance(block, dict) else str(block) for block in materials_content])
@@ -110,14 +93,14 @@ class VectorPipeline:
                 "interview_questions": []
             }
             
-        # 4. Update state with the new ATS Score
+        # 4. Update the pipeline state and return to FastAPI
         pipeline_state["candidateSkills"] = verified_capabilities
         pipeline_state["missingSkills"] = identified_gaps
         pipeline_state["tailoredBullets"] = generated_materials.get("tailored_bullets", [])
         pipeline_state["coverLetter"] = generated_materials.get("cover_letter", "")
         pipeline_state["interviewQuestions"] = generated_materials.get("interview_questions", [])
-        pipeline_state["atsScore"] = overall_ats_score # Added to state
         
         return pipeline_state
 
+# Initialize the workflow so main.py can import it
 applicationWorkflow = VectorPipeline()
