@@ -17,11 +17,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-async def launch_browser_task(url: str):
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)
-        page = await browser.new_page()
-        await page.goto(url)
+async def launch_browser_task(target_url: str):
+    async with async_playwright() as playwright_instance:
+        browser_session = await playwright_instance.chromium.launch(headless=False)
+        active_page = await browser_session.new_page()
+        await active_page.goto(target_url)
         await asyncio.sleep(60)
 
 @app.post("/api/run-pipeline")
@@ -31,25 +31,25 @@ async def run_pipeline(
     jd_url: str = Form(...)
 ):
     document_bytes = await resume_file.read()
-    filename = resume_file.filename.lower()
+    document_filename = resume_file.filename.lower()
     extracted_resume_text = ""
 
-    if filename.endswith(".pdf"):
-        reader = PdfReader(io.BytesIO(document_bytes))
-        for page in reader.pages:
-            extracted = page.extract_text()
-            if extracted:
-                extracted_resume_text += extracted + "\n"
-    elif filename.endswith(".docx"):
-        doc = Document(io.BytesIO(document_bytes))
-        for paragraph in doc.paragraphs:
+    if document_filename.endswith(".pdf"):
+        pdf_reader = PdfReader(io.BytesIO(document_bytes))
+        for page in pdf_reader.pages:
+            extracted_page_text = page.extract_text()
+            if extracted_page_text:
+                extracted_resume_text += extracted_page_text + "\n"
+    elif document_filename.endswith(".docx"):
+        word_document = Document(io.BytesIO(document_bytes))
+        for paragraph in word_document.paragraphs:
             extracted_resume_text += paragraph.text + "\n"
     else:
         extracted_resume_text = document_bytes.decode("utf-8", errors="ignore")
 
-    print(f"\n--- PARSED DOCUMENT: {filename} ---")
+    print(f"\n--- PARSED DOCUMENT: {document_filename} ---")
     
-    initial_state = {
+    initial_pipeline_state = {
         "resumeText": extracted_resume_text,
         "jobDescription": jd_text,
         "targetUrl": jd_url,
@@ -63,33 +63,34 @@ async def run_pipeline(
     }
     
     try:
-        pipeline_result = await applicationWorkflow.ainvoke(initial_state)
+        pipeline_result = await applicationWorkflow.ainvoke(initial_pipeline_state)
     except Exception as error:
         print(f"\nCRITICAL ERROR: {str(error)}\n")
-        pipeline_result = initial_state
+        pipeline_result = initial_pipeline_state
         pipeline_result["tailoredBullets"] = [f"⚠️ PIPELINE CRASHED: {str(error)}"]
     
-    tailored_output = pipeline_result.get("tailoredBullets", [])
-    cover_letter = pipeline_result.get("coverLetter", "")
+    tailored_output_materials = pipeline_result.get("tailoredBullets", [])
+    generated_cover_letter = pipeline_result.get("coverLetter", "")
     
-    if cover_letter:
-        tailored_output.append(f"\n--- Generated Cover Letter ---\n{cover_letter}")
+    if generated_cover_letter:
+        tailored_output_materials.append(f"\n--- Generated Cover Letter ---\n{generated_cover_letter}")
         
-    interview_questions = pipeline_result.get("interviewQuestions", [])
-    if interview_questions:
-        tailored_output.append(f"\n--- Mock Interview Questions ---\n" + "\n".join([f"• {q}" for q in interview_questions]))
+    mock_interview_questions = pipeline_result.get("interviewQuestions", [])
+    if mock_interview_questions:
+        tailored_output_materials.append(f"\n--- Mock Interview Questions ---\n" + "\n".join([f"• {question}" for question in mock_interview_questions]))
     
     return {
         "extracted_skills": pipeline_result.get("candidateSkills", []),
         "missing_skills": pipeline_result.get("missingSkills", []),
-        "tailored_bullets": tailored_output
+        "tailored_bullets": tailored_output_materials,
+        "ats_score": pipeline_result.get("atsScore", 0)
     }
 
 @app.post("/api/stage-application")
 async def stage_application(payload: dict, background_tasks: BackgroundTasks):
-    target_url = payload.get("url") or "https://google.com"
-    if not target_url.startswith(("http://", "https://")):
-        target_url = "https://" + target_url
+    destination_url = payload.get("url") or "https://google.com"
+    if not destination_url.startswith(("http://", "https://")):
+        destination_url = "https://" + destination_url
 
-    background_tasks.add_task(launch_browser_task, target_url)
+    background_tasks.add_task(launch_browser_task, destination_url)
     return {"status": "Browser launching in background!"}
