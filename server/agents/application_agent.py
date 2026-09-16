@@ -73,25 +73,31 @@ class ApplicationAgent:
             res = await apps_col.insert_one(app_doc)
             app_id = res["inserted_id"]
 
+        app_doc["_id"] = str(app_id)
         app_doc["id"] = str(app_id)
         return app_doc
 
     async def confirm_submission(self, user_id: str, application_id: str) -> Dict[str, Any]:
         """User manually confirms they have completed review and triggered submission in the browser."""
         apps_col = get_applications_col()
-        app = await apps_col.find_one({"_id": application_id, "user_id": user_id})
+        query = {"$or": [{"_id": application_id}, {"id": application_id}]}
+        app = await apps_col.find_one({**query, "user_id": user_id})
+        if not app:
+            app = await apps_col.find_one(query)
         if not app:
             return {"status": "error", "message": "Application not found"}
 
+        target_id = app.get("_id") or app.get("id") or application_id
         update_payload = {
             "status": "USER_SUBMITTED",
             "applied_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat(),
             "notes": "User reviewed staged fields and manually confirmed submission."
         }
-        await apps_col.update_one({"_id": application_id}, {"$set": update_payload})
+        await apps_col.update_one({"$or": [{"_id": target_id}, {"id": target_id}]}, {"$set": update_payload})
         app.update(update_payload)
-        app["id"] = str(app.get("_id", application_id))
+        app["id"] = str(target_id)
+        app["_id"] = str(target_id)
         return app
 
 application_agent = ApplicationAgent()

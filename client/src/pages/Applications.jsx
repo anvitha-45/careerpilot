@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import api from '../api/client';
 import { MultiAgentFlow } from '../components/MultiAgentFlow';
@@ -19,8 +19,9 @@ import {
 import { NextStepBanner } from '../components/NextStepBanner';
 
 export const Applications = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const autoStageJobId = searchParams.get('stageJobId');
+  const hasAutoStagedRef = useRef(false);
 
   const [applications, setApplications] = useState([]);
   const [jobs, setJobs] = useState([]);
@@ -38,8 +39,13 @@ export const Applications = () => {
   }, []);
 
   useEffect(() => {
-    if (autoStageJobId && jobs.length > 0) {
+    if (autoStageJobId && jobs.length > 0 && !hasAutoStagedRef.current) {
+      hasAutoStagedRef.current = true;
       setSelectedJobId(autoStageJobId);
+      // Remove query param from URL so it doesn't re-trigger
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('stageJobId');
+      setSearchParams(newParams, { replace: true });
       handleStageApplication(autoStageJobId);
     }
   }, [autoStageJobId, jobs]);
@@ -69,10 +75,12 @@ export const Applications = () => {
     setStaging(true);
     try {
       const res = await api.post('/applications/stage', { job_id: targetId });
-      // Open the review modal immediately for the staged application
-      setActiveAppForReview(res.data);
+      const stagedApp = { ...res.data, id: res.data.id || res.data._id };
+      setActiveAppForReview(stagedApp);
       setReviewModalOpen(true);
-      await fetchData();
+      // Refresh applications list only to prevent triggering jobs dependency
+      const appsRes = await api.get('/applications');
+      setApplications(appsRes.data);
     } catch (err) {
       console.error('Failed to stage application:', err);
     } finally {
@@ -81,13 +89,28 @@ export const Applications = () => {
   };
 
   const handleConfirmSubmission = async (appId) => {
+    const targetId = appId || activeAppForReview?.id || activeAppForReview?._id;
+    if (!targetId) {
+      console.warn('No application ID found to confirm');
+      setReviewModalOpen(false);
+      setActiveAppForReview(null);
+      return;
+    }
+
     setConfirming(true);
     try {
-      await api.post(`/applications/${appId}/confirm`);
+      await api.post(`/applications/${targetId}/confirm`);
       setReviewModalOpen(false);
-      await fetchData();
+      setActiveAppForReview(null);
+      const appsRes = await api.get('/applications');
+      setApplications(appsRes.data);
     } catch (err) {
       console.error('Failed to confirm application submission:', err);
+      // Close modal gracefully even if already confirmed
+      setReviewModalOpen(false);
+      setActiveAppForReview(null);
+      const appsRes = await api.get('/applications');
+      setApplications(appsRes.data);
     } finally {
       setConfirming(false);
     }
@@ -343,7 +366,10 @@ export const Applications = () => {
       {/* Human Review Modal */}
       <HumanReviewModal
         isOpen={reviewModalOpen}
-        onClose={() => setReviewModalOpen(false)}
+        onClose={() => {
+          setReviewModalOpen(false);
+          setActiveAppForReview(null);
+        }}
         application={activeAppForReview}
         onConfirmSubmission={handleConfirmSubmission}
         isConfirming={confirming}
