@@ -329,3 +329,4 @@ npm.cmd run build
 
 ### Q4: "What is your database architecture?"
 > **Defense**: CareerPilot features a dual-mode database engine. It connects to MongoDB in production, but automatically falls back to an embedded, asynchronous JSON document store (`careerpilot_store.json`) for zero-dependency local evaluation and offline capstone presentations.
+
