@@ -1,7 +1,9 @@
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from server.config import settings
 from server.database import db_manager
 from server.seeds.seed_data import seed_initial_jobs
@@ -37,13 +39,13 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Permits local dev and custom ports
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Register Routers
+# Register API Routers
 app.include_router(auth_router)
 app.include_router(profile_router)
 app.include_router(assessment_router)
@@ -64,7 +66,23 @@ async def health_check():
         "ai_provider": settings.AI_PROVIDER
     }
 
+# Serve Built React Frontend (Single-Port Unified Deployment)
+client_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "client", "dist"))
+assets_dir = os.path.join(client_dist, "assets")
+
+if os.path.exists(client_dist) and os.path.exists(assets_dir):
+    app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        # Don't intercept API routes or Swagger docs
+        if full_path.startswith("api/") or full_path in ("docs", "redoc", "openapi.json"):
+            raise HTTPException(status_code=404, detail="Not Found")
+        target_file = os.path.join(client_dist, full_path)
+        if os.path.isfile(target_file):
+            return FileResponse(target_file)
+        return FileResponse(os.path.join(client_dist, "index.html"))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("server.main:app", host=settings.HOST, port=settings.PORT, reload=True)
-

@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: careerpilot-ai
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: "cd client && npm install && npm run build && cd .. && pip install -r server/requirements.txt"
+    startCommand: "uvicorn server.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: NODE_VERSION
+        value: 20.12.0
+      - key: AI_PROVIDER
+        value: auto
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PLAYWRIGHT_HEADLESS
+        value: "true"
