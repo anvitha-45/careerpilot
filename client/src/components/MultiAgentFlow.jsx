@@ -119,3 +119,4 @@ export const MultiAgentFlow = ({ activeStage = 'overview' }) => {
     </div>
   );
 };
+
