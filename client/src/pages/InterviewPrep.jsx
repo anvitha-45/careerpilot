@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from '../api/client';
-import { MultiAgentFlow } from '../components/MultiAgentFlow';
 import { MatchScoreGauge } from '../components/MatchScoreGauge';
 import {
   MessageSquareCode,
@@ -102,8 +101,6 @@ export const InterviewPrep = () => {
           JD-derived technical & behavioral questions with simulated senior hiring manager evaluation.
         </p>
       </div>
-
-      <MultiAgentFlow activeStage="interview" />
 
       {/* Target Job Selector & Start */}
       <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">

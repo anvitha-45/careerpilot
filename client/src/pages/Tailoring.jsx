@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import api from '../api/client';
-import { MultiAgentFlow } from '../components/MultiAgentFlow';
 import {
   FileCheck,
   Sparkles,
@@ -116,8 +115,6 @@ export const Tailoring = () => {
           Rewrites resume bullet points using the CAR/STAR framework and generates tailored cover letters with strict 0% hallucination verification.
         </p>
       </div>
-
-      <MultiAgentFlow activeStage="tailoring" />
 
       {/* Target Job Selector & Action */}
       <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">

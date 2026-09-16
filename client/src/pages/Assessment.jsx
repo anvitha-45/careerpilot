@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../api/client';
-import { MultiAgentFlow } from '../components/MultiAgentFlow';
 import { MatchScoreGauge } from '../components/MatchScoreGauge';
 import { SkillBadge } from '../components/SkillBadge';
 import {
@@ -83,8 +83,6 @@ export const Assessment = () => {
           <span>{refreshing ? 'Re-evaluating Vector...' : 'Refresh Assessment'}</span>
         </button>
       </div>
-
-      <MultiAgentFlow activeStage="assessment" />
 
       {/* Top Banner: Overall Score & Market Benchmark */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -203,7 +201,7 @@ export const Assessment = () => {
 
       {/* Categorized Skill Vector Breakdown */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
               <Layers className="w-4 h-4 text-brand-400" />
@@ -213,6 +211,12 @@ export const Assessment = () => {
               Extracted from verified resume bullet points and public developer repositories
             </p>
           </div>
+          <Link
+            to="/profile"
+            className="text-xs font-semibold text-brand-400 hover:text-brand-300 self-start sm:self-auto transition"
+          >
+            Edit Ground Truth in Profile →
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

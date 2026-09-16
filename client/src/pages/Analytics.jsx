@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/client';
 import { MatchScoreGauge } from '../components/MatchScoreGauge';
-import { MultiAgentFlow } from '../components/MultiAgentFlow';
 import {
   BarChart3,
   TrendingUp,
@@ -53,8 +52,6 @@ export const Analytics = () => {
           Quantitative benchmarking across application conversion, multi-agent pipeline health, and interview readiness.
         </p>
       </div>
-
-      <MultiAgentFlow activeStage="overview" />
 
       {/* Top Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

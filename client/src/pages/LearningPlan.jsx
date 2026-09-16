@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/client';
-import { MultiAgentFlow } from '../components/MultiAgentFlow';
 import { ResourceCard } from '../components/ResourceCard';
 import {
   GraduationCap,
@@ -59,8 +58,6 @@ export const LearningPlan = () => {
           Missing skills ranked strictly by empirical frequency across real target job postings. Zero generic lists.
         </p>
       </div>
-
-      <MultiAgentFlow activeStage="learning" />
 
       {/* Tabs */}
       <div className="flex items-center space-x-2 border-b border-slate-800 pb-3">

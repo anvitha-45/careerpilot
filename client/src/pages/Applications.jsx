@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import api from '../api/client';
-import { MultiAgentFlow } from '../components/MultiAgentFlow';
 import { HumanReviewModal } from '../components/HumanReviewModal';
 import {
   Send,
@@ -28,6 +27,25 @@ export const Applications = () => {
   const [selectedJobId, setSelectedJobId] = useState(autoStageJobId || '');
   const [loading, setLoading] = useState(true);
   const [staging, setStaging] = useState(false);
+
+  // Deduplicate applications by job_id so multiple stages of the same job don't produce redundant cards
+  const uniqueApplications = useMemo(() => {
+    const map = new Map();
+    for (const app of applications) {
+      const key = app.job_id || app.id;
+      if (!map.has(key)) {
+        map.set(key, app);
+      } else {
+        const existing = map.get(key);
+        if (app.status === 'USER_SUBMITTED' && existing.status !== 'USER_SUBMITTED') {
+          map.set(key, app);
+        } else if (new Date(app.updated_at || 0) > new Date(existing.updated_at || 0)) {
+          map.set(key, app);
+        }
+      }
+    }
+    return Array.from(map.values());
+  }, [applications]);
 
   // Review Modal State
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -191,28 +209,6 @@ export const Applications = () => {
         </p>
       </div>
 
-      <MultiAgentFlow activeStage="application" />
-
-      {/* Human-in-the-Loop Architecture Explainer */}
-      <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-start space-x-3.5">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
-            <ShieldCheck className="w-6 h-6" />
-          </div>
-          <div className="space-y-1">
-            <div className="flex items-center space-x-2">
-              <span className="font-bold text-sm text-white">Responsible AI & Platform Safety Gate</span>
-              <span className="text-[10px] uppercase font-mono px-2 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">
-                Anti-Bot Compliant
-              </span>
-            </div>
-            <p className="text-xs text-slate-300 leading-relaxed max-w-3xl">
-              CareerPilot’s Application Agent uses Playwright to map DOM elements and pre-populate your verified details and tailored resume PDF. In strict adherence to <strong>LinkedIn Section 8.2</strong> and <strong>Naukri anti-automation ToS</strong>, the final submission click is placed in your hands via the Human Review Checkpoint.
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Trigger Staging Section */}
       <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
         <div className="flex-1 w-full">
@@ -247,13 +243,13 @@ export const Applications = () => {
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-white tracking-tight">Active Applications & Review Queue</h2>
           <span className="text-xs text-slate-400 font-medium">
-            {applications.length} Staged / Submitted
+            {uniqueApplications.length} Active Target Roles
           </span>
         </div>
 
         {loading ? (
           <div className="text-center py-12 text-slate-400 text-xs">Loading application pipeline...</div>
-        ) : applications.length === 0 ? (
+        ) : uniqueApplications.length === 0 ? (
           <div className="text-center py-16 bg-slate-900 border border-slate-800 rounded-2xl p-8">
             <ShieldCheck className="w-10 h-10 text-slate-600 mx-auto mb-3" />
             <h3 className="text-sm font-semibold text-white">No Staged Applications Yet</h3>
@@ -263,7 +259,7 @@ export const Applications = () => {
           </div>
         ) : (
           <div className="space-y-3">
-            {applications.map((app) => (
+            {uniqueApplications.map((app) => (
               <div
                 key={app.id}
                 className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-750 transition flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm"
