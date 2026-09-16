@@ -11,7 +11,6 @@ import {
   Save,
   AlertCircle
 } from 'lucide-react';
-import { NextStepBanner } from '../components/NextStepBanner';
 
 export const Profile = () => {
   const { profile, refreshProfile } = useAuth();
@@ -306,21 +305,6 @@ export const Profile = () => {
           </button>
         </div>
       </form>
-
-      {/* Guided Next Step Banner */}
-      <div className="pt-2">
-        <NextStepBanner
-          stepNumber={2}
-          totalSteps={7}
-          badgeText="Profile Signals Established"
-          title="See Your AI Readiness Assessment"
-          description="The Assessment Agent compares your ground truth signals against market tiers, identifying your readiness and priority skill gaps."
-          primaryLabel="View Skill Assessment"
-          primaryPath="/assessment"
-          secondaryLabel="Browse Matched Jobs"
-          secondaryPath="/jobs"
-        />
-      </div>
     </div>
   );
 };

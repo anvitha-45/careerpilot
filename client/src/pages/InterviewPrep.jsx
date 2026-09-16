@@ -14,7 +14,6 @@ import {
   RefreshCw,
   BookOpen
 } from 'lucide-react';
-import { NextStepBanner } from '../components/NextStepBanner';
 
 export const InterviewPrep = () => {
   const [searchParams] = useSearchParams();
@@ -295,19 +294,6 @@ export const InterviewPrep = () => {
           </p>
         </div>
       )}
-
-      {/* Guided Next Step Banner */}
-      <NextStepBanner
-        stepNumber={7}
-        totalSteps={7}
-        badgeText="Pipeline Mastery"
-        title="Track Your Overall Progress & Placement Odds"
-        description="View your end-to-end metrics, conversion rates, and multi-agent pipeline performance in the Placement Analytics dashboard."
-        primaryLabel="Inspect Placement Analytics"
-        primaryPath="/analytics"
-        secondaryLabel="Return to Dashboard"
-        secondaryPath="/dashboard"
-      />
     </div>
   );
 };

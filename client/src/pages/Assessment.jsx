@@ -12,7 +12,6 @@ import {
   Layers,
   Sparkles
 } from 'lucide-react';
-import { NextStepBanner } from '../components/NextStepBanner';
 
 export const Assessment = () => {
   const [data, setData] = useState(null);
@@ -269,19 +268,6 @@ export const Assessment = () => {
           </div>
         </div>
       </div>
-
-      {/* Guided Next Step Banner */}
-      <NextStepBanner
-        stepNumber={3}
-        totalSteps={7}
-        badgeText="Skills Evaluated"
-        title="Discover Targeted Market Opportunities"
-        description="The Job Matcher Agent uses semantic vector embeddings and cosine similarity to match your verified skill vector against active market job postings."
-        primaryLabel="Discover Matched Roles"
-        primaryPath="/jobs"
-        secondaryLabel="Curate Learning Plan"
-        secondaryPath="/learning"
-      />
     </div>
   );
 };

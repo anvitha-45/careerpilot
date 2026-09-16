@@ -6,7 +6,6 @@ import api from '../api/client';
 import { MultiAgentFlow } from '../components/MultiAgentFlow';
 import { MatchScoreGauge } from '../components/MatchScoreGauge';
 import { SkillBadge } from '../components/SkillBadge';
-import { NextStepBanner } from '../components/NextStepBanner';
 import {
   TrendingUp,
   Briefcase,
@@ -276,19 +275,6 @@ export const Dashboard = () => {
           </div>
         </div>
       </div>
-
-      {/* Guided Next Step Banner */}
-      <NextStepBanner
-        stepNumber={1}
-        totalSteps={7}
-        badgeText="Start Pipeline"
-        title="Ready to benchmark your profile?"
-        description="Upload your resume PDF and connect your GitHub & LeetCode handles to establish your immutable Ground Truth."
-        primaryLabel="Set Up Candidate Profile"
-        primaryPath="/profile"
-        secondaryLabel="Explore Target Jobs"
-        secondaryPath="/jobs"
-      />
     </div>
   );
 };
