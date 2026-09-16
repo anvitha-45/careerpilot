@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTour } from '../context/TourContext';
 import api from '../api/client';
 import { MultiAgentFlow } from '../components/MultiAgentFlow';
 import { MatchScoreGauge } from '../components/MatchScoreGauge';
@@ -13,11 +14,13 @@ import {
   ArrowUpRight,
   ShieldCheck,
   AlertCircle,
-  FileText
+  FileText,
+  Compass
 } from 'lucide-react';
 
 export const Dashboard = () => {
   const { user, profile } = useAuth();
+  const { restartTour } = useTour();
   const [analytics, setAnalytics] = useState(null);
   const [topJobs, setTopJobs] = useState([]);
   const [gaps, setGaps] = useState([]);
@@ -52,9 +55,18 @@ export const Dashboard = () => {
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-850 to-brand-950/40 border border-slate-800 p-6 sm:p-8 shadow-xl">
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-300 text-xs font-semibold mb-3">
-              <Sparkles className="w-3.5 h-3.5 text-brand-400" />
-              <span>Agentic Career Copilot Active</span>
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-300 text-xs font-semibold">
+                <Sparkles className="w-3.5 h-3.5 text-brand-400" />
+                <span>Agentic Career Copilot Active</span>
+              </div>
+              <button
+                onClick={restartTour}
+                className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-300 text-xs font-semibold transition hover:scale-105 active:scale-95"
+              >
+                <Compass className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Take Product Tour (2 min)</span>
+              </button>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
               Hello, {user?.name || 'Engineer'}!
@@ -266,4 +278,3 @@ export const Dashboard = () => {
     </div>
   );
 };
-

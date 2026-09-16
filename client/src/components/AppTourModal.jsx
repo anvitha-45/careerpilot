@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTour } from '../context/TourContext';
+import { useAuth } from '../context/AuthContext';
 import {
   Compass,
   FileText,
@@ -116,9 +118,15 @@ const TOUR_STEPS = [
   }
 ];
 
-export const AppTourModal = ({ isOpen, onClose }) => {
+export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const navigate = useNavigate();
+  const tour = useTour();
+  const { user, login, register } = useAuth();
+
+  // Support both context-driven and prop-driven visibility
+  const isOpen = propIsOpen !== undefined ? propIsOpen : tour?.isTourOpen;
+  const handleClose = propOnClose || (tour ? tour.closeTour : () => {});
 
   if (!isOpen) return null;
 
@@ -131,7 +139,7 @@ export const AppTourModal = ({ isOpen, onClose }) => {
     if (!isLast) {
       setCurrentStepIndex(currentStepIndex + 1);
     } else {
-      onClose();
+      handleClose();
     }
   };
 
@@ -141,9 +149,21 @@ export const AppTourModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleJumpToPage = () => {
+  const handleJumpToPage = async () => {
+    // If not logged in and navigating to a protected route, auto-login with demo account
+    if (!user && current.path !== '/login') {
+      try {
+        try {
+          await login('candidate@example.com', 'password123');
+        } catch {
+          await register('Aarav Sharma', 'candidate@example.com', 'password123');
+        }
+      } catch (e) {
+        console.warn('Auto-login demo skipped:', e);
+      }
+    }
     navigate(current.path);
-    onClose();
+    handleClose();
   };
 
   return (
@@ -172,7 +192,7 @@ export const AppTourModal = ({ isOpen, onClose }) => {
             </div>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
           >
             <X className="w-5 h-5" />
@@ -258,7 +278,7 @@ export const AppTourModal = ({ isOpen, onClose }) => {
 
           <div className="flex items-center space-x-2">
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="px-3.5 py-2 rounded-xl text-xs text-slate-400 hover:text-white transition"
             >
               Skip Tour

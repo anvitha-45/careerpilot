@@ -6,13 +6,17 @@ Unlike simple form-fillers or chatbots, CareerPilot coordinates **5 specialized 
 
 ---
 
-## ⚡ 10-Second Quickstart
+## ⚡ 10-Second Quickstart & Automatic Tour Offer
 
 1. Launch both backend and frontend with a single command:
    * **Windows Command Prompt**: `run_dev.bat`
    * **Windows PowerShell**: `.\run_dev.ps1`
 2. Open your browser at **`http://localhost:5173`**.
-3. On the login screen, click **"One-Click Instant Demo Login"**. You are immediately authenticated!
+3. **Automatic Product Tour Offer**:
+   * As soon as you open the app, CareerPilot automatically presents a friendly onboarding modal: *"Would you like a quick product tour?"*
+   * Click **"Start Product Tour (2 min)"** to take the guided 8-step walkthrough of the product and how the 5 agents work—even before signing in!
+   * Or click **"One-Click Instant Demo Login"** on the login screen to enter the app immediately with pre-loaded demo telemetry.
+   * You can re-open the tour at any time by clicking the **"Product Tour"** button in the top navigation bar or the Dashboard banner.
 
 ---
 
@@ -148,3 +152,4 @@ Unlike simple form-fillers or chatbots, CareerPilot coordinates **5 specialized 
 | **Why doesn't the system automatically click the final Submit button?** | "Fully autonomous submission violates LinkedIn Section 8.2 and Naukri ToS, triggering bot detection and banning student accounts. In compliance with **Responsible AI Agent Design**, CareerPilot automates 95% of the preparation while enforcing a mandatory Human-in-the-Loop review gate for the final binding action." |
 | **How do you guarantee zero hallucination in resume tailoring?** | "We implement a **Strict Grounded Verification Diff**. The candidate's resume and verified GitHub/LeetCode data form an immutable ground truth. Before tailored outputs are saved, a deterministic scanner verifies that no unearned technologies or fake metrics were introduced." |
 | **How does this run at zero operational cost?** | "Engineered for $0.00 cloud spend using Google Gemini 1.5 Flash and Groq free tiers, local in-memory cosine vector matching, local Playwright browser automation, and a hybrid database that works offline without cloud hosting." |
+
