@@ -95,7 +95,7 @@ export const JobExplorer = () => {
       </div>
 
       {/* Filter Bar */}
-      <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-center gap-4">
+      <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-stretch md:items-center gap-3 sm:gap-4">
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
           <input
@@ -107,13 +107,13 @@ export const JobExplorer = () => {
           />
         </div>
 
-        <div className="flex items-center space-x-3 w-full md:w-auto">
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-slate-400 font-medium">Portal:</span>
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <div className="flex-1 sm:flex-initial flex items-center space-x-2">
+            <span className="text-xs text-slate-400 font-medium shrink-0">Portal:</span>
             <select
               value={portal}
               onChange={(e) => setPortal(e.target.value)}
-              className="bg-slate-950 border border-slate-800 text-xs text-white rounded-lg py-1.5 px-2.5 focus:outline-none"
+              className="flex-1 sm:flex-initial bg-slate-950 border border-slate-800 text-xs text-white rounded-lg py-1.5 px-2.5 focus:outline-none"
             >
               <option value="All">All Portals</option>
               <option value="LinkedIn">LinkedIn</option>
@@ -122,12 +122,12 @@ export const JobExplorer = () => {
             </select>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-slate-400 font-medium">Min Match:</span>
+          <div className="flex-1 sm:flex-initial flex items-center space-x-2">
+            <span className="text-xs text-slate-400 font-medium shrink-0">Min Match:</span>
             <select
               value={minScore}
               onChange={(e) => setMinScore(Number(e.target.value))}
-              className="bg-slate-950 border border-slate-800 text-xs text-white rounded-lg py-1.5 px-2.5 focus:outline-none"
+              className="flex-1 sm:flex-initial bg-slate-950 border border-slate-800 text-xs text-white rounded-lg py-1.5 px-2.5 focus:outline-none"
             >
               <option value={0}>All Scores</option>
               <option value={60}>60%+ Match</option>
@@ -154,10 +154,10 @@ export const JobExplorer = () => {
           {jobs.map((item) => (
             <div
               key={item.job.id}
-              className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm"
+              className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6 shadow-sm"
             >
-              <div className="space-y-3 flex-1">
-                <div className="flex items-center space-x-3">
+              <div className="space-y-3 flex-1 min-w-0 w-full">
+                <div className="flex flex-wrap items-center gap-2">
                   <h3 className="text-base font-bold text-white">{item.job.title}</h3>
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-medium">
                     {item.job.portal}
@@ -229,11 +229,11 @@ export const JobExplorer = () => {
 
       {/* Import Job Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 my-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-4 sm:p-6 shadow-2xl space-y-4 my-auto max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-white text-base">Import Custom Job Description</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white p-1">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -289,18 +289,18 @@ export const JobExplorer = () => {
                 />
               </div>
 
-              <div className="flex justify-end space-x-2 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-xs"
+                  className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-xs text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={importing}
-                  className="px-5 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition"
+                  className="px-5 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition text-center"
                 >
                   {importing ? 'Analyzing JD...' : 'Import & Compute Match'}
                 </button>

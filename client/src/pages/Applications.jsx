@@ -209,15 +209,15 @@ export const Applications = () => {
       </div>
 
       {/* Trigger Staging Section */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
-        <div className="flex-1 w-full">
+      <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 shadow-sm">
+        <div className="flex-1 w-full min-w-0">
           <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
             Select Shortlisted Job to Stage
           </label>
           <select
             value={selectedJobId}
             onChange={(e) => setSelectedJobId(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-750 text-white rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:border-brand-500"
+            className="w-full bg-slate-950 border border-slate-750 text-white rounded-xl py-2.5 px-3 text-xs sm:text-sm focus:outline-none focus:border-brand-500 truncate"
           >
             {jobs.map((item) => (
               <option key={item.job.id} value={item.job.id}>
@@ -230,7 +230,7 @@ export const Applications = () => {
         <button
           onClick={() => handleStageApplication(selectedJobId)}
           disabled={staging || !selectedJobId}
-          className="w-full md:w-auto px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2 disabled:opacity-50 shrink-0 self-end"
+          className="w-full md:w-auto px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2 disabled:opacity-50 shrink-0"
         >
           <Play className={`w-4 h-4 ${staging ? 'animate-pulse' : ''}`} />
           <span>{staging ? 'Staging Browser Session...' : 'Stage New Application'}</span>
@@ -261,12 +261,12 @@ export const Applications = () => {
             {uniqueApplications.map((app) => (
               <div
                 key={app.id}
-                className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-750 transition flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm"
+                className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-750 transition flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm"
               >
-                <div className="space-y-2 flex-1">
-                  <div className="flex items-center space-x-3">
+                <div className="space-y-2 flex-1 min-w-0 w-full">
+                  <div className="flex flex-wrap items-center gap-2">
                     <h3 className="text-base font-bold text-white">{app.job_title}</h3>
-                    <span className="text-xs px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">
+                    <span className="text-xs px-2.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">
                       {app.portal}
                     </span>
                   </div>
@@ -289,7 +289,7 @@ export const Applications = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center space-x-3 self-end md:self-center">
+                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start md:justify-end pt-3 md:pt-0 border-t md:border-t-0 border-slate-800">
                   {app.status === 'READY_FOR_REVIEW' && (
                     <button
                       onClick={() => {

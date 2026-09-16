@@ -84,14 +84,14 @@ export const Assessment = () => {
       </div>
 
       {/* Top Banner: Overall Score & Market Benchmark */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex items-center space-x-6 shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+        <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 flex items-center space-x-4 sm:space-x-6 shadow-sm">
           <MatchScoreGauge score={data?.readiness_score || 70} size="lg" />
           <div>
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Empirical Readiness
             </span>
-            <div className="text-lg font-bold text-white mt-1">
+            <div className="text-base sm:text-lg font-bold text-white mt-1">
               {data?.readiness_score >= 75 ? 'Job Market Ready' : 'Competitive Track'}
             </div>
             <p className="text-xs text-emerald-400 font-medium mt-0.5">
@@ -100,7 +100,7 @@ export const Assessment = () => {
           </div>
         </div>
 
-        <div className="md:col-span-2 p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col justify-between shadow-sm">
+        <div className="md:col-span-2 p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col justify-between shadow-sm">
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
@@ -123,9 +123,9 @@ export const Assessment = () => {
       </div>
 
       {/* Public Signals: GitHub & LeetCode */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {/* GitHub Card */}
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+        <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2.5">
               <div className="w-8 h-8 rounded-lg bg-slate-800 text-white flex items-center justify-center">
@@ -160,7 +160,7 @@ export const Assessment = () => {
         </div>
 
         {/* LeetCode Card */}
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+        <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2.5">
               <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center">
@@ -199,7 +199,7 @@ export const Assessment = () => {
       </div>
 
       {/* Categorized Skill Vector Breakdown */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">

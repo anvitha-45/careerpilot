@@ -66,10 +66,10 @@ export const JobDetails = () => {
       </button>
 
       {/* Main Header Box */}
-      <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="space-y-3 flex-1">
-          <div className="flex items-center space-x-3">
-            <h1 className="text-2xl font-extrabold text-white tracking-tight">{job.title}</h1>
+      <div className="p-5 sm:p-8 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6">
+        <div className="space-y-3 flex-1 min-w-0 w-full">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">{job.title}</h1>
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-medium">
               {job.portal}
             </span>
@@ -176,16 +176,16 @@ export const JobDetails = () => {
           </a>
         )}
 
-        <div className="flex items-center space-x-3 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-3 sm:gap-0 w-full sm:w-auto">
           <Link
             to={`/interview?jobId=${job.id}`}
-            className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold border border-slate-700 transition text-center"
+            className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold border border-slate-700 transition text-center"
           >
             Practice Mock Interview
           </Link>
           <Link
             to={`/tailoring?jobId=${job.id}`}
-            className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition text-center flex items-center justify-center space-x-2"
+            className="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition text-center flex items-center justify-center space-x-2"
           >
             <FileCheck className="w-4 h-4" />
             <span>Tailor Resume for this Job</span>

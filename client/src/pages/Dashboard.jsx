@@ -52,38 +52,38 @@ export const Dashboard = () => {
   return (
     <div className="space-y-8">
       {/* Top Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-850 to-brand-950/40 border border-slate-800 p-6 sm:p-8 shadow-xl">
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="max-w-2xl">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-850 to-brand-950/40 border border-slate-800 p-4 sm:p-8 shadow-xl">
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 sm:gap-6">
+          <div className="max-w-2xl min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-3">
               <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-300 text-xs font-semibold">
-                <Sparkles className="w-3.5 h-3.5 text-brand-400" />
+                <Sparkles className="w-3.5 h-3.5 text-brand-400 shrink-0" />
                 <span>Agentic Career Copilot Active</span>
               </div>
               <button
                 onClick={restartTour}
                 className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-300 text-xs font-semibold transition hover:scale-105 active:scale-95"
               >
-                <Compass className="w-3.5 h-3.5 text-indigo-400" />
+                <Compass className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                 <span>Take Product Tour (2 min)</span>
               </button>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h1 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
               Hello, {user?.name || 'Engineer'}!
             </h1>
-            <p className="text-sm text-slate-300 mt-2 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
               Your autonomous 5-agent pipeline is active. Benchmarking candidate skill vectors against real Indian & global engineering job postings.
             </p>
           </div>
 
           {/* Overall Readiness Card */}
-          <div className="flex items-center space-x-5 bg-slate-900/90 border border-slate-750 p-4 rounded-xl shadow-lg shrink-0">
+          <div className="flex items-center space-x-4 sm:space-x-5 bg-slate-900/90 border border-slate-750 p-3.5 sm:p-4 rounded-xl shadow-lg w-full sm:w-auto shrink-0">
             <MatchScoreGauge score={readinessScore} size="lg" />
             <div>
               <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                 Readiness Score
               </div>
-              <div className="text-base font-bold text-white mt-0.5">
+              <div className="text-sm sm:text-base font-bold text-white mt-0.5">
                 {readinessScore >= 75 ? 'Market Ready' : 'Competitive Track'}
               </div>
               <p className="text-[11px] text-brand-400 font-medium mt-0.5">

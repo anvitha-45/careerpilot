@@ -126,7 +126,7 @@ export const Profile = () => {
       )}
 
       {/* Resume Upload Box */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm">
         <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-2 flex items-center space-x-2">
           <FileText className="w-4 h-4 text-brand-400" />
           <span>Step 1: Upload Resume (PDF)</span>
@@ -135,7 +135,7 @@ export const Profile = () => {
           Our NLP Parser extracts technical skills, education, and bullet points without fabricating information.
         </p>
 
-        <div className="border-2 border-dashed border-slate-750 hover:border-brand-500/50 rounded-xl p-6 text-center transition bg-slate-950/50">
+        <div className="border-2 border-dashed border-slate-750 hover:border-brand-500/50 rounded-xl p-4 sm:p-6 text-center transition bg-slate-950/50">
           <input
             type="file"
             id="resume-upload"
@@ -156,12 +156,12 @@ export const Profile = () => {
         </div>
 
         {profile?.resume_filename && (
-          <div className="mt-4 flex items-center justify-between p-3 rounded-lg bg-slate-850 border border-slate-750 text-xs text-slate-300">
-            <span className="font-medium text-white flex items-center space-x-2">
-              <FileText className="w-4 h-4 text-brand-400" />
-              <span>Current file: {profile.resume_filename}</span>
+          <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3 rounded-lg bg-slate-850 border border-slate-750 text-xs text-slate-300">
+            <span className="font-medium text-white flex items-center space-x-2 min-w-0 truncate">
+              <FileText className="w-4 h-4 text-brand-400 shrink-0" />
+              <span className="truncate">Current file: {profile.resume_filename}</span>
             </span>
-            <span className="text-emerald-400 font-semibold flex items-center space-x-1">
+            <span className="text-emerald-400 font-semibold flex items-center space-x-1 shrink-0">
               <CheckCircle className="w-3.5 h-3.5" />
               <span>Verified Ground Truth</span>
             </span>
@@ -170,7 +170,7 @@ export const Profile = () => {
       </div>
 
       {/* Main Profile & Public Handles Form */}
-      <form onSubmit={handleSaveProfile} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+      <form onSubmit={handleSaveProfile} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 space-y-6">
         <h3 className="text-sm font-semibold text-white uppercase tracking-wider flex items-center space-x-2">
           <Sparkles className="w-4 h-4 text-brand-400" />
           <span>Step 2: Candidate Details & Public Profiles</span>
@@ -275,30 +275,30 @@ export const Profile = () => {
             ))}
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <input
               type="text"
               value={newSkill}
               onChange={(e) => setNewSkill(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
               placeholder="Add skill (e.g. Redis, Kubernetes, Next.js)"
-              className="bg-slate-950 border border-slate-800 focus:border-brand-500 rounded-lg py-1.5 px-3 text-xs text-white focus:outline-none flex-1 max-w-xs"
+              className="bg-slate-950 border border-slate-800 focus:border-brand-500 rounded-lg py-2 px-3 text-xs text-white focus:outline-none flex-1 max-w-full sm:max-w-xs"
             />
             <button
               type="button"
               onClick={addSkill}
-              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold border border-slate-700 transition"
+              className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold border border-slate-700 transition text-center"
             >
               Add Skill
             </button>
           </div>
         </div>
 
-        <div className="pt-4 flex justify-end">
+        <div className="pt-4 flex flex-col sm:flex-row justify-end">
           <button
             type="submit"
             disabled={saving}
-            className="inline-flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition disabled:opacity-50"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition disabled:opacity-50 text-center"
           >
             <Save className="w-4 h-4" />
             <span>{saving ? 'Updating Signals...' : 'Save & Refresh Assessment'}</span>

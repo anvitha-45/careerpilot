@@ -102,8 +102,8 @@ export const InterviewPrep = () => {
       </div>
 
       {/* Target Job Selector & Start */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
-        <div className="flex-1 w-full">
+      <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 shadow-sm">
+        <div className="flex-1 w-full min-w-0">
           <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
             Target Job for Mock Interview
           </label>
@@ -113,7 +113,7 @@ export const InterviewPrep = () => {
               setSelectedJobId(e.target.value);
               startInterviewSession(e.target.value);
             }}
-            className="w-full bg-slate-950 border border-slate-750 text-white rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:border-brand-500"
+            className="w-full bg-slate-950 border border-slate-750 text-white rounded-xl py-2.5 px-3 text-xs sm:text-sm focus:outline-none focus:border-brand-500 truncate"
           >
             {jobs.map((item) => (
               <option key={item.job.id} value={item.job.id}>
@@ -126,7 +126,7 @@ export const InterviewPrep = () => {
         <button
           onClick={() => startInterviewSession(selectedJobId)}
           disabled={loading || !selectedJobId}
-          className="w-full md:w-auto px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2 disabled:opacity-50 shrink-0 self-end"
+          className="w-full md:w-auto px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2 disabled:opacity-50 shrink-0"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           <span>{loading ? 'Synthesizing Questions...' : 'Start New Mock Session'}</span>
@@ -144,18 +144,18 @@ export const InterviewPrep = () => {
         <div className="space-y-8">
           {/* Evaluation Report (If Completed) */}
           {evaluation && (
-            <div className="p-6 rounded-2xl bg-slate-900 border border-brand-500/40 space-y-6 shadow-xl">
+            <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-brand-500/40 space-y-5 sm:space-y-6 shadow-xl">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
                 <div>
                   <span className="text-xs font-bold text-brand-400 uppercase tracking-wider">
                     Mock Interview Assessment Report
                   </span>
-                  <h2 className="text-xl font-bold text-white mt-1">
+                  <h2 className="text-lg sm:text-xl font-bold text-white mt-1">
                     Overall Performance Evaluation
                   </h2>
                   <p className="text-xs text-slate-400 mt-0.5">{evaluation.summary}</p>
                 </div>
-                <div className="flex items-center space-x-4 bg-slate-950 px-5 py-3 rounded-xl border border-slate-800">
+                <div className="flex items-center space-x-4 bg-slate-950 px-4 sm:px-5 py-3 rounded-xl border border-slate-800 w-full sm:w-auto shrink-0">
                   <MatchScoreGauge score={evaluation.overall_score} size="md" />
                   <div>
                     <span className="text-[10px] uppercase font-bold text-slate-400">Readiness</span>
@@ -203,11 +203,11 @@ export const InterviewPrep = () => {
               return (
                 <div
                   key={q.id}
-                  className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm"
+                  className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2.5">
-                      <span className="w-6 h-6 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs font-bold">
+                      <span className="w-6 h-6 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs font-bold shrink-0">
                         {idx + 1}
                       </span>
                       <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -273,11 +273,11 @@ export const InterviewPrep = () => {
               );
             })}
 
-            <div className="flex justify-end pt-4">
+            <div className="flex flex-col sm:flex-row justify-end pt-4">
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex items-center space-x-2 px-8 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 sm:px-8 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition disabled:opacity-50 text-center"
               >
                 <Send className="w-4 h-4" />
                 <span>{submitting ? 'Evaluating Responses with AI...' : 'Submit Answers & Receive Score'}</span>

@@ -56,8 +56,8 @@ export const MultiAgentFlow = ({ activeStage = 'overview' }) => {
   ];
 
   return (
-    <div className="bg-slate-800/40 border border-slate-800 rounded-2xl p-5 mb-8">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-slate-800/40 border border-slate-800 rounded-2xl p-4 sm:p-5 mb-6 sm:mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
           <h3 className="text-sm font-semibold text-white tracking-wide uppercase flex items-center space-x-2">
             <span className="w-2 h-2 rounded-full bg-brand-400"></span>
@@ -67,12 +67,12 @@ export const MultiAgentFlow = ({ activeStage = 'overview' }) => {
             Autonomous specialized agents passing structured state down the recruitment lifecycle
           </p>
         </div>
-        <span className="text-[11px] font-mono text-slate-400 bg-slate-850 px-2.5 py-1 rounded-md border border-slate-700">
+        <span className="self-start sm:self-auto text-[11px] font-mono text-slate-400 bg-slate-850 px-2.5 py-1 rounded-md border border-slate-700">
           LangGraph Workflow
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-3 relative">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 relative">
         {agents.map((agent, idx) => {
           const Icon = agent.icon;
           return (

@@ -167,25 +167,25 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-750 rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-4 overflow-y-auto">
+      <div className="bg-slate-900 border border-slate-750 rounded-2xl sm:rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
         {/* Top Progress & Close Bar */}
-        <div className="p-4 px-6 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
-          <div className="flex items-center space-x-2">
-            <span className="text-[11px] font-mono font-bold text-brand-400 uppercase tracking-wider">
-              Tour Step {current.step} of {TOUR_STEPS.length}
+        <div className="p-3.5 sm:p-4 px-4 sm:px-6 border-b border-slate-800 flex items-center justify-between bg-slate-950/60 shrink-0">
+          <div className="flex items-center space-x-2 min-w-0">
+            <span className="text-[10px] sm:text-[11px] font-mono font-bold text-brand-400 uppercase tracking-wider shrink-0">
+              Tour Step {current.step}/{TOUR_STEPS.length}
             </span>
-            <div className="flex space-x-1 ml-2">
+            <div className="flex space-x-1 ml-1 sm:ml-2 overflow-hidden">
               {TOUR_STEPS.map((_, idx) => (
                 <div
                   key={idx}
                   onClick={() => setCurrentStepIndex(idx)}
                   className={`h-1.5 rounded-full cursor-pointer transition-all ${
                     idx === currentStepIndex
-                      ? 'w-6 bg-brand-500'
+                      ? 'w-5 sm:w-6 bg-brand-500'
                       : idx < currentStepIndex
-                      ? 'w-2 bg-emerald-500/80'
-                      : 'w-2 bg-slate-750 hover:bg-slate-600'
+                      ? 'w-1.5 sm:w-2 bg-emerald-500/80'
+                      : 'w-1.5 sm:w-2 bg-slate-750 hover:bg-slate-600'
                   }`}
                 />
               ))}
@@ -193,35 +193,35 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
           </div>
           <button
             onClick={handleClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0 ml-2"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Step Banner */}
-        <div className="p-6 sm:p-8 bg-gradient-to-r from-slate-900 to-slate-850 border-b border-slate-800 flex items-start space-x-4">
+        <div className="p-4 sm:p-6 lg:p-8 bg-gradient-to-r from-slate-900 to-slate-850 border-b border-slate-800 flex items-start space-x-3 sm:space-x-4 shrink-0">
           <div
-            className={`w-12 h-12 rounded-2xl bg-gradient-to-tr ${current.color} flex items-center justify-center text-white shadow-lg shrink-0 mt-1`}
+            className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr ${current.color} flex items-center justify-center text-white shadow-lg shrink-0 mt-0.5`}
           >
-            <Icon className="w-6 h-6" />
+            <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div className="flex-1">
-            <span className="text-[11px] font-bold text-brand-400 uppercase tracking-wider">
+          <div className="flex-1 min-w-0">
+            <span className="text-[10px] sm:text-[11px] font-bold text-brand-400 uppercase tracking-wider block truncate">
               {current.subtitle}
             </span>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight mt-0.5">
+            <h2 className="text-lg sm:text-2xl font-extrabold text-white tracking-tight mt-0.5">
               {current.title}
             </h2>
           </div>
         </div>
 
         {/* 3 Core Blocks: What you do, What AI does, Why it matters */}
-        <div className="p-6 sm:p-8 space-y-4 max-h-[60vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-3 sm:space-y-4 overflow-y-auto flex-1">
           {/* Block 1: What You Do */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
             <div className="flex items-center space-x-2 text-xs font-bold text-slate-300 uppercase tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-brand-400"></span>
+              <span className="w-2 h-2 rounded-full bg-brand-400 shrink-0"></span>
               <span>What You Do (Candidate Action)</span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed pl-4">
@@ -230,9 +230,9 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
           </div>
 
           {/* Block 2: What the AI Does */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
             <div className="flex items-center space-x-2 text-xs font-bold text-brand-300 uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-brand-400" />
+              <Sparkles className="w-3.5 h-3.5 text-brand-400 shrink-0" />
               <span>What the AI Does Under the Hood</span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed pl-5">
@@ -241,9 +241,9 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
           </div>
 
           {/* Block 3: Why It Matters */}
-          <div className="p-4 rounded-xl bg-brand-950/20 border border-brand-800/40 space-y-1">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-brand-950/20 border border-brand-800/40 space-y-1">
             <div className="flex items-center space-x-2 text-xs font-bold text-emerald-400 uppercase tracking-wider">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               <span>Why It Matters (Key Differentiator)</span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed pl-5">
@@ -253,12 +253,12 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
         </div>
 
         {/* Modal Footer Controls */}
-        <div className="p-4 px-6 bg-slate-950 border-t border-slate-800 flex items-center justify-between gap-3">
+        <div className="p-3.5 sm:p-4 px-4 sm:px-6 bg-slate-950 border-t border-slate-800 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 shrink-0">
           <div className="flex items-center space-x-2">
             {!isFirst && (
               <button
                 onClick={handlePrev}
-                className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-850 hover:bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-750 transition"
+                className="inline-flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-850 hover:bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-750 transition"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Previous</span>
@@ -268,7 +268,7 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
             {current.path && (
               <button
                 onClick={handleJumpToPage}
-                className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-brand-300 text-xs font-semibold border border-slate-700 transition"
+                className="inline-flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-brand-300 text-xs font-semibold border border-slate-700 transition"
               >
                 <span>{current.actionLabel}</span>
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -276,16 +276,16 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
             )}
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between sm:justify-end space-x-2">
             <button
               onClick={handleClose}
-              className="px-3.5 py-2 rounded-xl text-xs text-slate-400 hover:text-white transition"
+              className="px-3 py-2 rounded-xl text-xs text-slate-400 hover:text-white transition"
             >
               Skip Tour
             </button>
             <button
               onClick={handleNext}
-              className="inline-flex items-center space-x-2 px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-lg shadow-brand-500/20 transition"
+              className="inline-flex items-center justify-center space-x-2 px-4 sm:px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-lg shadow-brand-500/20 transition flex-1 sm:flex-initial"
             >
               <span>{isLast ? 'Finish Tour' : 'Next Step'}</span>
               <ArrowRight className="w-4 h-4" />

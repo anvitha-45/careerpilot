@@ -59,10 +59,10 @@ export const LearningPlan = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center space-x-2 border-b border-slate-800 pb-3">
+      <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
         <button
           onClick={() => setActiveTab('gaps')}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${
+          className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold transition ${
             activeTab === 'gaps'
               ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20'
               : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -72,7 +72,7 @@ export const LearningPlan = () => {
         </button>
         <button
           onClick={() => setActiveTab('roadmap')}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${
+          className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold transition ${
             activeTab === 'roadmap'
               ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20'
               : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -94,14 +94,14 @@ export const LearningPlan = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {gaps.map((gap) => (
               <div
                 key={gap.skill}
-                className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm flex flex-col justify-between"
+                className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm flex flex-col justify-between"
               >
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="text-base font-bold text-white">{gap.skill}</h3>
                     <span
                       className={`text-[10px] uppercase font-bold px-2.5 py-1 rounded-full border ${
@@ -145,11 +145,11 @@ export const LearningPlan = () => {
       ) : (
         /* 4-Week Study Roadmap Tab */
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {weeks.map((week) => (
               <div
                 key={week.week_number}
-                className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm"
+                className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">

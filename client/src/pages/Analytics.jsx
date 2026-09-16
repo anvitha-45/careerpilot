@@ -98,7 +98,7 @@ export const Analytics = () => {
       </div>
 
       {/* Application Funnel Visualizer */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm">
+      <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm">
         <div>
           <h3 className="text-sm font-bold text-white uppercase tracking-wider">
             Application Pipeline Funnel
@@ -133,7 +133,7 @@ export const Analytics = () => {
       </div>
 
       {/* Pipeline Agents Status */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm">
+      <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm">
         <div>
           <h3 className="text-sm font-bold text-white uppercase tracking-wider">
             Agent Coordination Telemetry (LangGraph Checkpoints)
