@@ -13,7 +13,8 @@ import {
   Trash2,
   AlertCircle,
   Building,
-  Sparkles
+  Sparkles,
+  Download
 } from 'lucide-react';
 
 export const Applications = () => {
@@ -100,6 +101,26 @@ export const Applications = () => {
     }
   };
 
+  const handleDownloadResumePdf = async (jobId, companyName) => {
+    try {
+      const response = await api.get(`/tailor/export-pdf?job_id=${jobId}`, {
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const company = companyName ? companyName.replace(/[^a-zA-Z0-9_-]/g, '_') : 'Target';
+      link.setAttribute('download', `CareerPilot_Resume_${company}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to download resume PDF:', err);
+    }
+  };
+
   const getStatusBadge = (status) => {
     switch (status) {
       case 'READY_FOR_REVIEW':
@@ -148,11 +169,31 @@ export const Applications = () => {
 
       <MultiAgentFlow activeStage="application" />
 
-      {/* Stage a Job Section */}
+      {/* Human-in-the-Loop Architecture Explainer */}
+      <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-start space-x-3.5">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+            <ShieldCheck className="w-6 h-6" />
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <span className="font-bold text-sm text-white">Responsible AI & Platform Safety Gate</span>
+              <span className="text-[10px] uppercase font-mono px-2 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">
+                Anti-Bot Compliant
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed max-w-3xl">
+              CareerPilot’s Application Agent uses Playwright to map DOM elements and pre-populate your verified details and tailored resume PDF. In strict adherence to <strong>LinkedIn Section 8.2</strong> and <strong>Naukri anti-automation ToS</strong>, the final submission click is placed in your hands via the Human Review Checkpoint.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Trigger Staging Section */}
       <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
         <div className="flex-1 w-full">
           <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-            Select Role to Stage in Browser
+            Select Shortlisted Job to Stage
           </label>
           <select
             value={selectedJobId}
@@ -161,7 +202,7 @@ export const Applications = () => {
           >
             {jobs.map((item) => (
               <option key={item.job.id} value={item.job.id}>
-                {item.job.title} at {item.job.company} ({item.job.portal})
+                {item.job.title} — {item.job.company} ({item.job.portal})
               </option>
             ))}
           </select>
@@ -172,28 +213,28 @@ export const Applications = () => {
           disabled={staging || !selectedJobId}
           className="w-full md:w-auto px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2 disabled:opacity-50 shrink-0 self-end"
         >
-          <Play className={`w-4 h-4 ${staging ? 'animate-spin' : ''}`} />
-          <span>{staging ? 'Staging via Playwright...' : 'Launch Browser Staging'}</span>
+          <Play className={`w-4 h-4 ${staging ? 'animate-pulse' : ''}`} />
+          <span>{staging ? 'Staging Browser Session...' : 'Stage New Application'}</span>
         </button>
       </div>
 
-      {/* Applications Pipeline List */}
+      {/* Applications List */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white tracking-tight">
-            Active Applications Pipeline ({applications.length})
-          </h2>
-          <span className="text-xs text-slate-400">
-            {applications.filter((a) => a.status === 'READY_FOR_REVIEW').length} Awaiting Approval
+          <h2 className="text-lg font-bold text-white tracking-tight">Active Applications & Review Queue</h2>
+          <span className="text-xs text-slate-400 font-medium">
+            {applications.length} Staged / Submitted
           </span>
         </div>
 
-        {applications.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-12 text-slate-400 text-xs">Loading application pipeline...</div>
+        ) : applications.length === 0 ? (
           <div className="text-center py-16 bg-slate-900 border border-slate-800 rounded-2xl p-8">
-            <Send className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-            <h3 className="text-sm font-semibold text-white">No applications in pipeline yet</h3>
-            <p className="text-xs text-slate-400 mt-1">
-              Select a job above to trigger Playwright staging and automated field pre-filling.
+            <ShieldCheck className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+            <h3 className="text-sm font-semibold text-white">No Staged Applications Yet</h3>
+            <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+              Select a role above or navigate to the Job Explorer to stage your first human-reviewed application.
             </p>
           </div>
         ) : (
@@ -243,6 +284,15 @@ export const Applications = () => {
                     </button>
                   )}
 
+                  {/* Download Staged ATS Resume PDF */}
+                  <button
+                    onClick={() => handleDownloadResumePdf(app.job_id, app.company_name)}
+                    className="p-2 rounded-lg bg-slate-800 hover:bg-slate-750 text-brand-300 hover:text-white border border-slate-700 transition"
+                    title="Download Tailored ATS Resume PDF"
+                  >
+                    <Download className="w-4 h-4" />
+                  </button>
+
                   {app.apply_url && (
                     <a
                       href={app.apply_url}
@@ -287,4 +337,3 @@ export const Applications = () => {
     </div>
   );
 };
-
