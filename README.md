@@ -7,7 +7,35 @@
 [![Tailwind CSS](https://img.shields.io/badge/Styles-Tailwind%20CSS-38B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![Playwright](https://img.shields.io/badge/RPA-Playwright-2EAD33.svg?logo=playwright&logoColor=white)](https://playwright.dev)
 [![Responsible AI](https://img.shields.io/badge/Design-Human--in--the--Loop-amber.svg)](#human-in-the-loop-hitl-architecture)
-[![Cost](https://img.shields.io/badge/Operational%20Cost-%240.00%20(Free%20Tier)-brightgreen.svg)](#zero-cost-student-infrastructure)
+[![Documentation](https://img.shields.io/badge/Full%20Docs-DOCUMENTATION.md-purple.svg)](docs/DOCUMENTATION.md)
+[![Video Walkthrough](https://img.shields.io/badge/Video-Live%20Demo-red.svg)](docs/videos/careerpilot_walkthrough.webm)
+
+---
+
+## 🎥 Live Video Walkthrough & Full Documentation
+
+* 📖 **Comprehensive Project Documentation**: Check out [`docs/DOCUMENTATION.md`](docs/DOCUMENTATION.md) for full architectural specs, mathematical formulas, and viva defense notes.
+* 🧭 **Beginner's Guided Tour Guide**: Check out [`APP_TOUR.md`](APP_TOUR.md).
+* 📹 **Recorded Video Demo**: Watch the continuous live screen walkthrough at [`docs/videos/careerpilot_walkthrough.webm`](docs/videos/careerpilot_walkthrough.webm).
+
+---
+
+## 📸 Live Application Screenshots
+
+| 🧭 Onboarding Tour Offer | 👤 Executive Dashboard |
+| :---: | :---: |
+| ![Onboarding Tour Offer](docs/screenshots/01_onboarding_tour_offer.png) | ![Dashboard Overview](docs/screenshots/04_dashboard_overview.png) |
+| *Auto-offers interactive product tour on app launch* | *Readiness Gauge, Multi-Agent Flow & Target Roles* |
+
+| ✍️ Tailoring Agent & ATS PDF Export | 🛡️ Mandatory Human Review Gate |
+| :---: | :---: |
+| ![Tailoring Agent](docs/screenshots/08_tailoring_agent_star_bullets.png) | ![Human Review Modal](docs/screenshots/10_human_review_checkpoint_modal.png) |
+| *CAR/STAR Bullet Rewrites & 1-Click ATS PDF Export* | *Playwright browser staging stops at review checkpoint* |
+
+| 🎓 Empirical Market Gap Analysis | 🎙️ JD-Tuned Mock Interview Simulator |
+| :---: | :---: |
+| ![Market Gap Analysis](docs/screenshots/07_market_gap_upskilling.png) | ![Interview Prep Simulator](docs/screenshots/11_interview_prep_simulator.png) |
+| *Frequency-ranked gaps + free NPTEL / YouTube links* | *Company-targeted technical & behavioral evaluation* |
 
 ---
 
@@ -52,6 +80,7 @@ Instead of leaving applicants helpless in front of automated ATS rejection filte
                             ┌───────────────────┐
                             │  Tailoring Agent  │ ──> CAR/STAR Bullet Transformations
                             │ (0% Hallucination)│ ──> Bespoke Cover Letter
+                            │                   │ ──> ATS Resume PDF Export Engine
                             └─────────┬─────────┘
                                       │
                                       ▼
@@ -82,7 +111,7 @@ Instead of leaving applicants helpless in front of automated ATS rejection filte
 | **01** | **Assessment Agent** | Ingests PDF resume, GitHub repositories, and LeetCode solve counts to construct a multi-dimensional Skill Vector. | PDF text extraction (`pypdf`), skill taxonomy NER, public REST/GraphQL APIs. |
 | **02** | **Job Discovery & Matching** | Computes cosine vector similarity between candidate skills and real postings across Indian & global tech hubs. | Vector embeddings, 4-factor scoring rubric, deterministic explainability. |
 | **03** | **Gap & Learning Agent** | Discovers missing skills ranked strictly by empirical market frequency across target postings (not generic checklists). | Mathematical frequency weighting, NPTEL (IIT) & developer YouTube curation. |
-| **04** | **Tailoring Agent** | Rewrites resume bullets using the Context-Action-Result (**CAR/STAR**) framework and crafts job-tuned cover letters. | Free-tier LLM inference (Groq/Gemini), programmatic zero-hallucination diffing. |
+| **04** | **Tailoring Agent & ATS PDF** | Rewrites resume bullets using the Context-Action-Result (**CAR/STAR**) framework and generates single-column ATS PDF resumes. | Free-tier LLM inference (Groq/Gemini), ReportLab Platypus, zero-hallucination diffing. |
 | **05** | **Application Agent (HITL)** | Launches browser automation to stage form fields on Naukri, LinkedIn, and ATS platforms; pauses at human review gate. | Playwright Chromium automation, DOM selector healing, session preservation. |
 | **06** | **Interview Prep Agent** | Generates role-specific questions and simulates interactive mock interviews with instant evaluative scoring. | JD competency extraction, few-shot prompting, hiring manager rubrics. |
 
@@ -98,67 +127,52 @@ Instead of leaving applicants helpless in front of automated ATS rejection filte
    * **Naukri.com** actively blocks automated submission scripts and enforces IP/profile blacklisting.
    * Autonomous bots trigger bot tripwires (Cloudflare, Datadome, honeypots) that get the applicant's email permanently banned.
 2. **Responsible AI Agent Design**:
-   * Job applications include legally binding representations regarding citizenship, visa status, disability disclosures, and salary expectations. An AI agent cannot ethically sign legal representations on behalf of a human.
-3. **The 95/5 Principle**:
-   * CareerPilot automates **95%** of the cognitive overhead (market benchmarking, gap discovery, STAR bullet refinement, DOM locator pre-filling), while leaving the final **5%** approval click in the hands of the human candidate.
+   * In a real hiring workflow, submitting unreviewed applications leads to awkward interview failures when an applicant is questioned about unverified claims.
+   * CareerPilot stages the form, uploads the tailored resume, pre-fills all inputs, and halts at the final **Human Review Gate**, ensuring 100% ethical and platform-safe operation.
 
 ---
 
-## 🎓 Academic & Research Merit: The 5 CS Pillars
+## 💰 Zero-Cost Student Infrastructure
 
-This project bridges five core sub-disciplines of modern Computer Science:
-1. **Natural Language Processing (NLP)**: Multi-format document text extraction, section identification, Named Entity Recognition (NER).
-2. **Semantic Search & Vector Embeddings**: Cosine distance benchmarking of skill vectors against real-time job descriptions in vector space.
-3. **Stateful Multi-Agent Orchestration**: Coordinating autonomous, specialized agents via LangGraph-inspired state graphs with typed state and checkpoints.
-4. **Browser Automation & RPA**: Resilient DOM navigation, form-field heuristic mapping, and staged application pre-filling using Playwright.
-5. **Generative LLM Prompt Engineering**: Few-shot CAR/STAR bullet generation, zero-hallucination verification diffing, and structured output formatting.
+Built specifically so that any graduating student can clone, run, and deploy CareerPilot with **$0.00 cloud spend**:
 
----
-
-## 💰 Zero-Cost Student Infrastructure ($0.00 Cloud Spend)
-
-Designed so that any engineering student can run CareerPilot completely free of cost:
-* **LLM Inference**: Powered by Google Gemini 1.5 Flash (15 RPM free) or Groq Llama 3.3 70B (free tier).
-* **Deterministic Fallback**: Built-in rule-based NLP engine guarantees 100% functionality even without API keys!
-* **Database**: Resilient dual-mode database layer — connects to MongoDB when available, and automatically operates an embedded local document store (`careerpilot_store.json`) when offline.
-* **Vector Search**: In-memory cosine similarity and vector matching (zero cloud vector DB hosting fees).
-* **Browser Automation**: Local Chromium instance powered by Playwright.
+* **Dual-Mode Database**:
+  - **Primary**: MongoDB (via `pymongo` / `motor`).
+  - **Zero-Dependency Fallback**: Asynchronous local JSON document store (`server/data/careerpilot_store.json`). If local `mongod` is not running, the system boots immediately in embedded store mode with 100% feature parity.
+* **Three-Tier Free AI Provider Abstraction**:
+  - **Tier 1**: Google Gemini 1.5 Flash (Free Tier API Key).
+  - **Tier 2**: Groq LLaMA-3.3-70B (Free Ultra-Fast Inference).
+  - **Tier 3**: Deterministic Offline Heuristic Engine (zero external API calls required).
 
 ---
 
-## 🚀 Quickstart & Local Setup
+## 🚀 Quickstart & Installation
 
-### Prerequisites
-* **Python 3.11+**
-* **Node.js 18+** & `npm`
+### Option 1: One-Click Startup Script (Recommended)
 
-### 1. Clone & Setup Environment
-```bash
-git clone https://github.com/your-username/careerpilot-ai.git
-cd careerpilot-ai
-cp .env.example .env
-```
-
-### 2. Launch with One Click
-#### On Windows (Command Prompt):
-```cmd
-run_dev.bat
-```
-#### On Windows (PowerShell):
+#### Windows PowerShell:
 ```powershell
 .\run_dev.ps1
 ```
 
-#### Manual Startup:
+#### Windows Command Prompt:
+```cmd
+run_dev.bat
+```
+
+### Option 2: Manual Step-by-Step Startup
+
+#### 1. Backend Server:
 ```bash
-# Terminal 1 — Backend
 python -m pip install -r server/requirements.txt
 python -m uvicorn server.main:app --reload --port 8000
+```
 
-# Terminal 2 — Frontend
+#### 2. Frontend Application:
+```bash
 cd client
-npm install
-npm run dev
+npm.cmd install
+npm.cmd run dev
 ```
 
 Visit the application at: **`http://localhost:5173`**  
@@ -166,15 +180,15 @@ Explore the interactive API Docs at: **`http://localhost:8000/docs`**
 
 ---
 
-## 📂 Project Structure
+## 📂 Repository Structure
 
 ```text
 careerpilot-ai/
 ├── client/                     # React 18 + Vite + Tailwind CSS Frontend
 │   ├── src/
 │   │   ├── api/                # Axios client with JWT interceptors
-│   │   ├── components/         # Navbar, Sidebar, MultiAgentFlow, HumanReviewModal, etc.
-│   │   ├── context/            # AuthContext & Candidate Profile State
+│   │   ├── components/         # Navbar, MultiAgentFlow, HumanReviewModal, AppTourModal, etc.
+│   │   ├── context/            # AuthContext & TourContext
 │   │   ├── pages/              # Dashboard, Profile, Assessment, Jobs, Learning, Tailoring, etc.
 │   │   ├── App.jsx             # React Router v6 navigation
 │   │   └── main.jsx
@@ -183,23 +197,27 @@ careerpilot-ai/
 │   ├── agents/                 # Assessment, GapLearning, Tailoring, Application, Interview
 │   ├── models/                 # Pydantic Schemas (Profile, Job, SkillGap, Application, etc.)
 │   ├── routers/                # Auth, Profile, Assessment, Jobs, Learning, Tailoring, etc.
-│   ├── services/               # AI Service, Resume Parser, GitHub, LeetCode, Playwright
+│   ├── services/               # AI Service, Resume Parser, PDF Export, GitHub, LeetCode, Playwright
 │   ├── seeds/                  # Real Tech Jobs & Curated NPTEL/YouTube Resources
 │   ├── config.py               # Pydantic Settings & Environment
 │   ├── database.py             # Hybrid MongoDB + Embedded Local Store Fallback
 │   ├── main.py                 # FastAPI Application Entrypoint
 │   └── requirements.txt
+├── docs/                       # Comprehensive Documentation, Screenshots & Videos
+│   ├── DOCUMENTATION.md        # Full Architectural & Academic Viva Guide
+│   ├── screenshots/            # 12 Live High-Resolution Screen Captures
+│   └── videos/                 # Recorded Video Walkthrough (careerpilot_walkthrough.webm)
+├── APP_TOUR.md                 # Interactive 8-Step App Tour Guide
+├── spec.md                     # Comprehensive Architectural Specification (2,860+ lines)
+├── run_dev.bat                 # One-click Windows CMD startup
+├── run_dev.ps1                 # One-click PowerShell startup
 ├── .gitignore
 ├── .env.example
-├── LICENSE
-├── README.md
-├── spec.md                     # Comprehensive Architectural Specification (2,860+ lines)
-├── run_dev.bat
-└── run_dev.ps1
+├── LICENSE                     # MIT License
+└── README.md
 ```
 
 ---
 
 ## 📜 License
 Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information.
-

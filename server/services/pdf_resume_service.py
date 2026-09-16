@@ -254,3 +254,4 @@ class PDFResumeService:
         return pdf_bytes
 
 pdf_resume_service = PDFResumeService()
+

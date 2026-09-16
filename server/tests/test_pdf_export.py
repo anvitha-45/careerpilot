@@ -48,3 +48,4 @@ def test_pdf_generation():
 
 if __name__ == "__main__":
     test_pdf_generation()
+
