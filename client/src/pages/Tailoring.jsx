@@ -16,6 +16,7 @@ import {
   Download,
   CheckCircle2
 } from 'lucide-react';
+import { NextStepBanner } from '../components/NextStepBanner';
 
 export const Tailoring = () => {
   const [searchParams] = useSearchParams();
@@ -300,6 +301,19 @@ export const Tailoring = () => {
               </Link>
             </div>
           </div>
+
+          {/* Guided Next Step Banner */}
+          <NextStepBanner
+            stepNumber={6}
+            totalSteps={7}
+            badgeText="Materials Ready"
+            title="Stage Your Application Safely"
+            description="Our browser automation pre-fills form fields, staging the application for your explicit review and confirmation before submission."
+            primaryLabel="Stage Application (HITL Review)"
+            primaryPath={selectedJobId ? `/applications?stageJobId=${selectedJobId}` : '/applications'}
+            secondaryLabel="Practice Mock Interview"
+            secondaryPath={selectedJobId ? `/interview?jobId=${selectedJobId}` : '/interview'}
+          />
         </div>
       ) : (
         <div className="text-center py-16 bg-slate-900 border border-slate-800 rounded-2xl p-8">

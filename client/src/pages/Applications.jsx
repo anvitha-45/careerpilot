@@ -16,6 +16,7 @@ import {
   Sparkles,
   Download
 } from 'lucide-react';
+import { NextStepBanner } from '../components/NextStepBanner';
 
 export const Applications = () => {
   const [searchParams] = useSearchParams();
@@ -325,6 +326,19 @@ export const Applications = () => {
           </div>
         )}
       </div>
+
+      {/* Guided Next Step Banner */}
+      <NextStepBanner
+        stepNumber={7}
+        totalSteps={7}
+        badgeText="Application Tracked"
+        title="Ready for Technical & Behavioral Interviews?"
+        description="Generate JD-targeted interview questions with STAR answers, live coding mock sessions, and instant AI evaluation."
+        primaryLabel="Launch Mock Interview Prep"
+        primaryPath="/interview"
+        secondaryLabel="Inspect Pipeline Analytics"
+        secondaryPath="/analytics"
+      />
 
       {/* Human Review Modal */}
       <HumanReviewModal

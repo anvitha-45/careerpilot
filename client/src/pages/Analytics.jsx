@@ -12,6 +12,7 @@ import {
   Sparkles,
   Layers
 } from 'lucide-react';
+import { NextStepBanner } from '../components/NextStepBanner';
 
 export const Analytics = () => {
   const [data, setData] = useState(null);
@@ -166,6 +167,19 @@ export const Analytics = () => {
           ))}
         </div>
       </div>
+
+      {/* Guided Next Step Banner */}
+      <NextStepBanner
+        stepNumber={7}
+        totalSteps={7}
+        badgeText="Cycle Complete"
+        title="Ready to Iterate Your Next Target Opportunity?"
+        description="Head back to your candidate dashboard to review updated readiness scores, target new positions, and run your next multi-agent iteration."
+        primaryLabel="Return to Dashboard"
+        primaryPath="/dashboard"
+        secondaryLabel="Explore More Jobs"
+        secondaryPath="/jobs"
+      />
     </div>
   );
 };

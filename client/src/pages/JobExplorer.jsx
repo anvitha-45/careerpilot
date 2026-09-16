@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   X
 } from 'lucide-react';
+import { NextStepBanner } from '../components/NextStepBanner';
 
 export const JobExplorer = () => {
   const [jobs, setJobs] = useState([]);
@@ -226,6 +227,19 @@ export const JobExplorer = () => {
           ))}
         </div>
       )}
+
+      {/* Guided Next Step Banner */}
+      <NextStepBanner
+        stepNumber={4}
+        totalSteps={7}
+        badgeText="Opportunities Identified"
+        title="Bridge Skill Gaps or Tailor Directly"
+        description="Missing critical skills for your desired roles? Review your curated learning syllabus, or select a high-match role to tailor your resume."
+        primaryLabel="Build Learning Plan"
+        primaryPath="/learning"
+        secondaryLabel="Go to Resume Tailoring"
+        secondaryPath="/tailoring"
+      />
 
       {/* Import Job Modal */}
       {isModalOpen && (

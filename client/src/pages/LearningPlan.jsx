@@ -12,6 +12,7 @@ import {
   BookOpen,
   ArrowRight
 } from 'lucide-react';
+import { NextStepBanner } from '../components/NextStepBanner';
 
 export const LearningPlan = () => {
   const [gapsData, setGapsData] = useState(null);
@@ -195,6 +196,19 @@ export const LearningPlan = () => {
           </div>
         </div>
       )}
+
+      {/* Guided Next Step Banner */}
+      <NextStepBanner
+        stepNumber={5}
+        totalSteps={7}
+        badgeText="Syllabus Built"
+        title="Ready to Tailor Your Application?"
+        description="Craft an ATS-optimized, single-column resume with bullet points dynamically matched to target role requirements."
+        primaryLabel="Tailor Resume Bullets"
+        primaryPath="/tailoring"
+        secondaryLabel="Explore Target Jobs"
+        secondaryPath="/jobs"
+      />
     </div>
   );
 };
