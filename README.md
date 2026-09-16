@@ -10,10 +10,14 @@
 [![Documentation](https://img.shields.io/badge/Full%20Docs-DOCUMENTATION.md-purple.svg)](docs/DOCUMENTATION.md)
 [![Video Walkthrough](https://img.shields.io/badge/Video-Live%20Demo-red.svg)](docs/videos/careerpilot_walkthrough.webm)
 
+[![Live Web App](https://img.shields.io/badge/Live%20Website-careerpilot--ai--dqfw.onrender.com-success.svg?style=for-the-badge&logo=render)](https://careerpilot-ai-dqfw.onrender.com)
+
 ---
 
-## 🎥 Live Video Walkthrough & Full Documentation
+## 🌐 Live Web Application & Documentation
 
+* 🚀 **Live Web Application**: 👉 **[https://careerpilot-ai-dqfw.onrender.com](https://careerpilot-ai-dqfw.onrender.com)**  
+  *(Open directly in your browser on phone, tablet, or PC. Click "One-Click Instant Demo Login" to explore).*
 * 📖 **Comprehensive Project Documentation**: Check out [`docs/DOCUMENTATION.md`](docs/DOCUMENTATION.md) for full architectural specs, mathematical formulas, and viva defense notes.
 * 🧭 **Beginner's Guided Tour Guide**: Check out [`APP_TOUR.md`](APP_TOUR.md).
 * 📹 **Recorded Video Demo**: Watch the continuous live screen walkthrough at [`docs/videos/careerpilot_walkthrough.webm`](docs/videos/careerpilot_walkthrough.webm).
