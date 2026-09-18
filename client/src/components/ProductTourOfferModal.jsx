@@ -57,48 +57,48 @@ export const ProductTourOfferModal = () => {
 
         {/* Agent Capabilities Preview Grid */}
         <div className="px-5 sm:px-8 py-3 space-y-2.5 relative z-10 overflow-y-auto flex-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
             What You'll Discover in the Tour:
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
-                <Cpu className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
+                <Cpu className="w-4.5 h-4.5" />
               </div>
-              <div className="text-xs">
+              <div className="text-xs sm:text-sm">
                 <div className="font-semibold text-white">Assessment Agent</div>
-                <div className="text-slate-400 text-[11px]">Resume NLP & GitHub stats</div>
+                <div className="text-slate-400 text-xs">Resume NLP & GitHub stats</div>
               </div>
             </div>
 
             <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
-                <GraduationCap className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
+                <GraduationCap className="w-4.5 h-4.5" />
               </div>
-              <div className="text-xs">
+              <div className="text-xs sm:text-sm">
                 <div className="font-semibold text-white">Market Upskilling</div>
-                <div className="text-slate-400 text-[11px]">Free NPTEL & YouTube links</div>
+                <div className="text-slate-400 text-xs">Free NPTEL & YouTube links</div>
               </div>
             </div>
 
             <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
-                <FileCheck className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
+                <FileCheck className="w-4.5 h-4.5" />
               </div>
-              <div className="text-xs">
+              <div className="text-xs sm:text-sm">
                 <div className="font-semibold text-white">Tailoring Agent</div>
-                <div className="text-slate-400 text-[11px]">STAR bullets + zero hallucinations</div>
+                <div className="text-slate-400 text-xs">STAR bullets + zero hallucinations</div>
               </div>
             </div>
 
             <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-4.5 h-4.5" />
               </div>
-              <div className="text-xs">
+              <div className="text-xs sm:text-sm">
                 <div className="font-semibold text-white">Ethical Automation</div>
-                <div className="text-slate-400 text-[11px]">Human-in-the-Loop review gate</div>
+                <div className="text-slate-400 text-xs">Human-in-the-Loop review gate</div>
               </div>
             </div>
           </div>
@@ -108,14 +108,14 @@ export const ProductTourOfferModal = () => {
         <div className="p-5 sm:p-8 pt-4 sm:pt-5 bg-slate-950/70 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10 shrink-0">
           <button
             onClick={dismissOffer}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-850 transition order-2 sm:order-1 text-center"
+            className="w-full sm:w-auto px-4 py-3 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-850 transition order-2 sm:order-1 text-center cursor-pointer"
           >
             I'll Explore on My Own
           </button>
 
           <button
             onClick={startTour}
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 transition order-1 sm:order-2"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3 sm:py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 transition order-1 sm:order-2 cursor-pointer"
           >
             <span>Start Product Tour (2 min)</span>
             <ArrowRight className="w-4 h-4" />

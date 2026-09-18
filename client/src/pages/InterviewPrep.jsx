@@ -91,12 +91,12 @@ export const InterviewPrep = () => {
       {/* Header */}
       <div>
         <div className="flex items-center space-x-2">
-          <h1 className="text-2xl font-bold text-white tracking-tight">Interview Prep Agent & Mock Simulator</h1>
-          <span className="px-2 py-0.5 rounded bg-brand-500/20 text-brand-300 border border-brand-500/30 text-[10px] font-bold uppercase">
+          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Interview Prep Agent & Mock Simulator</h1>
+          <span className="px-2 py-0.5 rounded bg-brand-500/20 text-brand-300 border border-brand-500/30 text-xs font-bold uppercase">
             Agent 06
           </span>
         </div>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs sm:text-sm text-slate-400 mt-1">
           JD-derived technical & behavioral questions with simulated senior hiring manager evaluation.
         </p>
       </div>
@@ -104,7 +104,7 @@ export const InterviewPrep = () => {
       {/* Target Job Selector & Start */}
       <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 shadow-sm">
         <div className="flex-1 w-full min-w-0">
-          <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+          <label className="block text-xs sm:text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">
             Target Job for Mock Interview
           </label>
           <select
@@ -126,7 +126,7 @@ export const InterviewPrep = () => {
         <button
           onClick={() => startInterviewSession(selectedJobId)}
           disabled={loading || !selectedJobId}
-          className="w-full md:w-auto px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2 disabled:opacity-50 shrink-0"
+          className="w-full md:w-auto px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2 disabled:opacity-50 shrink-0"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           <span>{loading ? 'Synthesizing Questions...' : 'Start New Mock Session'}</span>
@@ -136,7 +136,7 @@ export const InterviewPrep = () => {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 space-y-3">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-400">
             Analyzing target job description and engineering hiring rubrics...
           </p>
         </div>
@@ -153,13 +153,13 @@ export const InterviewPrep = () => {
                   <h2 className="text-lg sm:text-xl font-bold text-white mt-1">
                     Overall Performance Evaluation
                   </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">{evaluation.summary}</p>
+                  <p className="text-xs sm:text-sm text-slate-400 mt-0.5">{evaluation.summary}</p>
                 </div>
                 <div className="flex items-center space-x-4 bg-slate-950 px-4 sm:px-5 py-3 rounded-xl border border-slate-800 w-full sm:w-auto shrink-0">
                   <MatchScoreGauge score={evaluation.overall_score} size="md" />
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400">Readiness</span>
-                    <div className="text-sm font-bold text-emerald-400">
+                    <span className="text-xs uppercase font-bold text-slate-400">Readiness</span>
+                    <div className="text-sm sm:text-base font-bold text-emerald-400">
                       {evaluation.readiness_level}
                     </div>
                   </div>
@@ -169,11 +169,11 @@ export const InterviewPrep = () => {
               {/* Strengths and Gaps */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl bg-slate-950 border border-slate-850 space-y-2">
-                  <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center space-x-1.5">
+                  <h4 className="text-xs sm:text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center space-x-1.5">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Identified Strengths</span>
                   </h4>
-                  <ul className="space-y-1.5 text-xs text-slate-300">
+                  <ul className="space-y-1.5 text-xs sm:text-sm text-slate-300">
                     {evaluation.strengths?.map((s, idx) => (
                       <li key={idx}>• {s}</li>
                     ))}
@@ -181,11 +181,11 @@ export const InterviewPrep = () => {
                 </div>
 
                 <div className="p-4 rounded-xl bg-slate-950 border border-slate-850 space-y-2">
-                  <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
+                  <h4 className="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
                     <AlertCircle className="w-4 h-4" />
                     <span>Critical Improvement Points</span>
                   </h4>
-                  <ul className="space-y-1.5 text-xs text-slate-300">
+                  <ul className="space-y-1.5 text-xs sm:text-sm text-slate-300">
                     {evaluation.critical_gaps?.map((g, idx) => (
                       <li key={idx}>• {g}</li>
                     ))}
@@ -216,24 +216,24 @@ export const InterviewPrep = () => {
                     </div>
 
                     {qFeedback && (
-                      <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-brand-300">
+                      <span className="text-xs sm:text-sm font-bold px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-brand-300">
                         Score: {qFeedback.score} / 10
                       </span>
                     )}
                   </div>
 
-                  <h3 className="text-base font-semibold text-white leading-snug">
+                  <h3 className="text-base sm:text-lg font-semibold text-white leading-snug">
                     {q.question}
                   </h3>
 
-                  <div className="text-xs text-slate-400 bg-slate-950/60 p-3 rounded-lg border border-slate-850 flex items-start space-x-2">
+                  <div className="text-xs sm:text-sm text-slate-400 bg-slate-950/60 p-3 rounded-lg border border-slate-850 flex items-start space-x-2">
                     <HelpCircle className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
                     <span><strong>Interviewer Intent:</strong> {q.context}</span>
                   </div>
 
                   {/* Candidate Input */}
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">
                       Your Response:
                     </label>
                     <textarea
@@ -241,27 +241,27 @@ export const InterviewPrep = () => {
                       value={answers[q.id] || ''}
                       onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                       placeholder="Type your structured answer here (e.g. STAR method for behavioral, architectural trade-offs for technical)..."
-                      className="w-full bg-slate-950 border border-slate-800 focus:border-brand-500 rounded-xl p-3 text-xs text-white focus:outline-none resize-none leading-relaxed"
+                      className="w-full bg-slate-950 border border-slate-800 focus:border-brand-500 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none resize-none leading-relaxed"
                     />
                   </div>
 
                   {/* Feedback Details (if evaluated) */}
                   {qFeedback && (
                     <div className="pt-3 border-t border-slate-800 space-y-3">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                        <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-850">
-                          <span className="text-[10px] uppercase font-bold text-slate-500">Technical Accuracy</span>
-                          <p className="text-slate-300 mt-0.5">{qFeedback.technical_accuracy}</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs sm:text-sm">
+                        <div className="p-3 rounded-lg bg-slate-950 border border-slate-850">
+                          <span className="text-xs uppercase font-bold text-slate-500">Technical Accuracy</span>
+                          <p className="text-slate-300 mt-1">{qFeedback.technical_accuracy}</p>
                         </div>
-                        <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-850">
-                          <span className="text-[10px] uppercase font-bold text-slate-500">Clarity & Depth</span>
-                          <p className="text-slate-300 mt-0.5">{qFeedback.depth_of_explanation}</p>
+                        <div className="p-3 rounded-lg bg-slate-950 border border-slate-850">
+                          <span className="text-xs uppercase font-bold text-slate-500">Clarity & Depth</span>
+                          <p className="text-slate-300 mt-1">{qFeedback.depth_of_explanation}</p>
                         </div>
                       </div>
 
                       {q.sample_ideal_answer && (
-                        <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-850 text-xs space-y-1">
-                          <span className="text-[10px] uppercase font-bold text-emerald-400">
+                        <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-850 text-xs sm:text-sm space-y-1.5">
+                          <span className="text-xs uppercase font-bold text-emerald-400">
                             Senior Benchmark Answer
                           </span>
                           <p className="text-slate-300 leading-relaxed">{q.sample_ideal_answer}</p>
@@ -277,7 +277,7 @@ export const InterviewPrep = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 sm:px-8 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition disabled:opacity-50 text-center"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 sm:px-8 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-brand-500/20 transition disabled:opacity-50 text-center"
               >
                 <Send className="w-4 h-4" />
                 <span>{submitting ? 'Evaluating Responses with AI...' : 'Submit Answers & Receive Score'}</span>

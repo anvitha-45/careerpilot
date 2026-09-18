@@ -86,7 +86,7 @@ export const Dashboard = () => {
               <div className="text-sm sm:text-base font-bold text-white mt-0.5">
                 {readinessScore >= 75 ? 'Market Ready' : 'Competitive Track'}
               </div>
-              <p className="text-[11px] text-brand-400 font-medium mt-0.5">
+              <p className="text-xs text-brand-400 font-medium mt-0.5">
                 Top 20% of 2026 Batch
               </p>
             </div>
@@ -158,12 +158,12 @@ export const Dashboard = () => {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-white tracking-tight">Top Matched Engineering Roles</h2>
-              <p className="text-xs text-slate-400">Ranked by cosine vector similarity & required skill overlap</p>
+              <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">Top Matched Engineering Roles</h2>
+              <p className="text-xs sm:text-sm text-slate-400">Ranked by cosine vector similarity & required skill overlap</p>
             </div>
             <Link
               to="/jobs"
-              className="inline-flex items-center space-x-1 text-xs font-semibold text-brand-400 hover:text-brand-300 transition"
+              className="inline-flex items-center space-x-1 text-xs sm:text-sm font-semibold text-brand-400 hover:text-brand-300 transition"
             >
               <span>Explore All Jobs</span>
               <ArrowUpRight className="w-4 h-4" />
@@ -174,16 +174,16 @@ export const Dashboard = () => {
             {topJobs.map((item) => (
               <div
                 key={item.job.id}
-                className="p-5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                className="p-4 sm:p-5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
               >
                 <div className="space-y-2 flex-1">
                   <div className="flex items-center space-x-3">
-                    <span className="font-bold text-base text-white">{item.job.title}</span>
-                    <span className="text-xs px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">
+                    <span className="font-bold text-base sm:text-lg text-white">{item.job.title}</span>
+                    <span className="text-xs px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-medium">
                       {item.job.portal}
                     </span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm text-slate-400">
                     <span className="font-semibold text-slate-300">{item.job.company}</span>
                     <span>•</span>
                     <span>{item.job.location}</span>
@@ -205,13 +205,13 @@ export const Dashboard = () => {
                   <div className="flex items-center space-x-2">
                     <Link
                       to={`/jobs/${item.job.id}`}
-                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-medium border border-slate-700 transition"
+                      className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs sm:text-sm font-semibold border border-slate-700 transition"
                     >
                       View JD
                     </Link>
                     <Link
                       to={`/tailoring?jobId=${item.job.id}`}
-                      className="px-3 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-md shadow-brand-500/20 transition"
+                      className="px-3.5 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs sm:text-sm font-semibold shadow-md shadow-brand-500/20 transition"
                     >
                       Tailor
                     </Link>
@@ -226,19 +226,19 @@ export const Dashboard = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-white tracking-tight">Market Skill Gaps</h2>
-              <p className="text-xs text-slate-400">Frequency across real active JDs</p>
+              <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">Market Skill Gaps</h2>
+              <p className="text-xs sm:text-sm text-slate-400">Frequency across real active JDs</p>
             </div>
             <Link
               to="/learning"
-              className="text-xs font-semibold text-brand-400 hover:text-brand-300"
+              className="text-xs sm:text-sm font-semibold text-brand-400 hover:text-brand-300"
             >
               View Plan
             </Link>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
-            <p className="text-xs text-slate-300 leading-relaxed">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 sm:p-5 space-y-4">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               These technologies appear most frequently across your shortlisted backend & fullstack roles:
             </p>
 
@@ -246,18 +246,18 @@ export const Dashboard = () => {
               {gaps.map((gap) => (
                 <div
                   key={gap.skill}
-                  className="p-3 rounded-lg bg-slate-950 border border-slate-800/80 space-y-2"
+                  className="p-3 sm:p-3.5 rounded-lg bg-slate-950 border border-slate-800/80 space-y-2"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-sm text-white">{gap.skill}</span>
-                    <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-rose-500/15 border border-rose-500/30 text-rose-300">
+                    <span className="font-bold text-sm sm:text-base text-white">{gap.skill}</span>
+                    <span className="text-xs uppercase font-bold px-2 py-0.5 rounded bg-rose-500/15 border border-rose-500/30 text-rose-300">
                       {gap.frequency_percentage}% of Postings
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400 leading-snug">
+                  <p className="text-xs text-slate-400 leading-snug">
                     {gap.market_context}
                   </p>
-                  <div className="flex items-center justify-between pt-1 text-[11px]">
+                  <div className="flex items-center justify-between pt-1 text-xs">
                     <span className="text-slate-500">Est. Time: {gap.estimated_days}</span>
                     <span className="text-brand-400 font-medium">Free Resources (NPTEL/YT) →</span>
                   </div>
@@ -267,7 +267,7 @@ export const Dashboard = () => {
 
             <Link
               to="/learning"
-              className="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center justify-center space-x-2 transition"
+              className="w-full py-2.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 flex items-center justify-center space-x-2 transition"
             >
               <GraduationCap className="w-4 h-4 text-brand-400" />
               <span>Open Personalized 4-Week Roadmap</span>

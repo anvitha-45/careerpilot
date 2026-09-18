@@ -29,31 +29,31 @@ export const Navbar = ({ onToggleSidebar }) => {
             </button>
           )}
 
-          <Link to="/" className="flex items-center space-x-2.5 sm:space-x-3 group">
+          <Link to="/" className="flex items-center space-x-2.5 sm:space-x-3 group min-w-0">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform shrink-0">
               <Compass className="w-5 h-5 sm:w-6 sm:h-6 text-white animate-pulse" />
             </div>
-            <div>
-              <div className="flex items-center space-x-1.5 sm:space-x-2">
-                <span className="font-bold text-base sm:text-lg text-white tracking-tight">CareerPilot</span>
-                <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-brand-500/20 text-brand-300 border border-brand-500/30">
+            <div className="min-w-0">
+              <div className="flex items-center space-x-2">
+                <span className="font-extrabold text-base sm:text-lg text-white tracking-tight truncate">CareerPilot</span>
+                <span className="hidden sm:inline-block text-xs uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-brand-500/20 text-brand-300 border border-brand-500/30 shrink-0">
                   AI Copilot
                 </span>
               </div>
-              <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium hidden sm:block">Job-Readiness & Staged Automation</p>
+              <p className="text-xs text-slate-400 font-medium hidden md:block">Job-Readiness & Staged Automation</p>
             </div>
           </Link>
         </div>
 
         {/* Status Badges, App Tour & User Info */}
-        <div className="flex items-center space-x-2 sm:space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
           <button
             onClick={restartTour}
-            className="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/30 text-brand-300 text-xs font-semibold transition hover:scale-105 active:scale-95"
+            className="hidden md:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/30 text-brand-300 text-xs font-semibold transition hover:scale-105 active:scale-95"
             title="Open Interactive Product Tour"
           >
             <HelpCircle className="w-3.5 h-3.5 text-brand-400 shrink-0" />
-            <span className="hidden sm:inline">Product Tour</span>
+            <span>Product Tour</span>
           </button>
 
           <div className="hidden lg:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
@@ -62,17 +62,17 @@ export const Navbar = ({ onToggleSidebar }) => {
           </div>
 
           {user ? (
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 sm:space-x-3">
               <Link
                 to="/profile"
-                className="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 text-sm transition"
+                className="flex items-center space-x-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 text-sm transition"
               >
-                <div className="w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center text-white text-xs font-bold">
+                <div className="w-7 h-7 rounded-full bg-brand-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                   {user.name ? user.name[0].toUpperCase() : 'U'}
                 </div>
-                <span className="font-medium hidden sm:inline">{user.name}</span>
+                <span className="font-semibold hidden sm:inline">{user.name}</span>
                 {profile?.overall_readiness_score && (
-                  <span className="text-xs bg-slate-700 px-2 py-0.5 rounded-full text-brand-300 font-semibold">
+                  <span className="text-xs bg-slate-700 px-2 py-0.5 rounded-full text-brand-300 font-bold">
                     {profile.overall_readiness_score}%
                   </span>
                 )}
@@ -80,22 +80,22 @@ export const Navbar = ({ onToggleSidebar }) => {
               <button
                 onClick={handleLogout}
                 title="Sign out"
-                className="p-2 rounded-lg bg-slate-800 hover:bg-red-500/10 border border-slate-700 hover:border-red-500/30 text-slate-400 hover:text-red-400 transition"
+                className="p-2 sm:p-2 rounded-lg bg-slate-800 hover:bg-red-500/10 border border-slate-700 hover:border-red-500/30 text-slate-400 hover:text-red-400 transition"
               >
                 <LogOut className="w-4 h-4" />
               </button>
             </div>
           ) : (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
               <Link
                 to="/login"
-                className="text-sm px-4 py-2 text-slate-300 hover:text-white transition"
+                className="text-xs sm:text-sm px-3 sm:px-4 py-2 text-slate-300 hover:text-white transition font-medium"
               >
                 Sign In
               </Link>
               <Link
                 to="/register"
-                className="text-sm px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white font-medium shadow-md shadow-brand-500/20 transition"
+                className="text-xs sm:text-sm px-3.5 sm:px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white font-semibold shadow-md shadow-brand-500/20 transition"
               >
                 Get Started
               </Link>

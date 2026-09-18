@@ -172,7 +172,7 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
         {/* Top Progress & Close Bar */}
         <div className="p-3.5 sm:p-4 px-4 sm:px-6 border-b border-slate-800 flex items-center justify-between bg-slate-950/60 shrink-0">
           <div className="flex items-center space-x-2 min-w-0">
-            <span className="text-[10px] sm:text-[11px] font-mono font-bold text-brand-400 uppercase tracking-wider shrink-0">
+            <span className="text-xs font-mono font-bold text-brand-400 uppercase tracking-wider shrink-0">
               Tour Step {current.step}/{TOUR_STEPS.length}
             </span>
             <div className="flex space-x-1 ml-1 sm:ml-2 overflow-hidden">
@@ -180,7 +180,7 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
                 <div
                   key={idx}
                   onClick={() => setCurrentStepIndex(idx)}
-                  className={`h-1.5 rounded-full cursor-pointer transition-all ${
+                  className={`h-1.5 sm:h-2 rounded-full cursor-pointer transition-all ${
                     idx === currentStepIndex
                       ? 'w-5 sm:w-6 bg-brand-500'
                       : idx < currentStepIndex
@@ -207,7 +207,7 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
             <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div className="flex-1 min-w-0">
-            <span className="text-[10px] sm:text-[11px] font-bold text-brand-400 uppercase tracking-wider block truncate">
+            <span className="text-xs font-bold text-brand-400 uppercase tracking-wider block truncate">
               {current.subtitle}
             </span>
             <h2 className="text-lg sm:text-2xl font-extrabold text-white tracking-tight mt-0.5">
@@ -220,33 +220,33 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
         <div className="p-4 sm:p-6 lg:p-8 space-y-3 sm:space-y-4 overflow-y-auto flex-1">
           {/* Block 1: What You Do */}
           <div className="p-3.5 sm:p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-            <div className="flex items-center space-x-2 text-xs font-bold text-slate-300 uppercase tracking-wider">
+            <div className="flex items-center space-x-2 text-xs sm:text-sm font-bold text-slate-300 uppercase tracking-wider">
               <span className="w-2 h-2 rounded-full bg-brand-400 shrink-0"></span>
               <span>What You Do (Candidate Action)</span>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed pl-4">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed pl-4">
               {current.whatYouDo}
             </p>
           </div>
 
           {/* Block 2: What the AI Does */}
           <div className="p-3.5 sm:p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-            <div className="flex items-center space-x-2 text-xs font-bold text-brand-300 uppercase tracking-wider">
+            <div className="flex items-center space-x-2 text-xs sm:text-sm font-bold text-brand-300 uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 text-brand-400 shrink-0" />
               <span>What the AI Does Under the Hood</span>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed pl-5">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed pl-5">
               {current.whatAIDoes}
             </p>
           </div>
 
           {/* Block 3: Why It Matters */}
           <div className="p-3.5 sm:p-4 rounded-xl bg-brand-950/20 border border-brand-800/40 space-y-1">
-            <div className="flex items-center space-x-2 text-xs font-bold text-emerald-400 uppercase tracking-wider">
+            <div className="flex items-center space-x-2 text-xs sm:text-sm font-bold text-emerald-400 uppercase tracking-wider">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               <span>Why It Matters (Key Differentiator)</span>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed pl-5">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed pl-5">
               {current.whyItMatters}
             </p>
           </div>
@@ -258,7 +258,7 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
             {!isFirst && (
               <button
                 onClick={handlePrev}
-                className="inline-flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-850 hover:bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-750 transition"
+                className="inline-flex items-center justify-center space-x-1.5 px-3.5 py-2.5 sm:py-2 rounded-xl bg-slate-850 hover:bg-slate-800 text-slate-300 text-xs sm:text-sm font-semibold border border-slate-750 transition"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Previous</span>
@@ -268,7 +268,7 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
             {current.path && (
               <button
                 onClick={handleJumpToPage}
-                className="inline-flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-brand-300 text-xs font-semibold border border-slate-700 transition"
+                className="inline-flex items-center justify-center space-x-1.5 px-3.5 py-2.5 sm:py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-brand-300 text-xs sm:text-sm font-semibold border border-slate-700 transition"
               >
                 <span>{current.actionLabel}</span>
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -279,13 +279,13 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
           <div className="flex items-center justify-between sm:justify-end space-x-2">
             <button
               onClick={handleClose}
-              className="px-3 py-2 rounded-xl text-xs text-slate-400 hover:text-white transition"
+              className="px-3.5 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm text-slate-400 hover:text-white transition"
             >
               Skip Tour
             </button>
             <button
               onClick={handleNext}
-              className="inline-flex items-center justify-center space-x-2 px-4 sm:px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-lg shadow-brand-500/20 transition flex-1 sm:flex-initial"
+              className="inline-flex items-center justify-center space-x-2 px-4 sm:px-5 py-2.5 sm:py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-brand-500/20 transition flex-1 sm:flex-initial"
             >
               <span>{isLast ? 'Finish Tour' : 'Next Step'}</span>
               <ArrowRight className="w-4 h-4" />

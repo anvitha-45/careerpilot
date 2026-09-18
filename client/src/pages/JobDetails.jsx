@@ -59,7 +59,7 @@ export const JobDetails = () => {
     <div className="max-w-4xl mx-auto space-y-6">
       <button
         onClick={() => navigate(-1)}
-        className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-400 hover:text-white transition"
+        className="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition"
       >
         <ChevronLeft className="w-4 h-4" />
         <span>Back to Jobs</span>
@@ -75,7 +75,7 @@ export const JobDetails = () => {
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm text-slate-400">
             <span className="font-semibold text-slate-200 flex items-center space-x-1">
               <Building className="w-4 h-4 text-slate-500" />
               <span>{job.company}</span>
@@ -100,25 +100,25 @@ export const JobDetails = () => {
       {/* Score Breakdown Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center">
-          <span className="text-[11px] font-semibold text-slate-400 uppercase">Skill Overlap</span>
-          <div className="text-lg font-bold text-brand-400 mt-1">{data.skills_score} / 60</div>
+          <span className="text-xs font-semibold text-slate-400 uppercase">Skill Overlap</span>
+          <div className="text-xl sm:text-2xl font-bold text-brand-400 mt-1">{data.skills_score} / 60</div>
         </div>
         <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center">
-          <span className="text-[11px] font-semibold text-slate-400 uppercase">Role Relevance</span>
-          <div className="text-lg font-bold text-indigo-400 mt-1">{data.role_relevance_score} / 20</div>
+          <span className="text-xs font-semibold text-slate-400 uppercase">Role Relevance</span>
+          <div className="text-xl sm:text-2xl font-bold text-indigo-400 mt-1">{data.role_relevance_score} / 20</div>
         </div>
         <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center">
-          <span className="text-[11px] font-semibold text-slate-400 uppercase">Project Evidence</span>
-          <div className="text-lg font-bold text-emerald-400 mt-1">{data.project_evidence_score} / 10</div>
+          <span className="text-xs font-semibold text-slate-400 uppercase">Project Evidence</span>
+          <div className="text-xl sm:text-2xl font-bold text-emerald-400 mt-1">{data.project_evidence_score} / 10</div>
         </div>
         <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center">
-          <span className="text-[11px] font-semibold text-slate-400 uppercase">Location Match</span>
-          <div className="text-lg font-bold text-amber-400 mt-1">{data.location_score} / 10</div>
+          <span className="text-xs font-semibold text-slate-400 uppercase">Location Match</span>
+          <div className="text-xl sm:text-2xl font-bold text-amber-400 mt-1">{data.location_score} / 10</div>
         </div>
       </div>
 
       {/* Explainability Callout */}
-      <div className="p-4 rounded-xl bg-brand-950/40 border border-brand-800/40 text-xs text-brand-300 flex items-start space-x-3 leading-relaxed">
+      <div className="p-4 rounded-xl bg-brand-950/40 border border-brand-800/40 text-xs sm:text-sm text-brand-300 flex items-start space-x-3 leading-relaxed">
         <Sparkles className="w-5 h-5 text-brand-400 shrink-0 mt-0.5" />
         <div>
           <span className="font-bold text-white">Semantic Match Assessment:</span>
@@ -128,8 +128,8 @@ export const JobDetails = () => {
 
       {/* Skills Matrix */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-          <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center space-x-1.5">
+        <div className="p-4 sm:p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+          <h4 className="text-xs sm:text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center space-x-1.5">
             <span>Verified Skills You Possess ({data.matched_skills.length})</span>
           </h4>
           <div className="flex flex-wrap gap-2">
@@ -139,8 +139,8 @@ export const JobDetails = () => {
           </div>
         </div>
 
-        <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-          <h4 className="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center space-x-1.5">
+        <div className="p-4 sm:p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+          <h4 className="text-xs sm:text-sm font-bold text-rose-400 uppercase tracking-wider flex items-center space-x-1.5">
             <AlertCircle className="w-4 h-4" />
             <span>Missing Skills To Address ({data.missing_skills.length})</span>
           </h4>
@@ -153,11 +153,11 @@ export const JobDetails = () => {
       </div>
 
       {/* Full Description */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-        <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+      <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+        <h3 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider">
           Complete Job Description
         </h3>
-        <div className="text-xs text-slate-300 leading-relaxed whitespace-pre-line bg-slate-950 p-4 rounded-xl border border-slate-850">
+        <div className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line bg-slate-950 p-4 rounded-xl border border-slate-850">
           {job.description}
         </div>
       </div>
@@ -169,7 +169,7 @@ export const JobDetails = () => {
             href={job.apply_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center space-x-2 text-xs text-slate-400 hover:text-white transition"
+            className="inline-flex items-center space-x-2 text-xs sm:text-sm text-slate-400 hover:text-white transition"
           >
             <span>Direct Portal URL</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -179,13 +179,13 @@ export const JobDetails = () => {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-3 sm:gap-0 w-full sm:w-auto">
           <Link
             to={`/interview?jobId=${job.id}`}
-            className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold border border-slate-700 transition text-center"
+            className="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 transition text-center"
           >
             Practice Mock Interview
           </Link>
           <Link
             to={`/tailoring?jobId=${job.id}`}
-            className="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition text-center flex items-center justify-center space-x-2"
+            className="px-5 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-brand-500/20 transition text-center flex items-center justify-center space-x-2"
           >
             <FileCheck className="w-4 h-4" />
             <span>Tailor Resume for this Job</span>

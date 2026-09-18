@@ -41,7 +41,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
               }
             }}
             className={({ isActive }) =>
-              `flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition ${
+              `flex items-center justify-between px-3.5 py-3 sm:py-2.5 rounded-xl text-sm font-medium transition ${
                 isActive
                   ? 'bg-brand-600/20 text-brand-300 border border-brand-500/40 shadow-sm font-semibold'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
@@ -49,12 +49,12 @@ export const Sidebar = ({ isOpen, onClose }) => {
             }
           >
             <div className="flex items-center space-x-3">
-              <Icon className="w-4 h-4 shrink-0" />
+              <Icon className="w-4.5 h-4.5 sm:w-4 sm:h-4 shrink-0" />
               <span>{item.label}</span>
             </div>
             {item.badge && (
               <span
-                className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                className={`text-xs px-2 py-0.5 rounded font-bold uppercase ${
                   item.badge === 'HITL'
                     ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                     : 'bg-brand-500/20 text-brand-300 border border-brand-500/30'
@@ -71,12 +71,12 @@ export const Sidebar = ({ isOpen, onClose }) => {
 
   const renderComplianceCard = () => (
     <div className="p-4 border-t border-slate-800">
-      <div className="p-3 rounded-xl bg-slate-850/60 border border-slate-750/60">
-        <div className="flex items-center space-x-2 text-xs font-semibold text-emerald-400 mb-1">
+      <div className="p-3 rounded-xl bg-slate-850/60 border border-slate-755/60">
+        <div className="flex items-center space-x-2 text-xs sm:text-sm font-semibold text-emerald-400 mb-1">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
           <span>Platform Safe</span>
         </div>
-        <p className="text-[11px] text-slate-400 leading-relaxed">
+        <p className="text-xs text-slate-400 leading-relaxed">
           Stops at Human Review Checkpoint. Compliant with LinkedIn Section 8.2 & Naukri ToS.
         </p>
       </div>
@@ -124,7 +124,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
       {/* Desktop Persistent Sidebar */}
       <aside className="w-64 bg-slate-900 border-r border-slate-800 hidden lg:flex flex-col shrink-0 min-h-[calc(100vh-4rem)]">
         <div className="p-4 flex-1 overflow-y-auto">
-          <div className="text-[11px] uppercase tracking-wider font-semibold text-slate-500 mb-3 px-3">
+          <div className="text-xs uppercase tracking-wider font-semibold text-slate-500 mb-3 px-3">
             Multi-Agent Pipeline
           </div>
           {renderNavLinks(false)}

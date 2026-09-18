@@ -17,15 +17,17 @@ export const MatchScoreGauge = ({ score = 0, size = 'md' }) => {
 
   if (size === 'sm') {
     return (
-      <span className={`px-2 py-0.5 rounded-full text-xs font-bold border ${getBgColor(score)}`}>
+      <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${getBgColor(score)}`}>
         {score}% Match
       </span>
     );
   }
 
+  const isLarge = size === 'lg';
+
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="relative w-16 h-16 flex items-center justify-center">
+    <div className="flex flex-col items-center justify-center shrink-0">
+      <div className={`relative flex items-center justify-center ${isLarge ? 'w-20 h-20 sm:w-24 sm:h-24' : 'w-16 h-16 sm:w-18 sm:h-18'}`}>
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
           <path
             className="text-slate-800"
@@ -45,10 +47,12 @@ export const MatchScoreGauge = ({ score = 0, size = 'md' }) => {
           />
         </svg>
         <div className="absolute flex flex-col items-center">
-          <span className="text-sm font-bold text-white">{score}%</span>
+          <span className={`${isLarge ? 'text-lg sm:text-2xl font-extrabold' : 'text-base sm:text-lg font-bold'} text-white`}>
+            {score}%
+          </span>
         </div>
       </div>
-      <span className="text-[10px] uppercase font-bold text-slate-400 mt-1 tracking-wider">
+      <span className={`${isLarge ? 'text-xs sm:text-sm' : 'text-xs'} uppercase font-bold text-slate-400 mt-1 tracking-wider`}>
         Match
       </span>
     </div>

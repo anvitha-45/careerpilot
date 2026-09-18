@@ -198,12 +198,12 @@ export const Applications = () => {
       {/* Header */}
       <div>
         <div className="flex items-center space-x-2">
-          <h1 className="text-2xl font-bold text-white tracking-tight">Application Agent & Staging Manager</h1>
-          <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold uppercase">
+          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Application Agent & Staging Manager</h1>
+          <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold uppercase">
             Agent 05 (HITL Core)
           </span>
         </div>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs sm:text-sm text-slate-400 mt-1">
           Automates browser form pre-filling on Naukri, LinkedIn, and ATS portals. Strictly halts at the Human Review Gate.
         </p>
       </div>
@@ -211,7 +211,7 @@ export const Applications = () => {
       {/* Trigger Staging Section */}
       <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 shadow-sm">
         <div className="flex-1 w-full min-w-0">
-          <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+          <label className="block text-xs sm:text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">
             Select Shortlisted Job to Stage
           </label>
           <select
@@ -230,7 +230,7 @@ export const Applications = () => {
         <button
           onClick={() => handleStageApplication(selectedJobId)}
           disabled={staging || !selectedJobId}
-          className="w-full md:w-auto px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2 disabled:opacity-50 shrink-0"
+          className="w-full md:w-auto px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2 disabled:opacity-50 shrink-0"
         >
           <Play className={`w-4 h-4 ${staging ? 'animate-pulse' : ''}`} />
           <span>{staging ? 'Staging Browser Session...' : 'Stage New Application'}</span>
@@ -240,19 +240,19 @@ export const Applications = () => {
       {/* Applications List */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white tracking-tight">Active Applications & Review Queue</h2>
-          <span className="text-xs text-slate-400 font-medium">
+          <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">Active Applications & Review Queue</h2>
+          <span className="text-xs sm:text-sm text-slate-400 font-medium">
             {uniqueApplications.length} Active Target Roles
           </span>
         </div>
 
         {loading ? (
-          <div className="text-center py-12 text-slate-400 text-xs">Loading application pipeline...</div>
+          <div className="text-center py-12 text-slate-400 text-xs sm:text-sm">Loading application pipeline...</div>
         ) : uniqueApplications.length === 0 ? (
           <div className="text-center py-16 bg-slate-900 border border-slate-800 rounded-2xl p-8">
             <ShieldCheck className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-            <h3 className="text-sm font-semibold text-white">No Staged Applications Yet</h3>
-            <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+            <h3 className="text-base font-semibold text-white">No Staged Applications Yet</h3>
+            <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-sm mx-auto">
               Select a role above or navigate to the Job Explorer to stage your first human-reviewed application.
             </p>
           </div>
@@ -265,13 +265,13 @@ export const Applications = () => {
               >
                 <div className="space-y-2 flex-1 min-w-0 w-full">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-base font-bold text-white">{app.job_title}</h3>
-                    <span className="text-xs px-2.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">
+                    <h3 className="text-base sm:text-lg font-bold text-white">{app.job_title}</h3>
+                    <span className="text-xs px-2.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-medium">
                       {app.portal}
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm text-slate-400">
                     <span className="font-semibold text-slate-200">{app.company_name}</span>
                     <span>•</span>
                     <span>Staged: {new Date(app.created_at || Date.now()).toLocaleDateString()}</span>
@@ -289,14 +289,14 @@ export const Applications = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start md:justify-end pt-3 md:pt-0 border-t md:border-t-0 border-slate-800">
+                <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-start md:justify-end pt-3 md:pt-0 border-t md:border-t-0 border-slate-800">
                   {app.status === 'READY_FOR_REVIEW' && (
                     <button
                       onClick={() => {
                         setActiveAppForReview(app);
                         setReviewModalOpen(true);
                       }}
-                      className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold shadow-md shadow-amber-500/20 transition"
+                      className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs sm:text-sm font-bold shadow-md shadow-amber-500/20 transition"
                     >
                       <ShieldCheck className="w-4 h-4" />
                       <span>Review & Confirm</span>
@@ -306,7 +306,7 @@ export const Applications = () => {
                   {/* Download Staged ATS Resume PDF */}
                   <button
                     onClick={() => handleDownloadResumePdf(app.job_id, app.company_name)}
-                    className="p-2 rounded-lg bg-slate-800 hover:bg-slate-750 text-brand-300 hover:text-white border border-slate-700 transition"
+                    className="p-2.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-brand-300 hover:text-white border border-slate-700 transition"
                     title="Download Tailored ATS Resume PDF"
                   >
                     <Download className="w-4 h-4" />
@@ -317,7 +317,7 @@ export const Applications = () => {
                       href={app.apply_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-white border border-slate-700 transition"
+                      className="p-2.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-white border border-slate-700 transition"
                       title="Inspect portal page"
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -326,14 +326,14 @@ export const Applications = () => {
 
                   <Link
                     to={`/interview?jobId=${app.job_id}`}
-                    className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold border border-slate-700 transition"
+                    className="px-3.5 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs sm:text-sm font-semibold border border-slate-700 transition"
                   >
                     Mock Prep
                   </Link>
 
                   <button
                     onClick={() => handleDeleteApplication(app.id)}
-                    className="p-2 rounded-lg bg-slate-800 hover:bg-rose-500/10 text-slate-500 hover:text-rose-400 border border-slate-700 transition"
+                    className="p-2.5 rounded-lg bg-slate-800 hover:bg-rose-500/10 text-slate-500 hover:text-rose-400 border border-slate-700 transition"
                     title="Delete"
                   >
                     <Trash2 className="w-4 h-4" />

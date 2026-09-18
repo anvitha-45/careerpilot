@@ -48,12 +48,12 @@ export const LearningPlan = () => {
       {/* Header */}
       <div>
         <div className="flex items-center space-x-2">
-          <h1 className="text-2xl font-bold text-white tracking-tight">Market-Driven Upskilling Agent</h1>
-          <span className="px-2 py-0.5 rounded bg-brand-500/20 text-brand-300 border border-brand-500/30 text-[10px] font-bold uppercase">
+          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Market-Driven Upskilling Agent</h1>
+          <span className="px-2 py-0.5 rounded bg-brand-500/20 text-brand-300 border border-brand-500/30 text-xs font-bold uppercase">
             Agent 03
           </span>
         </div>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs sm:text-sm text-slate-400 mt-1">
           Missing skills ranked strictly by empirical frequency across real target job postings. Zero generic lists.
         </p>
       </div>
@@ -62,7 +62,7 @@ export const LearningPlan = () => {
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
         <button
           onClick={() => setActiveTab('gaps')}
-          className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold transition ${
+          className={`px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition ${
             activeTab === 'gaps'
               ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20'
               : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -72,7 +72,7 @@ export const LearningPlan = () => {
         </button>
         <button
           onClick={() => setActiveTab('roadmap')}
-          className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold transition ${
+          className={`px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition ${
             activeTab === 'roadmap'
               ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20'
               : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -84,7 +84,7 @@ export const LearningPlan = () => {
 
       {activeTab === 'gaps' ? (
         <div className="space-y-6">
-          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 flex items-start space-x-3 leading-relaxed">
+          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-slate-300 flex items-start space-x-3 leading-relaxed">
             <Sparkles className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
             <div>
               <span className="font-bold text-white">Empirical Market Philosophy:</span>
@@ -102,9 +102,9 @@ export const LearningPlan = () => {
               >
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h3 className="text-base font-bold text-white">{gap.skill}</h3>
+                    <h3 className="text-base sm:text-lg font-bold text-white">{gap.skill}</h3>
                     <span
-                      className={`text-[10px] uppercase font-bold px-2.5 py-1 rounded-full border ${
+                      className={`text-xs uppercase font-bold px-2.5 py-1 rounded-full border ${
                         gap.priority === 'CRITICAL'
                           ? 'bg-rose-500/15 border-rose-500/30 text-rose-300'
                           : 'bg-amber-500/15 border-amber-500/30 text-amber-300'
@@ -114,14 +114,14 @@ export const LearningPlan = () => {
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-400 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
                     {gap.market_context}
                   </p>
 
-                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-850 text-xs space-y-1">
-                    <span className="text-[10px] uppercase font-bold text-slate-500">Recommended Action</span>
+                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-850 text-xs sm:text-sm space-y-1">
+                    <span className="text-xs uppercase font-bold text-slate-500">Recommended Action</span>
                     <p className="text-slate-200 font-medium">{gap.suggested_action}</p>
-                    <span className="text-[11px] text-brand-400 block pt-1">
+                    <span className="text-xs text-brand-400 block pt-1 font-medium">
                       Estimated Completion: {gap.estimated_days}
                     </span>
                   </div>
@@ -129,7 +129,7 @@ export const LearningPlan = () => {
 
                 {/* Free Resources List */}
                 <div className="space-y-2 pt-3 border-t border-slate-800/80">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                  <span className="text-xs uppercase font-bold text-slate-400 tracking-wider">
                     Curated Free Learning Resources (NPTEL / YouTube / Docs)
                   </span>
                   <div className="grid grid-cols-1 gap-2">
@@ -153,12 +153,12 @@ export const LearningPlan = () => {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center font-bold text-xs">
+                    <div className="w-8 h-8 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center font-bold text-xs sm:text-sm">
                       W{week.week_number}
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold text-white">{week.focus_topic}</h3>
-                      <span className="text-[11px] text-slate-400">
+                      <h3 className="text-base font-bold text-white">{week.focus_topic}</h3>
+                      <span className="text-xs sm:text-sm text-slate-400">
                         Target Skills: {week.skills?.join(', ')}
                       </span>
                     </div>
@@ -166,12 +166,12 @@ export const LearningPlan = () => {
                 </div>
 
                 <div className="space-y-2 pt-2">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                     Key Deliverables
                   </span>
                   <ul className="space-y-2">
                     {week.tasks?.map((task, tIdx) => (
-                      <li key={tIdx} className="flex items-start space-x-2 text-xs text-slate-300">
+                      <li key={tIdx} className="flex items-start space-x-2 text-xs sm:text-sm text-slate-300">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                         <span>{task}</span>
                       </li>
@@ -181,7 +181,7 @@ export const LearningPlan = () => {
 
                 {week.resources && week.resources.length > 0 && (
                   <div className="pt-3 border-t border-slate-800 space-y-2">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                    <span className="text-xs uppercase font-bold text-slate-400 tracking-wider">
                       Assigned Resource
                     </span>
                     <ResourceCard resource={week.resources[0]} />
