@@ -14,7 +14,6 @@ class UserResponse(BaseModel):
     id: str
     name: str
     email: EmailStr
-    avatar_url: Optional[str] = None
     created_at: Optional[str] = None
 
 class Token(BaseModel):
@@ -25,12 +24,5 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     user_id: Optional[str] = None
     email: Optional[str] = None
-
-class GoogleAuthRequest(BaseModel):
-    credential: Optional[str] = None
-    email: Optional[EmailStr] = None
-    name: Optional[str] = None
-    google_id: Optional[str] = None
-    avatar_url: Optional[str] = None
 
 

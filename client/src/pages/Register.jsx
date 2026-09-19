@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Compass, Lock, Mail, User, ArrowRight } from 'lucide-react';
-import { GoogleSignInModal, GoogleIcon } from '../components/GoogleSignInModal';
 
 export const Register = () => {
   const [name, setName] = useState('');
@@ -10,23 +9,8 @@ export const Register = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
-  const { register, loginWithGoogle } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
-
-  const handleGoogleSelect = async (googleAccount) => {
-    setError('');
-    setLoading(true);
-    try {
-      await loginWithGoogle(googleAccount);
-      setIsGoogleModalOpen(false);
-      navigate('/profile');
-    } catch (err) {
-      setError(err.response?.data?.detail || 'Google sign-up failed. Try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,30 +44,6 @@ export const Register = () => {
             {error}
           </div>
         )}
-
-        {/* Continue with Google Button */}
-        <div className="space-y-4 mb-4">
-          <button
-            type="button"
-            onClick={() => setIsGoogleModalOpen(true)}
-            disabled={loading}
-            className="w-full py-3 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-semibold text-sm shadow-md transition flex items-center justify-center space-x-3 cursor-pointer disabled:opacity-50"
-          >
-            <GoogleIcon className="w-5 h-5" />
-            <span>Continue with Google</span>
-          </button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-800" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-slate-900 px-3 text-slate-500 font-semibold tracking-wider">
-                Or register with email
-              </span>
-            </div>
-          </div>
-        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -149,14 +109,6 @@ export const Register = () => {
           </Link>
         </p>
       </div>
-
-      {/* Google Sign-In Account Selector Modal */}
-      <GoogleSignInModal
-        isOpen={isGoogleModalOpen}
-        onClose={() => setIsGoogleModalOpen(false)}
-        onSelectGoogleAccount={handleGoogleSelect}
-        loading={loading}
-      />
     </div>
   );
 };

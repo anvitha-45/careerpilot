@@ -3,31 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTour } from '../context/TourContext';
 import { Compass, Lock, Mail, ArrowRight, Sparkles, HelpCircle } from 'lucide-react';
-import { GoogleSignInModal, GoogleIcon } from '../components/GoogleSignInModal';
 
 export const Login = () => {
   const [email, setEmail] = useState('candidate@example.com');
   const [password, setPassword] = useState('password123');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
-  const { login, register, loginWithGoogle } = useAuth();
+  const { login, register } = useAuth();
   const { restartTour } = useTour();
   const navigate = useNavigate();
-
-  const handleGoogleSelect = async (googleAccount) => {
-    setError('');
-    setLoading(true);
-    try {
-      await loginWithGoogle(googleAccount);
-      setIsGoogleModalOpen(false);
-      navigate('/');
-    } catch (err) {
-      setError(err.response?.data?.detail || 'Google sign-in failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -101,31 +85,7 @@ export const Login = () => {
           </div>
         )}
 
-        {/* Continue with Google Button */}
-        <div className="space-y-4">
-          <button
-            type="button"
-            onClick={() => setIsGoogleModalOpen(true)}
-            disabled={loading}
-            className="w-full py-3 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-semibold text-sm shadow-md transition flex items-center justify-center space-x-3 cursor-pointer disabled:opacity-50"
-          >
-            <GoogleIcon className="w-5 h-5" />
-            <span>Continue with Google</span>
-          </button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-800" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-slate-900 px-3 text-slate-500 font-semibold tracking-wider">
-                Or sign in with email
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">Email Address</label>
             <div className="relative">
@@ -159,7 +119,7 @@ export const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm shadow-lg shadow-brand-500/20 transition disabled:opacity-50 flex items-center justify-center space-x-2"
+            className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm shadow-lg shadow-brand-500/20 transition disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer"
           >
             <span>{loading ? 'Signing in...' : 'Sign In'}</span>
             <ArrowRight className="w-4 h-4" />
@@ -171,7 +131,7 @@ export const Login = () => {
             type="button"
             onClick={handleDemoLogin}
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-750 text-brand-300 hover:text-white border border-brand-500/30 text-xs sm:text-sm font-semibold transition flex items-center justify-center space-x-2"
+            className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-750 text-brand-300 hover:text-white border border-brand-500/30 text-xs sm:text-sm font-semibold transition flex items-center justify-center space-x-2 cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-brand-400" />
             <span>One-Click Instant Demo Login</span>
@@ -180,7 +140,7 @@ export const Login = () => {
           <button
             type="button"
             onClick={restartTour}
-            className="w-full py-2.5 rounded-xl bg-slate-950 hover:bg-slate-850 text-slate-400 hover:text-slate-200 border border-slate-800 text-xs sm:text-sm font-medium transition flex items-center justify-center space-x-1.5"
+            className="w-full py-2.5 rounded-xl bg-slate-950 hover:bg-slate-850 text-slate-400 hover:text-slate-200 border border-slate-800 text-xs sm:text-sm font-medium transition flex items-center justify-center space-x-1.5 cursor-pointer"
           >
             <HelpCircle className="w-4 h-4 text-brand-400" />
             <span>Interactive Product Tour (No Login Required)</span>
@@ -194,14 +154,6 @@ export const Login = () => {
           </Link>
         </p>
       </div>
-
-      {/* Google Sign-In Account Selector Modal */}
-      <GoogleSignInModal
-        isOpen={isGoogleModalOpen}
-        onClose={() => setIsGoogleModalOpen(false)}
-        onSelectGoogleAccount={handleGoogleSelect}
-        loading={loading}
-      />
     </div>
   );
 };

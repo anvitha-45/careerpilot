@@ -53,17 +53,6 @@ export const AuthProvider = ({ children }) => {
     return userData;
   };
 
-  const loginWithGoogle = async (googleData) => {
-    const res = await api.post('/auth/google', googleData);
-    const { access_token, user: userData } = res.data;
-    localStorage.setItem('careerpilot_token', access_token);
-    localStorage.setItem('careerpilot_user', JSON.stringify(userData));
-    setToken(access_token);
-    setUser(userData);
-    await fetchProfile();
-    return userData;
-  };
-
   const logout = () => {
     localStorage.removeItem('careerpilot_token');
     localStorage.removeItem('careerpilot_user');
@@ -73,7 +62,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, profile, loading, login, register, loginWithGoogle, logout, refreshProfile: fetchProfile }}>
+    <AuthContext.Provider value={{ user, token, profile, loading, login, register, logout, refreshProfile: fetchProfile }}>
       {children}
     </AuthContext.Provider>
   );
