@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Compass, Lock, Mail, User, ArrowRight } from 'lucide-react';
+import { GoogleSignInModal, GoogleIcon } from '../components/GoogleSignInModal';
 
 export const Register = () => {
   const [name, setName] = useState('');
@@ -9,8 +10,23 @@ export const Register = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
+  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
+  const { register, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
+
+  const handleGoogleSelect = async (googleAccount) => {
+    setError('');
+    setLoading(true);
+    try {
+      await loginWithGoogle(googleAccount);
+      setIsGoogleModalOpen(false);
+      navigate('/profile');
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Google sign-up failed. Try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +43,7 @@ export const Register = () => {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4">
+    <div className="min-h-[85vh] flex items-center justify-center px-4 py-8">
       <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-8 shadow-2xl">
         <div className="text-center mb-6 sm:mb-8">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-brand-500/20">
@@ -44,6 +60,30 @@ export const Register = () => {
             {error}
           </div>
         )}
+
+        {/* Continue with Google Button */}
+        <div className="space-y-4 mb-4">
+          <button
+            type="button"
+            onClick={() => setIsGoogleModalOpen(true)}
+            disabled={loading}
+            className="w-full py-3 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-semibold text-sm shadow-md transition flex items-center justify-center space-x-3 cursor-pointer disabled:opacity-50"
+          >
+            <GoogleIcon className="w-5 h-5" />
+            <span>Continue with Google</span>
+          </button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-800" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-slate-900 px-3 text-slate-500 font-semibold tracking-wider">
+                Or register with email
+              </span>
+            </div>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -95,7 +135,7 @@ export const Register = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm shadow-lg shadow-brand-500/20 transition disabled:opacity-50 flex items-center justify-center space-x-2"
+            className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm shadow-lg shadow-brand-500/20 transition disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer"
           >
             <span>{loading ? 'Creating Account...' : 'Get Started'}</span>
             <ArrowRight className="w-4 h-4" />
@@ -109,6 +149,14 @@ export const Register = () => {
           </Link>
         </p>
       </div>
+
+      {/* Google Sign-In Account Selector Modal */}
+      <GoogleSignInModal
+        isOpen={isGoogleModalOpen}
+        onClose={() => setIsGoogleModalOpen(false)}
+        onSelectGoogleAccount={handleGoogleSelect}
+        loading={loading}
+      />
     </div>
   );
 };
