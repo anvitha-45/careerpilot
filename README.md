@@ -7,39 +7,15 @@
 [![Tailwind CSS](https://img.shields.io/badge/Styles-Tailwind%20CSS-38B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![Playwright](https://img.shields.io/badge/RPA-Playwright-2EAD33.svg?logo=playwright&logoColor=white)](https://playwright.dev)
 [![Responsible AI](https://img.shields.io/badge/Design-Human--in--the--Loop-amber.svg)](#human-in-the-loop-hitl-architecture)
-[![Documentation](https://img.shields.io/badge/Full%20Docs-DOCUMENTATION.md-purple.svg)](docs/DOCUMENTATION.md)
-[![Video Walkthrough](https://img.shields.io/badge/Video-Live%20Demo-red.svg)](docs/videos/careerpilot_walkthrough.webm)
-
 [![Live Web App](https://img.shields.io/badge/Live%20Website-careerpilot--ai--dqfw.onrender.com-success.svg?style=for-the-badge&logo=render)](https://careerpilot-ai-dqfw.onrender.com)
 
 ---
 
-## 🌐 Live Web Application & Documentation
+## 🌐 Live Web Application
 
 * 🚀 **Live Web Application**: 👉 **[https://careerpilot-ai-dqfw.onrender.com](https://careerpilot-ai-dqfw.onrender.com)**  
   *(Open directly in your browser on phone, tablet, or PC. Click "One-Click Instant Demo Login" to explore).*
-* 📖 **Comprehensive Project Documentation**: Check out [`docs/DOCUMENTATION.md`](docs/DOCUMENTATION.md) for full architectural specs, mathematical formulas, and viva defense notes.
 * 🧭 **Beginner's Guided Tour Guide**: Check out [`APP_TOUR.md`](APP_TOUR.md).
-* 📹 **Recorded Video Demo**: Watch the continuous live screen walkthrough at [`docs/videos/careerpilot_walkthrough.webm`](docs/videos/careerpilot_walkthrough.webm).
-
----
-
-## 📸 Live Application Screenshots
-
-| 🧭 Onboarding Tour Offer | 👤 Executive Dashboard |
-| :---: | :---: |
-| ![Onboarding Tour Offer](docs/screenshots/01_onboarding_tour_offer.png) | ![Dashboard Overview](docs/screenshots/04_dashboard_overview.png) |
-| *Auto-offers interactive product tour on app launch* | *Readiness Gauge, Multi-Agent Flow & Target Roles* |
-
-| ✍️ Tailoring Agent & ATS PDF Export | 🛡️ Mandatory Human Review Gate |
-| :---: | :---: |
-| ![Tailoring Agent](docs/screenshots/08_tailoring_agent_star_bullets.png) | ![Human Review Modal](docs/screenshots/10_human_review_checkpoint_modal.png) |
-| *CAR/STAR Bullet Rewrites & 1-Click ATS PDF Export* | *Playwright browser staging stops at review checkpoint* |
-
-| 🎓 Empirical Market Gap Analysis | 🎙️ JD-Tuned Mock Interview Simulator |
-| :---: | :---: |
-| ![Market Gap Analysis](docs/screenshots/07_market_gap_upskilling.png) | ![Interview Prep Simulator](docs/screenshots/11_interview_prep_simulator.png) |
-| *Frequency-ranked gaps + free NPTEL / YouTube links* | *Company-targeted technical & behavioral evaluation* |
 
 ---
 
@@ -207,10 +183,6 @@ careerpilot-ai/
 │   ├── database.py             # Hybrid MongoDB + Embedded Local Store Fallback
 │   ├── main.py                 # FastAPI Application Entrypoint
 │   └── requirements.txt
-├── docs/                       # Comprehensive Documentation, Screenshots & Videos
-│   ├── DOCUMENTATION.md        # Full Architectural & Academic Viva Guide
-│   ├── screenshots/            # 12 Live High-Resolution Screen Captures
-│   └── videos/                 # Recorded Video Walkthrough (careerpilot_walkthrough.webm)
 ├── APP_TOUR.md                 # Interactive 8-Step App Tour Guide
 ├── spec.md                     # Comprehensive Architectural Specification (2,860+ lines)
 ├── run_dev.bat                 # One-click Windows CMD startup
