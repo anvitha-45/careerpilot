@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTour } from '../context/TourContext';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -124,11 +124,13 @@ export const AppTourModal = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
   const tour = useTour();
   const { user, login, register } = useAuth();
 
+  const location = useLocation();
+
   // Support both context-driven and prop-driven visibility
   const isOpen = propIsOpen !== undefined ? propIsOpen : tour?.isTourOpen;
   const handleClose = propOnClose || (tour ? tour.closeTour : () => {});
 
-  if (!isOpen) return null;
+  if (!isOpen || location.pathname === '/register') return null;
 
   const current = TOUR_STEPS[currentStepIndex];
   const Icon = current.icon;

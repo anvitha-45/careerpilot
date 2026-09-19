@@ -31,8 +31,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
+  const login = async (username, password) => {
+    const res = await api.post('/auth/login', { username, password });
     const { access_token, user: userData } = res.data;
     localStorage.setItem('careerpilot_token', access_token);
     localStorage.setItem('careerpilot_user', JSON.stringify(userData));
@@ -42,8 +42,8 @@ export const AuthProvider = ({ children }) => {
     return userData;
   };
 
-  const register = async (name, email, password) => {
-    const res = await api.post('/auth/register', { name, email, password });
+  const register = async (username, password, name = '') => {
+    const res = await api.post('/auth/register', { username, password, name });
     const { access_token, user: userData } = res.data;
     localStorage.setItem('careerpilot_token', access_token);
     localStorage.setItem('careerpilot_user', JSON.stringify(userData));

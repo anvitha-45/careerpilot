@@ -2,18 +2,20 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 
 class UserCreate(BaseModel):
-    name: str
-    email: EmailStr
+    username: str = Field(min_length=3)
     password: str = Field(min_length=6)
+    name: Optional[str] = None
+    email: Optional[str] = None
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    username: str
     password: str
 
 class UserResponse(BaseModel):
     id: str
     name: str
-    email: EmailStr
+    username: Optional[str] = None
+    email: Optional[str] = None
     created_at: Optional[str] = None
 
 class Token(BaseModel):

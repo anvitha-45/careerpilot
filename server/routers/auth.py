@@ -9,16 +9,27 @@ router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 @router.post("/register", response_model=Token)
 async def register(user_in: UserCreate):
     users_col = get_users_col()
-    existing_user = await users_col.find_one({"email": user_in.email})
+    username = user_in.username.strip().lower()
+
+    # Verify username doesn't already exist
+    check_query = [{"username": username}]
+    if user_in.email:
+        check_query.append({"email": user_in.email.strip().lower()})
+    
+    existing_user = await users_col.find_one({"$or": check_query})
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="A user with this email already exists."
+            detail="A user with this username or email already exists."
         )
 
+    user_name = user_in.name.strip() if user_in.name else username.capitalize()
+    user_email = user_in.email.strip().lower() if user_in.email else f"{username}@careerpilot.local"
+
     user_doc = {
-        "name": user_in.name,
-        "email": user_in.email,
+        "name": user_name,
+        "username": username,
+        "email": user_email,
         "hashed_password": get_password_hash(user_in.password),
         "created_at": datetime.utcnow().isoformat()
     }
@@ -29,8 +40,9 @@ async def register(user_in: UserCreate):
     profiles_col = get_profiles_col()
     profile_doc = {
         "user_id": user_id,
-        "full_name": user_in.name,
-        "email": user_in.email,
+        "full_name": user_name,
+        "username": username,
+        "email": user_email,
         "phone": "+91 9876543210",
         "target_roles": ["Software Engineer", "Backend Developer"],
         "target_location": "India (Bengaluru, Hyderabad, Remote)",
@@ -55,14 +67,15 @@ async def register(user_in: UserCreate):
     }
     await profiles_col.insert_one(profile_doc)
 
-    access_token = create_access_token(data={"sub": user_id, "email": user_in.email})
+    access_token = create_access_token(data={"sub": user_id, "username": username, "email": user_email})
     return {
         "access_token": access_token,
         "token_type": "bearer",
         "user": {
             "id": user_id,
-            "name": user_in.name,
-            "email": user_in.email,
+            "name": user_name,
+            "username": username,
+            "email": user_email,
             "created_at": user_doc["created_at"]
         }
     }
@@ -70,23 +83,34 @@ async def register(user_in: UserCreate):
 @router.post("/login", response_model=Token)
 async def login(login_in: UserLogin):
     users_col = get_users_col()
-    user = await users_col.find_one({"email": login_in.email})
+    identifier = login_in.username.strip().lower()
+
+    # Support login with either username or email
+    user = await users_col.find_one({
+        "$or": [
+            {"username": identifier},
+            {"email": identifier}
+        ]
+    })
     if not user or not verify_password(login_in.password, user.get("hashed_password", "")):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+            detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"}
         )
 
     user_id = str(user["_id"])
-    access_token = create_access_token(data={"sub": user_id, "email": user["email"]})
+    username = user.get("username", identifier)
+    email = user.get("email", f"{username}@careerpilot.local")
+    access_token = create_access_token(data={"sub": user_id, "username": username, "email": email})
     return {
         "access_token": access_token,
         "token_type": "bearer",
         "user": {
             "id": user_id,
-            "name": user["name"],
-            "email": user["email"],
+            "name": user.get("name", username.capitalize()),
+            "username": username,
+            "email": email,
             "created_at": user.get("created_at")
         }
     }
@@ -95,10 +119,12 @@ async def login(login_in: UserLogin):
 async def get_me(current_user: dict = Depends(get_current_user)):
     return {
         "id": str(current_user["_id"]),
-        "name": current_user["name"],
-        "email": current_user["email"],
+        "name": current_user.get("name", "Candidate"),
+        "username": current_user.get("username"),
+        "email": current_user.get("email"),
         "created_at": current_user.get("created_at")
     }
+
 
 
 

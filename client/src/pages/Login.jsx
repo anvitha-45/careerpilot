@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTour } from '../context/TourContext';
-import { Compass, Lock, Mail, ArrowRight, Sparkles, HelpCircle } from 'lucide-react';
+import { Compass, Lock, User, ArrowRight, Sparkles, HelpCircle } from 'lucide-react';
 
 export const Login = () => {
-  const [email, setEmail] = useState('candidate@example.com');
+  const [username, setUsername] = useState('candidate');
   const [password, setPassword] = useState('password123');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,10 +18,10 @@ export const Login = () => {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
+      await login(username.trim(), password);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Invalid email or password');
+      setError(err.response?.data?.detail || 'Invalid username or password');
     } finally {
       setLoading(false);
     }
@@ -32,10 +32,10 @@ export const Login = () => {
     setLoading(true);
     try {
       try {
-        await login('candidate@example.com', 'password123');
+        await login('candidate', 'password123');
       } catch {
         // Auto-register demo user if not exists
-        await register('Aarav Sharma', 'candidate@example.com', 'password123');
+        await register('candidate', 'password123', 'Aarav Sharma');
       }
       navigate('/');
     } catch (err) {
@@ -87,16 +87,16 @@ export const Login = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">Email Address</label>
+            <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">Username</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
+              <User className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
               <input
-                type="email"
+                type="text"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 focus:border-brand-500 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none transition"
-                placeholder="name@example.com"
+                placeholder="Enter your username"
               />
             </div>
           </div>

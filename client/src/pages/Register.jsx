@@ -1,23 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Compass, Lock, Mail, User, ArrowRight } from 'lucide-react';
+import { useTour } from '../context/TourContext';
+import { Compass, Lock, User, ArrowRight } from 'lucide-react';
 
 export const Register = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
+  const { dismissOffer, closeTour } = useTour();
   const navigate = useNavigate();
+
+  // Ensure any product tour modals are dismissed on the register page
+  useEffect(() => {
+    dismissOffer();
+    closeTour();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await register(name, email, password);
+      await register(username.trim().toLowerCase(), password, name.trim());
       navigate('/profile');
     } catch (err) {
       setError(err.response?.data?.detail || 'Registration failed. Try again.');
@@ -47,31 +55,31 @@ export const Register = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">Full Name</label>
+            <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">Username</label>
             <div className="relative">
               <User className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
               <input
                 type="text"
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                minLength={3}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 focus:border-brand-500 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none transition"
-                placeholder="Aarav Sharma"
+                placeholder="e.g. aarav_sharma"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">Email Address</label>
+            <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">Full Name (Optional)</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
+              <User className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
               <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 focus:border-brand-500 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none transition"
-                placeholder="aarav@college.edu"
+                placeholder="Aarav Sharma"
               />
             </div>
           </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { useTour } from '../context/TourContext';
 import {
   Compass,
@@ -14,8 +15,9 @@ import {
 
 export const ProductTourOfferModal = () => {
   const { isOfferOpen, startTour, dismissOffer } = useTour();
+  const location = useLocation();
 
-  if (!isOfferOpen) return null;
+  if (!isOfferOpen || location.pathname === '/register') return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-300">
