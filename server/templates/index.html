@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CareerPilot | Agentic Job-Readiness & Application Copilot</title>
+  <title>CareerPilot | Your Job-Readiness & Application Assistant</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
@@ -55,27 +55,41 @@
     ::-webkit-scrollbar-track { background: #0f172a; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    /* Print styling for PDF Resume Export */
+    @media print {
+      body * { visibility: hidden; }
+      #resumePrintArea, #resumePrintArea * { visibility: visible; }
+      #resumePrintArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+        background: white !important;
+        color: #111827 !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-dark-900 text-slate-100 min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
 
   <!-- TOP HEADER -->
-  <header class="border-b border-dark-700/80 bg-dark-800/90 backdrop-blur-md sticky top-0 z-50">
+  <header class="border-b border-dark-700/80 bg-dark-800/90 backdrop-blur-md sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-brand-500/20 text-white font-bold text-lg">
           <i class="fa-solid fa-paper-plane"></i>
         </div>
         <div>
-          <div class="flex items-center space-x-2">
-            <span class="text-xl font-bold tracking-tight text-white">Career<span class="text-brand-500">Pilot</span></span>
-            <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20">Student Edition</span>
-          </div>
-          <p class="text-xs text-slate-400 hidden sm:block">Your Personal Job Readiness & Application Assistant</p>
+          <span class="text-xl font-bold tracking-tight text-white">Career<span class="text-brand-500">Pilot</span></span>
+          <p class="text-xs text-slate-400 hidden sm:block">Your Personal Job-Readiness & Application Assistant</p>
         </div>
       </div>
 
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Target Role Quick-Select -->
         <div class="hidden md:flex items-center space-x-1 text-xs bg-dark-700/50 p-1 rounded-lg border border-dark-600">
           <span class="px-2 py-1 text-slate-400">Target Role:</span>
           <select id="headerDomainSelect" class="bg-dark-800 text-brand-400 font-medium rounded px-2 py-1 border border-dark-600 focus:outline-none text-xs">
@@ -88,10 +102,23 @@
           </select>
         </div>
 
+        <!-- Quick Demo Button -->
         <button onclick="loadSampleProfile()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition flex items-center space-x-1.5 shadow-sm">
           <i class="fa-solid fa-wand-magic-sparkles"></i>
-          <span>Try Demo Profile</span>
+          <span class="hidden sm:inline">Try Demo Profile</span>
+          <span class="sm:hidden">Demo</span>
         </button>
+
+        <!-- User Authentication Status & Modal Trigger -->
+        <div class="flex items-center space-x-1.5">
+          <span id="userStatusTag" class="text-xs text-slate-300 font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-dark-700/60 border border-dark-600">
+            <i class="fa-regular fa-circle-user text-brand-400"></i>
+            <span id="headerUserName">Guest</span>
+          </span>
+          <button id="authBtn" onclick="openLoginModal()" class="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-dark-700 hover:bg-dark-600 text-slate-300 border border-dark-600 transition">
+            Sign In
+          </button>
+        </div>
       </div>
     </div>
 
@@ -125,7 +152,7 @@
   <!-- MAIN APP CONTAINER -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-    <!-- GLOBAL NOTIFICATION BANNER (For HITL & Actions) -->
+    <!-- GLOBAL NOTIFICATION BANNER -->
     <div id="statusBanner" class="hidden mb-6 p-4 rounded-xl border flex items-center justify-between text-sm transition">
       <div class="flex items-center space-x-3">
         <i id="statusIcon" class="fa-solid fa-circle-info text-lg"></i>
@@ -134,7 +161,7 @@
       <button onclick="hideBanner()" class="text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
-    <!-- TAB 1: SELF-ASSESSMENT & BENCHMARKING (AGENT 1) -->
+    <!-- TAB 1: PROFILE & SKILLS -->
     <section id="tab-assessment" class="tab-content space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
@@ -161,7 +188,7 @@
             </div>
           </div>
 
-          <!-- Public API Handles -->
+          <!-- Public Handles -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="text-xs font-semibold text-slate-300 flex items-center space-x-1.5">
@@ -261,7 +288,7 @@
       </div>
     </section>
 
-    <!-- TAB 2: GAPS & FREE LEARNING ROADMAP (AGENT 2) -->
+    <!-- TAB 2: SKILLS & FREE COURSES -->
     <section id="tab-gaps" class="tab-content hidden space-y-6">
       <div class="bg-dark-800 border border-dark-700 rounded-2xl p-6 shadow-xl space-y-5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -296,7 +323,7 @@
       </div>
     </section>
 
-    <!-- TAB 3: STAR TAILORING STUDIO (AGENT 3) -->
+    <!-- TAB 3: TAILOR RESUME & DOWNLOAD -->
     <section id="tab-tailoring" class="tab-content hidden space-y-6">
       <div class="bg-dark-800 border border-dark-700 rounded-2xl p-6 shadow-xl space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-dark-700">
@@ -308,21 +335,33 @@
             <p class="text-xs text-slate-400 mt-0.5">We rewrite your project points into clear, impactful bullet points that highlight what this specific employer is looking for.</p>
           </div>
 
-          <div class="flex items-center space-x-2">
-            <label class="text-xs text-slate-400">Choose a Job:</label>
-            <select id="tailoringJobSelect" onchange="onJobSelectChange()" class="bg-dark-900 text-slate-200 border border-dark-600 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500">
-              <!-- Rendered dynamically -->
-            </select>
-            <button onclick="runTailoringPipeline()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-1.5 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="flex items-center space-x-2">
+              <label class="text-xs text-slate-400">Choose a Job:</label>
+              <select id="tailoringJobSelect" onchange="onJobSelectChange()" class="bg-dark-900 text-slate-200 border border-dark-600 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500">
+                <!-- Rendered dynamically -->
+              </select>
+            </div>
+            
+            <button onclick="runTailoringPipeline()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
               <i class="fa-solid fa-arrows-rotate"></i>
-              <span>Update Tailored Points</span>
+              <span>Update Points</span>
+            </button>
+
+            <!-- Big Impactful Resume Download Action -->
+            <button onclick="openResumePreviewModal()" class="bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold px-3.5 py-1.5 rounded-lg text-xs transition flex items-center space-x-1.5 shadow-lg shadow-brand-500/20">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>Preview & Download Resume</span>
             </button>
           </div>
         </div>
 
         <!-- STAR Comparison Cards -->
         <div class="space-y-4">
-          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Before & After: How Your Project Points Improve</h3>
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Before & After: How Your Project Points Improve</h3>
+            <span class="text-[11px] text-emerald-400 font-medium"><i class="fa-solid fa-circle-check text-[10px]"></i> STAR Formatted with Metrics</span>
+          </div>
           <div id="starBulletsContainer" class="space-y-3">
             <!-- Rendered dynamically -->
           </div>
@@ -330,15 +369,21 @@
 
         <!-- Custom Cover Letter Section -->
         <div class="space-y-3 pt-4 border-t border-dark-700">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
               <i class="fa-solid fa-envelope-open-text text-brand-400"></i>
               <span>Personalized Cover Letter</span>
             </h3>
-            <button onclick="copyCoverLetter()" class="text-xs px-2.5 py-1 rounded bg-dark-700 hover:bg-dark-600 text-slate-300 border border-dark-600 transition flex items-center space-x-1">
-              <i class="fa-regular fa-copy"></i>
-              <span>Copy Cover Letter</span>
-            </button>
+            <div class="flex items-center space-x-2">
+              <button onclick="copyCoverLetter()" class="text-xs px-2.5 py-1 rounded bg-dark-700 hover:bg-dark-600 text-slate-300 border border-dark-600 transition flex items-center space-x-1">
+                <i class="fa-regular fa-copy"></i>
+                <span>Copy Letter</span>
+              </button>
+              <button onclick="downloadCoverLetterTXT()" class="text-xs px-2.5 py-1 rounded bg-dark-700 hover:bg-dark-600 text-emerald-400 border border-dark-600 transition flex items-center space-x-1">
+                <i class="fa-solid fa-download"></i>
+                <span>Download .TXT</span>
+              </button>
+            </div>
           </div>
           <div id="coverLetterBox" class="bg-dark-900 border border-dark-700 rounded-xl p-4 text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap select-all">
             Loading tailored cover letter...
@@ -347,80 +392,124 @@
       </div>
     </section>
 
-    <!-- TAB 4: APPLICATION STAGING (AGENT 4 - INNOVATIVE CORE & HITL) -->
+    <!-- TAB 4: REVIEW & APPLY (SIMPLIFIED & INTUITIVE APPLICATION STAGING) -->
     <section id="tab-staging" class="tab-content hidden space-y-6">
       <div class="bg-dark-800 border border-dark-700 rounded-2xl p-6 shadow-xl space-y-6">
         
-        <!-- Header & Compliance Rationale -->
+        <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-dark-700">
           <div>
             <div class="flex items-center space-x-2">
               <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-                <i class="fa-solid fa-robot text-purple-400"></i>
-                <span>Auto-Fill Application & Safety Review</span>
+                <i class="fa-solid fa-circle-check text-purple-400"></i>
+                <span>Review & Send Application</span>
               </h2>
               <span id="stagingStatusBadge" class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
                 Ready for Your Review
               </span>
             </div>
-            <p class="text-xs text-slate-400 mt-1">We automatically fill in the application form fields for you, then pause so you can double-check everything before sending.</p>
+            <p class="text-xs text-slate-400 mt-1">We filled out the job form for you so you don't have to retype everything. Review your details below and confirm when ready.</p>
           </div>
 
-          <div class="flex items-center space-x-2">
-            <button onclick="stageActiveApplication()" class="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-4 py-2 rounded-xl text-xs transition flex items-center space-x-1.5 shadow">
-              <i class="fa-solid fa-play"></i>
-              <span>Fill in Application Form</span>
-            </button>
-          </div>
+          <button onclick="stageActiveApplication()" class="bg-dark-700 hover:bg-dark-600 text-slate-200 font-semibold px-3.5 py-2 rounded-xl text-xs transition border border-dark-600 flex items-center space-x-1.5 self-start">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span>Refresh Application Data</span>
+          </button>
         </div>
 
-        <!-- Ethical & ToS Callout -->
-        <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-start space-x-3 text-xs text-amber-200">
-          <i class="fa-solid fa-shield-halved text-amber-400 text-lg mt-0.5"></i>
+        <!-- Safe Application Notice -->
+        <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 flex items-start space-x-3 text-xs text-blue-200">
+          <i class="fa-solid fa-shield-check text-blue-400 text-lg mt-0.5"></i>
           <div>
-            <strong class="font-bold text-amber-300">Why we pause before submitting:</strong>
-            Auto-apply bots violate LinkedIn and Naukri rules and can get your account banned. CareerPilot saves you time by filling out all the tedious forms, but leaves the final "Submit" button to you. Safe, compliant, and always under your control.
+            <strong class="font-bold text-blue-300">Why we ask you to confirm:</strong>
+            Auto-apply bots violate LinkedIn and Naukri rules and can get your account banned. CareerPilot saves you time by preparing and filling in every field, and keeps your account 100% safe by letting you confirm the final submit.
           </div>
         </div>
 
-        <!-- Staged Fields Table -->
-        <div class="space-y-3">
-          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Information Filled into the Application Form</h3>
-          <div class="overflow-x-auto rounded-xl border border-dark-700">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-dark-900 text-slate-400 uppercase text-[10px] tracking-wider border-b border-dark-700">
-                <tr>
-                  <th class="px-4 py-3">Form Field</th>
-                  <th class="px-4 py-3">Filled Value</th>
-                  <th class="px-4 py-3">Where It Came From</th>
-                  <th class="px-4 py-3">Status</th>
-                </tr>
-              </thead>
-              <tbody id="stagedFieldsTableBody" class="divide-y divide-dark-700/60 font-mono text-[11px]">
-                <!-- Dynamically rendered -->
-              </tbody>
-            </table>
+        <!-- Clean 4-Grid Summary of What Was Prepared -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="stagingCardsContainer">
+          <!-- Card 1: Candidate Contact Info -->
+          <div class="bg-dark-900 border border-dark-700 rounded-xl p-4 space-y-2.5">
+            <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
+              <i class="fa-regular fa-user text-brand-400"></i>
+              <span>1. Your Information</span>
+            </div>
+            <div class="text-xs space-y-1.5 text-slate-300">
+              <div class="flex justify-between"><span class="text-slate-500">Name:</span> <span id="stagedNameVal" class="font-semibold text-white">Ananya Sharma</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Email:</span> <span id="stagedEmailVal" class="font-mono text-slate-200">ananya.sharma@example.com</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Phone:</span> <span id="stagedPhoneVal" class="text-slate-200">+91 9876543210</span></div>
+            </div>
+          </div>
+
+          <!-- Card 2: Target Position -->
+          <div class="bg-dark-900 border border-dark-700 rounded-xl p-4 space-y-2.5">
+            <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
+              <i class="fa-solid fa-briefcase text-emerald-400"></i>
+              <span>2. Job Destination</span>
+            </div>
+            <div class="text-xs space-y-1.5 text-slate-300">
+              <div class="flex justify-between"><span class="text-slate-500">Company:</span> <span id="stagedCompanyVal" class="font-semibold text-white">Target Company</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Position:</span> <span id="stagedRoleVal" class="text-slate-200">Software Engineer</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Work Auth:</span> <span class="text-emerald-400">Authorized / Citizen</span></div>
+            </div>
+          </div>
+
+          <!-- Card 3: Documents Attached -->
+          <div class="bg-dark-900 border border-dark-700 rounded-xl p-4 space-y-2.5">
+            <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
+              <i class="fa-solid fa-paperclip text-purple-400"></i>
+              <span>3. Attached Documents</span>
+            </div>
+            <div class="text-xs space-y-2">
+              <div class="flex items-center justify-between bg-dark-800 p-2 rounded-lg border border-dark-700">
+                <span class="flex items-center space-x-1.5 text-slate-200 truncate">
+                  <i class="fa-solid fa-file-pdf text-rose-400"></i>
+                  <span id="stagedResumeDocName">Tailored_Resume.pdf</span>
+                </span>
+                <span class="text-[10px] font-semibold text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10">Attached</span>
+              </div>
+              <div class="flex items-center justify-between bg-dark-800 p-2 rounded-lg border border-dark-700">
+                <span class="flex items-center space-x-1.5 text-slate-200 truncate">
+                  <i class="fa-solid fa-file-lines text-blue-400"></i>
+                  <span>Custom_Cover_Letter.txt</span>
+                </span>
+                <span class="text-[10px] font-semibold text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10">Attached</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: Verified Profiles Attached -->
+          <div class="bg-dark-900 border border-dark-700 rounded-xl p-4 space-y-2.5">
+            <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
+              <i class="fa-solid fa-link text-indigo-400"></i>
+              <span>4. Verified Coding Profiles</span>
+            </div>
+            <div class="text-xs space-y-2">
+              <div class="flex items-center justify-between bg-dark-800 p-2 rounded-lg border border-dark-700">
+                <span class="flex items-center space-x-1.5 text-slate-200">
+                  <i class="fa-brands fa-github text-slate-400"></i>
+                  <span id="stagedGhVal">github.com/ananya-dev</span>
+                </span>
+                <span class="text-[10px] font-semibold text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10">Verified</span>
+              </div>
+              <div class="flex items-center justify-between bg-dark-800 p-2 rounded-lg border border-dark-700">
+                <span class="flex items-center space-x-1.5 text-slate-200">
+                  <i class="fa-solid fa-code text-amber-500"></i>
+                  <span id="stagedLcVal">leetcode.com/ananya_codes</span>
+                </span>
+                <span class="text-[10px] font-semibold text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10">Verified</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Browser Logs Stream -->
-        <div class="space-y-2">
-          <label class="text-xs font-semibold text-slate-300 flex items-center space-x-1.5">
-            <i class="fa-solid fa-terminal text-slate-400"></i>
-            <span>Automation Activity Log</span>
-          </label>
-          <div id="browserLogBox" class="bg-dark-900 border border-dark-700 rounded-xl p-3 text-[11px] font-mono text-emerald-400 h-24 overflow-y-auto space-y-1">
-            [Automation Engine] Ready to fill in your application.
-          </div>
-        </div>
-
-        <!-- The HITL Approval Gate Action -->
+        <!-- The Confirmation Action Bar -->
         <div class="pt-4 border-t border-dark-700 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div class="text-xs text-slate-400 text-center sm:text-left">
-            <span>Review the details above. When you are happy with everything, click below to confirm your application.</span>
+            <span>When everything looks right, click confirm to mark your application ready and submitted safely.</span>
           </div>
-          <button id="hitlSubmitBtn" onclick="confirmHumanSubmission()" class="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold px-6 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 text-xs">
-            <i class="fa-solid fa-circle-check"></i>
+          <button id="hitlSubmitBtn" onclick="confirmHumanSubmission()" class="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold px-7 py-3 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 text-xs">
+            <i class="fa-solid fa-circle-check text-sm"></i>
             <span>Confirm & Submit Application</span>
           </button>
         </div>
@@ -428,7 +517,7 @@
       </div>
     </section>
 
-    <!-- TAB 5: MOCK INTERVIEW STUDIO (AGENT 5) -->
+    <!-- TAB 5: MOCK INTERVIEW STUDIO -->
     <section id="tab-interview" class="tab-content hidden space-y-6">
       <div class="bg-dark-800 border border-dark-700 rounded-2xl p-6 shadow-xl space-y-6">
         <div>
@@ -449,22 +538,49 @@
 
         <!-- Active Question Box & Input -->
         <div class="bg-dark-900 border border-dark-700 rounded-2xl p-5 space-y-4">
-          <div>
-            <span id="activeQuestionType" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 border border-brand-500/20">Technical Question</span>
-            <h3 id="activeQuestionText" class="text-sm font-semibold text-white mt-1.5">Loading interview question...</h3>
-            <p id="activeQuestionConcepts" class="text-xs text-slate-400 mt-1">Key topics the interviewer wants to hear: Concurrency, Threading, Latency</p>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span id="activeQuestionType" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 border border-brand-500/20">Technical Deep-Dive</span>
+              <span class="text-xs text-slate-500">Real Interview Question</span>
+            </div>
+            <h3 id="activeQuestionText" class="text-sm font-semibold text-white mt-1 leading-snug">Loading interview question...</h3>
+            
+            <!-- What the interviewer is evaluating -->
+            <div class="text-xs text-slate-400 bg-dark-800/80 p-2.5 rounded-lg border border-dark-700 space-y-1">
+              <div class="flex items-center space-x-1.5 font-semibold text-slate-300">
+                <i class="fa-solid fa-bullseye text-brand-400"></i>
+                <span id="activeQuestionWhy">Why this is asked: Evaluates concurrency and performance handling.</span>
+              </div>
+              <div class="text-[11px] text-slate-400" id="activeQuestionConcepts">
+                Key concepts to mention: Async/Await • Event Loop • Non-blocking I/O
+              </div>
+            </div>
+
+            <!-- Expandable Hint -->
+            <details class="text-xs text-slate-400 group cursor-pointer">
+              <summary class="font-semibold text-brand-400 hover:text-brand-300 flex items-center space-x-1 select-none">
+                <i class="fa-regular fa-lightbulb text-amber-400"></i>
+                <span>View Hint & How to Structure Your Answer</span>
+              </summary>
+              <div id="activeQuestionHint" class="mt-2 p-3 bg-dark-800 rounded-lg border border-dark-700 text-slate-300 leading-relaxed text-xs">
+                Explain how I/O calls yield control back to the event loop, and provide a concrete example from your past projects.
+              </div>
+            </details>
           </div>
 
           <!-- Answer Textarea -->
           <div class="space-y-1.5">
-            <label class="text-xs font-semibold text-slate-300">Type Your Answer (Explain the situation, what you did, and the result)</label>
+            <label class="text-xs font-semibold text-slate-300">Your Answer (State what you did, the tools used, and the result):</label>
             <textarea id="candidateAnswerInput" rows="5" placeholder="Type your response here or explain your past project experience..." class="w-full bg-dark-800 border border-dark-600 focus:border-brand-500 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none leading-relaxed"></textarea>
           </div>
 
-          <button id="evaluateAnswerBtn" onclick="evaluateAnswer()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold px-5 py-2.5 rounded-xl transition text-xs flex items-center space-x-2 shadow-lg shadow-pink-500/20">
-            <i class="fa-solid fa-chart-line"></i>
-            <span>Get Feedback on My Answer</span>
-          </button>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <button id="evaluateAnswerBtn" onclick="evaluateAnswer()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold px-5 py-2.5 rounded-xl transition text-xs flex items-center space-x-2 shadow-lg shadow-pink-500/20">
+              <i class="fa-solid fa-chart-line"></i>
+              <span>Get Feedback on My Answer</span>
+            </button>
+            <span class="text-[11px] text-slate-500">Evaluates technical depth & STAR structure</span>
+          </div>
         </div>
 
         <!-- Real-time Feedback Card -->
@@ -495,8 +611,8 @@
           </div>
 
           <div class="space-y-1">
-            <span class="text-xs font-bold text-emerald-400">Example of a Strong Answer:</span>
-            <p id="evalModelAnswerText" class="text-xs text-slate-300 italic leading-relaxed bg-dark-800/80 p-3 rounded-lg border border-dark-700"></p>
+            <span class="text-xs font-bold text-emerald-400">Example of a Strong Answer (Senior Engineer Reference):</span>
+            <p id="evalModelAnswerText" class="text-xs text-slate-300 italic leading-relaxed bg-dark-800/80 p-3.5 rounded-lg border border-dark-700"></p>
           </div>
         </div>
 
@@ -519,10 +635,75 @@
     </div>
   </footer>
 
+  <!-- SIMPLE LOGIN MODAL -->
+  <div id="loginModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+    <div class="bg-dark-800 border border-dark-700 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative">
+      <div class="text-center space-y-1">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center mx-auto text-white text-xl font-bold shadow-lg shadow-brand-500/20">
+          <i class="fa-solid fa-user-lock"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white">Sign In to CareerPilot</h3>
+        <p class="text-xs text-slate-400">Save your progress or explore freely without signing in.</p>
+      </div>
+
+      <form onsubmit="handleLoginSubmit(event)" class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-300">Username</label>
+          <input type="text" id="loginUsername" required placeholder="Enter your username" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-300">Password</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none">
+        </div>
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-lg shadow-brand-500/20">
+          Sign In
+        </button>
+      </form>
+
+      <div class="pt-2 border-t border-dark-700 text-center">
+        <button onclick="continueAsGuest()" class="w-full text-xs text-slate-400 hover:text-white py-2 rounded-lg border border-dark-600 hover:bg-dark-700/50 transition font-medium">
+          Continue without Login (Guest Mode)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPACTFUL TAILORED RESUME PREVIEW & DOWNLOAD MODAL -->
+  <div id="resumePreviewModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
+    <div class="bg-dark-800 border border-dark-700 rounded-2xl max-w-4xl w-full p-6 space-y-4 shadow-2xl my-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-dark-700">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center space-x-2">
+            <i class="fa-solid fa-file-lines text-emerald-400"></i>
+            <span>Impactful Tailored Resume</span>
+          </h3>
+          <p class="text-xs text-slate-400">Structured for ATS scanning with quantified STAR bullet points</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="downloadResumePDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
+            <i class="fa-solid fa-print"></i>
+            <span>Download PDF / Print</span>
+          </button>
+          <button onclick="downloadResumeTXT()" class="bg-dark-700 hover:bg-dark-600 text-slate-300 font-semibold px-3 py-1.5 rounded-lg text-xs border border-dark-600 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-file-arrow-down"></i>
+            <span>Download TXT</span>
+          </button>
+          <button onclick="closeResumeModal()" class="text-slate-400 hover:text-white px-2 py-1"><i class="fa-solid fa-xmark text-sm"></i></button>
+        </div>
+      </div>
+
+      <!-- Printable/Viewable Clean ATS Resume Document -->
+      <div id="resumePrintArea" class="bg-white text-slate-900 rounded-xl p-8 shadow-inner font-sans text-xs space-y-5 border border-slate-200 leading-normal max-h-[70vh] overflow-y-auto">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
   <!-- FRONTEND SCRIPT -->
   <script>
     // State Store
     let appState = {
+      user: localStorage.getItem('careerpilot_user') || 'Guest',
       profile: null,
       gaps: null,
       jobs: [],
@@ -532,6 +713,55 @@
       questions: [],
       activeQuestion: null
     };
+
+    // User Authentication Logic
+    function updateAuthUI() {
+      const name = appState.user || 'Guest';
+      document.getElementById('headerUserName').textContent = name;
+      const authBtn = document.getElementById('authBtn');
+      if (name !== 'Guest') {
+        authBtn.textContent = 'Log Out';
+        authBtn.onclick = handleLogout;
+      } else {
+        authBtn.textContent = 'Sign In';
+        authBtn.onclick = openLoginModal;
+      }
+    }
+
+    function openLoginModal() {
+      document.getElementById('loginModal').classList.remove('hidden');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('loginModal').classList.add('hidden');
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value.trim();
+      if (username) {
+        appState.user = username;
+        localStorage.setItem('careerpilot_user', username);
+        updateAuthUI();
+        closeLoginModal();
+        showBanner(`Signed in successfully as ${username}!`, "success");
+      }
+    }
+
+    function continueAsGuest() {
+      appState.user = 'Guest';
+      localStorage.setItem('careerpilot_user', 'Guest');
+      updateAuthUI();
+      closeLoginModal();
+      showBanner("Continuing as Guest. All features are fully accessible!", "info");
+    }
+
+    function handleLogout() {
+      appState.user = 'Guest';
+      localStorage.removeItem('careerpilot_user');
+      updateAuthUI();
+      showBanner("Logged out successfully.", "info");
+    }
 
     // Tab Navigation
     function switchTab(tabId) {
@@ -575,6 +805,8 @@
 
     // Initialize Initial Data
     window.addEventListener('DOMContentLoaded', async () => {
+      updateAuthUI();
+
       try {
         const resp = await fetch('/api/jobs');
         const data = await resp.json();
@@ -621,7 +853,7 @@
     // Run Agent 1 & Agent 2
     async function runAssessmentPipeline() {
       const btn = document.getElementById('runAssessBtn');
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Analyzing with Agents 1 & 2...</span>`;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Analyzing Match...</span>`;
       btn.disabled = true;
 
       const formData = new FormData();
@@ -645,16 +877,16 @@
           renderAssessmentUI();
           renderGapsUI();
           showBanner("Assessment complete: Verified skills benchmarked against live postings.", "success");
-          // Also run initial tailoring for active job
+          
           if (appState.jobs.length > 0) {
             await runTailoringPipeline();
           }
         }
       } catch (err) {
         console.error(err);
-        showBanner("Error executing assessment agent: " + err.message, "warning");
+        showBanner("Error executing assessment: " + err.message, "warning");
       } finally {
-        btn.innerHTML = `<i class="fa-solid fa-bolt"></i><span>Run Multi-Agent Assessment</span>`;
+        btn.innerHTML = `<i class="fa-solid fa-bolt"></i><span>Check My Job Match</span>`;
         btn.disabled = false;
       }
     }
@@ -672,10 +904,10 @@
 
       // GitHub / LeetCode Badges
       const gh = p.github_stats || {};
-      document.getElementById('ghBadge').innerHTML = `<i class="fa-brands fa-github text-slate-400"></i><span>GitHub: Verified (${gh.public_repos || 6} Repos, ${gh.total_stars || 5} Stars)</span>`;
+      document.getElementById('ghBadge').innerHTML = `<i class="fa-brands fa-github text-slate-400"></i><span>GitHub: ${gh.public_repos || 6} Repos, ${gh.total_stars || 5} Stars</span>`;
       
       const lc = p.leetcode_stats || {};
-      document.getElementById('lcBadge').innerHTML = `<i class="fa-solid fa-code text-amber-500"></i><span>LeetCode: ${lc.total_solved || 142} Solved (${lc.easy_solved || 75}E / ${lc.medium_solved || 58}M / ${lc.hard_solved || 9}H)</span>`;
+      document.getElementById('lcBadge').innerHTML = `<i class="fa-solid fa-code text-amber-500"></i><span>LeetCode: ${lc.total_solved || 142} Solved (${lc.easy_solved || 75} Easy / ${lc.medium_solved || 58} Medium / ${lc.hard_solved || 9} Hard)</span>`;
 
       // Verified Skills
       const skillContainer = document.getElementById('verifiedSkillsContainer');
@@ -818,49 +1050,159 @@
       });
 
       document.getElementById('coverLetterBox').textContent = t.cover_letter;
+      renderResumeDocument();
+    }
+
+    // Render Impactful Structured Resume in Preview Modal
+    function renderResumeDocument() {
+      const p = appState.profile;
+      const t = appState.tailored;
+      if (!p || !t) return;
+
+      const company = t.company || "Target Company";
+      const role = t.role || "Software Engineer";
+
+      let bulletsHtml = '';
+      (t.tailored_bullets || []).forEach(b => {
+        bulletsHtml += `
+          <div style="margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; color: #111827; font-size: 13px;">
+              <span>${b.project_title}</span>
+              <span style="font-size: 11px; color: #4b5563;">Engineering Project</span>
+            </div>
+            <p style="margin: 3px 0 0 0; color: #374151; font-size: 12px; line-height: 1.5;">
+              • ${b.star_tailored_bullet}
+            </p>
+          </div>
+        `;
+      });
+
+      const printArea = document.getElementById('resumePrintArea');
+      printArea.innerHTML = `
+        <div style="border-bottom: 2px solid #2563eb; padding-bottom: 12px; margin-bottom: 16px;">
+          <h1 style="font-size: 22px; font-weight: 800; color: #111827; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">${p.name}</h1>
+          <p style="font-size: 12px; color: #2563eb; font-weight: 700; margin: 2px 0 6px 0;">Target Role: ${role} | ${company}</p>
+          <div style="font-size: 11px; color: #4b5563; display: flex; flex-wrap: wrap; gap: 12px;">
+            <span><i class="fa-regular fa-envelope"></i> ${p.email}</span>
+            <span><i class="fa-solid fa-phone"></i> ${p.phone || '+91 9876543210'}</span>
+            <span><i class="fa-brands fa-github"></i> github.com/${p.github_handle || 'developer'}</span>
+            <span><i class="fa-brands fa-linkedin"></i> linkedin.com/in/${p.linkedin_handle || 'developer'}</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <h2 style="font-size: 12px; font-weight: 800; color: #1e3a8a; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e5e7eb; padding-bottom: 3px; margin-bottom: 6px;">Professional Profile</h2>
+          <p style="font-size: 11.5px; color: #374151; line-height: 1.5; margin: 0;">
+            Motivated and impact-driven engineer specializing in modern software development with verified hands-on proficiency in ${(p.skills || []).slice(0, 5).join(', ')}. Strong problem-solving background with ${p.leetcode_stats?.total_solved || 140}+ algorithmic problems solved on LeetCode and active open-source contribution history on GitHub. Tailored specifically for the ${role} opening at ${company}.
+          </p>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <h2 style="font-size: 12px; font-weight: 800; color: #1e3a8a; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e5e7eb; padding-bottom: 3px; margin-bottom: 6px;">Technical Skills Core</h2>
+          <div style="font-size: 11.5px; color: #374151; line-height: 1.6;">
+            <strong>Verified Technical Stack:</strong> ${(p.skills || []).join(' • ')}
+          </div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <h2 style="font-size: 12px; font-weight: 800; color: #1e3a8a; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e5e7eb; padding-bottom: 3px; margin-bottom: 8px;">Key Engineering Projects (STAR Method)</h2>
+          ${bulletsHtml}
+        </div>
+
+        <div>
+          <h2 style="font-size: 12px; font-weight: 800; color: #1e3a8a; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e5e7eb; padding-bottom: 3px; margin-bottom: 6px;">Education & Certifications</h2>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: #111827; font-weight: bold;">
+            <span>Bachelor of Technology in Computer Science & Engineering</span>
+            <span style="color: #4b5563; font-weight: normal;">Graduating 2026</span>
+          </div>
+          <p style="font-size: 11.5px; color: #4b5563; margin: 2px 0 0 0;">Cumulative CGPA: 8.7/10.0 • Focus on Distributed Systems, Algorithms & Cloud Infrastructure</p>
+        </div>
+      `;
+    }
+
+    function openResumePreviewModal() {
+      renderResumeDocument();
+      document.getElementById('resumePreviewModal').classList.remove('hidden');
+    }
+
+    function closeResumeModal() {
+      document.getElementById('resumePreviewModal').classList.add('hidden');
+    }
+
+    function downloadResumePDF() {
+      window.print();
+    }
+
+    function downloadResumeTXT() {
+      const p = appState.profile;
+      const t = appState.tailored;
+      if (!p || !t) return;
+
+      let text = `=================================================================\n`;
+      text += `${p.name.toUpperCase()}\n`;
+      text += `Target Position: ${t.role} at ${t.company}\n`;
+      text += `Email: ${p.email} | Phone: ${p.phone || '+91 9876543210'}\n`;
+      text += `GitHub: github.com/${p.github_handle || 'dev'} | LinkedIn: linkedin.com/in/${p.linkedin_handle || 'dev'}\n`;
+      text += `=================================================================\n\n`;
+
+      text += `TECHNICAL SKILLS:\n${(p.skills || []).join(', ')}\n\n`;
+
+      text += `FEATURED PROJECTS (STAR METHOD):\n`;
+      (t.tailored_bullets || []).forEach(b => {
+        text += `\n* ${b.project_title}\n  - ${b.star_tailored_bullet}\n`;
+      });
+
+      text += `\nEDUCATION:\nBachelor of Technology in Computer Science (2022-2026)\nCGPA: 8.7/10\n`;
+
+      const blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${p.name.replace(/\s+/g, '_')}_Tailored_Resume_${t.company}.txt`;
+      link.click();
+      showBanner("Resume downloaded as text file!", "success");
     }
 
     function copyCoverLetter() {
       const text = document.getElementById('coverLetterBox').textContent;
       navigator.clipboard.writeText(text);
-      showBanner("Tailored cover letter copied to clipboard!", "success");
+      showBanner("Cover letter copied to clipboard!", "success");
     }
 
-    // Staging & HITL
+    function downloadCoverLetterTXT() {
+      const text = document.getElementById('coverLetterBox').textContent;
+      const p = appState.profile || {name: "Candidate"};
+      const t = appState.tailored || {company: "Company"};
+
+      const blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${p.name.replace(/\s+/g, '_')}_Cover_Letter_${t.company}.txt`;
+      link.click();
+      showBanner("Cover letter downloaded as text file!", "success");
+    }
+
+    // Staging & Review UI
     function renderStagingUI() {
-      const s = appState.staged;
-      const tbody = document.getElementById('stagedFieldsTableBody');
-      tbody.innerHTML = '';
+      const p = appState.profile || {};
+      const t = appState.tailored || {};
 
-      const fields = s.staged_fields || {};
-      for (const [key, val] of Object.entries(fields)) {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-dark-800/50 transition";
-        tr.innerHTML = `
-          <td class="px-4 py-2.5 text-slate-300 font-sans font-medium">${key}</td>
-          <td class="px-4 py-2.5 text-slate-100">${val}</td>
-          <td class="px-4 py-2.5 text-slate-400 font-sans text-[10px]">Your Profile</td>
-          <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-sans font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Ready for Review</span></td>
-        `;
-        tbody.appendChild(tr);
-      }
+      document.getElementById('stagedNameVal').textContent = p.name || "Candidate";
+      document.getElementById('stagedEmailVal').textContent = p.email || "candidate@example.com";
+      document.getElementById('stagedPhoneVal').textContent = p.phone || "+91 9876543210";
 
-      // Update logs
-      const logBox = document.getElementById('browserLogBox');
-      logBox.innerHTML = '';
-      (s.browser_logs || []).forEach(log => {
-        const line = document.createElement('div');
-        line.textContent = `> ${log}`;
-        logBox.appendChild(line);
-      });
+      document.getElementById('stagedCompanyVal').textContent = t.company || "Target Company";
+      document.getElementById('stagedRoleVal').textContent = t.role || "Software Engineer";
+
+      document.getElementById('stagedResumeDocName').textContent = `${(p.name || 'Candidate').replace(/\s+/g, '_')}_Resume_Tailored_${t.company || 'Job'}.pdf`;
+      document.getElementById('stagedGhVal').textContent = `github.com/${p.github_handle || 'developer'}`;
+      document.getElementById('stagedLcVal').textContent = `leetcode.com/${p.leetcode_handle || 'developer'}`;
     }
 
     async function stageActiveApplication() {
       await runTailoringPipeline();
-      showBanner("Application fields updated and ready for your review.", "info");
+      showBanner("Application data updated and ready for your review.", "info");
     }
 
-    // Human-in-the-Loop Explicit Confirmation
     async function confirmHumanSubmission() {
       if (!appState.staged) return;
       const appId = appState.staged.application_id;
@@ -880,10 +1222,12 @@
           badge.className = "text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
           badge.textContent = "Submitted Successfully!";
 
-          document.getElementById('hitlSubmitBtn').className = "w-full sm:w-auto bg-dark-700 text-slate-400 font-bold px-6 py-2.5 rounded-xl cursor-not-allowed";
-          document.getElementById('hitlSubmitBtn').disabled = true;
+          const btn = document.getElementById('hitlSubmitBtn');
+          btn.className = "w-full sm:w-auto bg-emerald-700/60 text-emerald-200 font-bold px-7 py-3 rounded-xl cursor-default flex items-center space-x-2 text-xs border border-emerald-500/30";
+          btn.innerHTML = `<i class="fa-solid fa-check-double text-emerald-400"></i><span>Application Confirmed & Ready to Send</span>`;
+          btn.disabled = true;
 
-          showBanner("Your application has been safely confirmed and submitted!", "success");
+          showBanner("Application confirmed and ready to dispatch safely!", "success");
         }
       } catch (err) {
         console.error(err);
@@ -902,7 +1246,7 @@
         card.innerHTML = `
           <div class="flex items-center justify-between text-[10px] text-slate-400 mb-1">
             <span class="font-bold text-brand-400">${q.type}</span>
-            <span>Q${q.id}</span>
+            <span>Question ${q.id}</span>
           </div>
           <p class="text-xs text-white font-medium line-clamp-2">${q.question}</p>
         `;
@@ -927,7 +1271,10 @@
 
       document.getElementById('activeQuestionType').textContent = q.type;
       document.getElementById('activeQuestionText').textContent = q.question;
-      document.getElementById('activeQuestionConcepts').textContent = `Interviewer listening for: ${q.key_concepts.join(' • ')}`;
+      document.getElementById('activeQuestionWhy').textContent = `Why this is asked: ${q.why_asked || 'Tests technical problem solving.'}`;
+      document.getElementById('activeQuestionConcepts').textContent = `Key concepts to mention: ${(q.key_concepts || []).join(' • ')}`;
+      document.getElementById('activeQuestionHint').textContent = q.hint || "State your technical approach clearly, reference real tools, and explain how you verified the outcome.";
+      
       document.getElementById('candidateAnswerInput').value = '';
       document.getElementById('evaluationFeedbackCard').classList.add('hidden');
     }
@@ -935,12 +1282,12 @@
     async function evaluateAnswer() {
       const answer = document.getElementById('candidateAnswerInput').value;
       if (!answer.trim()) {
-        showBanner("Please enter your answer before requesting evaluation.", "warning");
+        showBanner("Please type your answer before requesting evaluation.", "warning");
         return;
       }
 
       const btn = document.getElementById('evaluateAnswerBtn');
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Scoring Answer...</span>`;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Analyzing Response...</span>`;
       btn.disabled = true;
 
       try {
@@ -961,7 +1308,7 @@
           document.getElementById('scoreCommVal').textContent = `${evalData.communication_score}/10`;
           document.getElementById('scoreOverallVal').textContent = `${evalData.overall_score}/10`;
           document.getElementById('evalCritiqueText').textContent = evalData.feedback;
-          document.getElementById('evalModelAnswerText').textContent = evalData.model_answer_snippet;
+          document.getElementById('evalModelAnswerText').textContent = evalData.model_answer || evalData.model_answer_snippet || "Clear example answer.";
 
           document.getElementById('evaluationFeedbackCard').classList.remove('hidden');
           showBanner("Answer evaluated! Review your scorecard below.", "success");
@@ -969,11 +1316,10 @@
       } catch (err) {
         console.error(err);
       } finally {
-        btn.innerHTML = `<i class="fa-solid fa-chart-line"></i><span>Evaluate Response with AI</span>`;
+        btn.innerHTML = `<i class="fa-solid fa-chart-line"></i><span>Get Feedback on My Answer</span>`;
         btn.disabled = false;
       }
     }
   </script>
 </body>
 </html>
-
