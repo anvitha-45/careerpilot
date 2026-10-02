@@ -128,6 +128,13 @@ async def run_tailoring_and_staging(req: TailorRequest):
         print(f"[API] Error in tailoring and staging pipeline: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/applications")
+async def get_applications(email: Optional[str] = None):
+    """Retrieve list of candidate's submitted / staged applications for the tracking dashboard."""
+    query = {"email": email} if email else {}
+    apps = await db.find("applications", query)
+    return {"applications": apps}
+
 @router.post("/applications/confirm")
 async def confirm_application(req: ConfirmApplicationRequest):
     """HITL Gate: Human explicitly reviews staged fields and clicks submit."""

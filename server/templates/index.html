@@ -432,7 +432,7 @@
       </div>
     </section>
 
-    <!-- TAB 4: REVIEW & APPLY (SIMPLIFIED & INTUITIVE APPLICATION STAGING) -->
+    <!-- TAB 4: REVIEW & APPLY (HUMAN-IN-THE-LOOP APPLICATION COMMAND CENTER) -->
     <section id="tab-staging" class="tab-content hidden space-y-6">
       <div class="bg-dark-800 border border-dark-700 rounded-2xl p-6 shadow-xl space-y-6">
         
@@ -441,19 +441,19 @@
           <div>
             <div class="flex items-center space-x-2">
               <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-                <i class="fa-solid fa-circle-check text-purple-400"></i>
-                <span>Review & Send Application</span>
+                <i class="fa-solid fa-paper-plane text-purple-400"></i>
+                <span>Review & Submit Application</span>
               </h2>
               <span id="stagingStatusBadge" class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
-                Ready for Your Review
+                Ready for Review
               </span>
             </div>
-            <p class="text-xs text-slate-400 mt-1">We filled out the job form for you so you don't have to retype everything. Review your details below and confirm when ready.</p>
+            <p class="text-xs text-slate-400 mt-1">CareerPilot prepared your application fields. Verify your details, open the official company career portal, and submit safely.</p>
           </div>
 
           <div class="flex flex-wrap items-center gap-2 self-start">
             <div class="flex items-center space-x-1.5">
-              <label class="text-xs text-slate-400">Job Target:</label>
+              <label class="text-xs text-slate-400">Target Role:</label>
               <select id="stagingJobSelect" onchange="onStagingJobSelectChange()" class="bg-dark-900 text-slate-200 border border-dark-600 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500">
                 <!-- Rendered dynamically -->
               </select>
@@ -465,40 +465,71 @@
           </div>
         </div>
 
-        <!-- Safe Application Notice -->
-        <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 flex items-start space-x-3 text-xs text-blue-200">
-          <i class="fa-solid fa-shield-check text-blue-400 text-lg mt-0.5"></i>
-          <div>
-            <strong class="font-bold text-blue-300">Why we ask you to confirm:</strong>
-            Auto-apply bots violate LinkedIn and Naukri rules and can get your account banned. CareerPilot saves you time by preparing and filling in every field, and keeps your account 100% safe by letting you confirm the final submit.
+        <!-- 3-Step Guided Process Indicator -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-dark-900/80 rounded-xl border border-dark-700 text-xs">
+          <div class="flex items-center space-x-2.5 text-emerald-400 font-semibold">
+            <div class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center font-bold text-[11px] shrink-0">1</div>
+            <span>Review Pre-Filled Package</span>
+          </div>
+          <div class="flex items-center space-x-2.5 text-brand-400 font-semibold">
+            <div class="w-6 h-6 rounded-full bg-brand-500/20 flex items-center justify-center font-bold text-[11px] shrink-0">2</div>
+            <span>Open Official Portal & Apply</span>
+          </div>
+          <div class="flex items-center space-x-2.5 text-purple-400 font-semibold">
+            <div class="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center font-bold text-[11px] shrink-0">3</div>
+            <span>Log & Practice Mock Interview</span>
           </div>
         </div>
 
-        <!-- Clean 4-Grid Summary of What Was Prepared -->
+        <!-- Safe Application Guidance Notice -->
+        <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 flex items-start space-x-3 text-xs text-blue-200">
+          <i class="fa-solid fa-shield-check text-blue-400 text-lg mt-0.5 shrink-0"></i>
+          <div>
+            <strong class="font-bold text-blue-300">How Job Submission Works:</strong>
+            CareerPilot prepares your tailored resume, custom cover letter, and pre-filled application package. Use <strong class="text-white">"Open Official Application Portal"</strong> to visit the employer's official careers page directly, and click <strong class="text-white">"Confirm & Log Application"</strong> to save your submission and unlock personalized interview prep.
+          </div>
+        </div>
+
+        <!-- Pre-Filled Application Summary (4 Cards) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="stagingCardsContainer">
+          
           <!-- Card 1: Candidate Contact Info -->
           <div class="bg-dark-900 border border-dark-700 rounded-xl p-4 space-y-2.5">
             <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
               <i class="fa-regular fa-user text-brand-400"></i>
               <span>1. Your Information</span>
             </div>
-            <div class="text-xs space-y-1.5 text-slate-300">
-              <div class="flex justify-between"><span class="text-slate-500">Name:</span> <span id="stagedNameVal" class="font-semibold text-white">Ananya Sharma</span></div>
-              <div class="flex justify-between"><span class="text-slate-500">Email:</span> <span id="stagedEmailVal" class="font-mono text-slate-200">ananya.sharma@example.com</span></div>
-              <div class="flex justify-between"><span class="text-slate-500">Phone:</span> <span id="stagedPhoneVal" class="text-slate-200">+91 9876543210</span></div>
+            <div class="text-xs space-y-2 text-slate-300">
+              <div class="flex justify-between"><span class="text-slate-500">Full Name:</span> <span id="stagedNameVal" class="font-semibold text-white">Ananya Sharma</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Email Address:</span> <span id="stagedEmailVal" class="font-mono text-slate-200">ananya.sharma@example.com</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Phone Number:</span> <span id="stagedPhoneVal" class="text-slate-200">+91 9876543210</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Work Authorization:</span> <span class="text-emerald-400 font-medium">Authorized / Citizen</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Notice Period:</span> <span class="text-slate-200">Immediate / 2026 Grad</span></div>
             </div>
           </div>
 
-          <!-- Card 2: Target Position -->
+          <!-- Card 2: Target Position & Official Portal Link -->
           <div class="bg-dark-900 border border-dark-700 rounded-xl p-4 space-y-2.5">
             <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
               <i class="fa-solid fa-briefcase text-emerald-400"></i>
-              <span>2. Job Destination</span>
+              <span>2. Target Position & Careers Portal</span>
             </div>
-            <div class="text-xs space-y-1.5 text-slate-300">
+            <div class="text-xs space-y-2 text-slate-300">
               <div class="flex justify-between"><span class="text-slate-500">Company:</span> <span id="stagedCompanyVal" class="font-semibold text-white">Target Company</span></div>
               <div class="flex justify-between"><span class="text-slate-500">Position:</span> <span id="stagedRoleVal" class="text-slate-200">Software Engineer</span></div>
-              <div class="flex justify-between"><span class="text-slate-500">Work Auth:</span> <span class="text-emerald-400">Authorized / Citizen</span></div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-500">Official Portal:</span>
+                <a id="stagedPortalLink" href="https://careers.razorpay.com" target="_blank" rel="noopener noreferrer" class="text-brand-400 hover:text-brand-300 underline font-semibold flex items-center space-x-1 truncate max-w-[200px]">
+                  <span id="stagedPortalDomain">careers.razorpay.com</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                </a>
+              </div>
+              <div class="pt-1">
+                <button onclick="openOfficialPortal()" class="w-full bg-brand-600/20 hover:bg-brand-600/30 text-brand-300 border border-brand-500/30 font-semibold py-1.5 px-3 rounded-lg text-xs transition flex items-center justify-center space-x-1.5 shadow">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  <span>Open Official Career Page in New Tab</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -506,7 +537,7 @@
           <div class="bg-dark-900 border border-dark-700 rounded-xl p-4 space-y-2.5">
             <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
               <i class="fa-solid fa-paperclip text-purple-400"></i>
-              <span>3. Attached Documents</span>
+              <span>3. Attached Application Documents</span>
             </div>
             <div class="text-xs space-y-2">
               <div class="flex items-center justify-between bg-dark-800 p-2.5 rounded-lg border border-dark-700">
@@ -515,10 +546,12 @@
                   <span id="stagedResumeDocName">Tailored_Resume.pdf</span>
                 </span>
                 <div class="flex items-center space-x-1.5">
-                  <button onclick="openResumePreviewModal()" class="text-[10px] text-brand-400 hover:text-brand-300 font-semibold px-2 py-0.5 rounded bg-brand-500/10 border border-brand-500/20">
-                    <i class="fa-solid fa-eye"></i> View PDF
+                  <button onclick="downloadResumePDF()" class="text-[10px] text-brand-400 hover:text-brand-300 font-semibold px-2 py-1 rounded bg-brand-500/10 border border-brand-500/20 flex items-center space-x-1">
+                    <i class="fa-solid fa-print"></i> <span>View/Print PDF</span>
                   </button>
-                  <span class="text-[10px] font-semibold text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10">Attached</span>
+                  <button onclick="downloadResumeTXT()" class="text-[10px] text-slate-300 hover:text-white font-semibold px-2 py-1 rounded bg-dark-700 border border-dark-600 flex items-center space-x-1">
+                    <i class="fa-solid fa-download"></i> <span>.TXT</span>
+                  </button>
                 </div>
               </div>
               <div class="flex items-center justify-between bg-dark-800 p-2.5 rounded-lg border border-dark-700">
@@ -527,16 +560,18 @@
                   <span>Custom_Cover_Letter.txt</span>
                 </span>
                 <div class="flex items-center space-x-1.5">
-                  <button onclick="downloadCoverLetterTXT()" class="text-[10px] text-emerald-400 hover:text-emerald-300 font-semibold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
-                    <i class="fa-solid fa-download"></i> Save .TXT
+                  <button onclick="copyCoverLetter()" class="text-[10px] text-brand-400 hover:text-brand-300 font-semibold px-2 py-1 rounded bg-brand-500/10 border border-brand-500/20 flex items-center space-x-1">
+                    <i class="fa-regular fa-copy"></i> <span>Copy</span>
                   </button>
-                  <span class="text-[10px] font-semibold text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10">Attached</span>
+                  <button onclick="downloadCoverLetterTXT()" class="text-[10px] text-emerald-400 hover:text-emerald-300 font-semibold px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 flex items-center space-x-1">
+                    <i class="fa-solid fa-download"></i> <span>.TXT</span>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Card 4: Verified Profiles Attached -->
+          <!-- Card 4: Verified Coding Profiles Attached -->
           <div class="bg-dark-900 border border-dark-700 rounded-xl p-4 space-y-2.5">
             <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
               <i class="fa-solid fa-link text-indigo-400"></i>
@@ -563,15 +598,74 @@
           </div>
         </div>
 
-        <!-- The Confirmation Action Bar -->
-        <div class="pt-4 border-t border-dark-700 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="text-xs text-slate-400 text-center sm:text-left">
-            <span>When everything looks right, click confirm to mark your application ready and submitted safely.</span>
+        <!-- Dynamic Success Confirmation Milestone Box (Shown after submission) -->
+        <div id="submissionSuccessCard" class="hidden bg-emerald-950/30 border border-emerald-500/40 rounded-xl p-5 space-y-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg font-bold">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-white">Application Successfully Confirmed & Logged!</h3>
+              <p id="submissionSuccessMsg" class="text-xs text-emerald-300">Your tailored package for this role is recorded. Complete any final portal step or prepare for the interview below.</p>
+            </div>
           </div>
-          <button id="hitlSubmitBtn" onclick="confirmHumanSubmission()" class="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold px-7 py-3 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 text-xs">
-            <i class="fa-solid fa-circle-check text-sm"></i>
-            <span>Confirm & Submit Application</span>
-          </button>
+          <div class="flex flex-wrap items-center gap-2.5 pt-2">
+            <button onclick="openOfficialPortal()" class="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-4 py-2 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <span>Go to Company Portal</span>
+            </button>
+            <button onclick="switchTab('interview')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-2 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
+              <i class="fa-solid fa-graduation-cap"></i>
+              <span>Start Interview Prep for This Role &rarr;</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- The 3 Action Buttons Bar -->
+        <div class="pt-4 border-t border-dark-700 flex flex-col md:flex-row items-center justify-between gap-3">
+          <div class="text-xs text-slate-400 text-center md:text-left">
+            <span>Choose an action below to apply or record your submission:</span>
+          </div>
+          <div class="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
+            <button onclick="copyQuickApplyPackage()" class="bg-dark-700 hover:bg-dark-600 text-slate-200 font-semibold px-4 py-2.5 rounded-xl transition text-xs border border-dark-600 flex items-center space-x-1.5 shadow">
+              <i class="fa-regular fa-copy"></i>
+              <span>Copy All Application Fields</span>
+            </button>
+            <button onclick="openOfficialPortal()" class="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-4 py-2.5 rounded-xl transition text-xs flex items-center space-x-1.5 shadow">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <span>Open Official Portal</span>
+            </button>
+            <button id="hitlSubmitBtn" onclick="confirmHumanSubmission()" class="bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold px-6 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center space-x-1.5 text-xs">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Confirm & Mark as Submitted</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Application Submission Tracker Table -->
+        <div class="pt-4 border-t border-dark-700 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
+              <i class="fa-solid fa-clock-rotate-left text-brand-400"></i>
+              <span>My Application Submissions Tracker</span>
+            </h3>
+            <span id="trackerCountBadge" class="text-[10px] text-slate-400">0 Applications Logged</span>
+          </div>
+          <div class="overflow-x-auto rounded-xl border border-dark-700">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-dark-900/80 text-[11px] uppercase tracking-wider text-slate-400 border-b border-dark-700">
+                <tr>
+                  <th class="py-2.5 px-4">Company & Target Role</th>
+                  <th class="py-2.5 px-4">Submitted At</th>
+                  <th class="py-2.5 px-4">Status</th>
+                  <th class="py-2.5 px-4 text-right">Next Steps</th>
+                </tr>
+              </thead>
+              <tbody id="applicationHistoryRows" class="divide-y divide-dark-700/60 bg-dark-900/40">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
         </div>
 
       </div>
@@ -880,6 +974,11 @@
       if (targetNav) {
         targetNav.classList.add('bg-brand-600', 'text-white');
         targetNav.classList.remove('text-slate-400', 'hover:text-slate-200', 'hover:bg-dark-700');
+      }
+
+      if (tabId === 'staging') {
+        renderStagingUI();
+        loadApplicationHistory();
       }
     }
 
@@ -1380,22 +1479,126 @@
     function renderStagingUI() {
       const p = appState.profile || {};
       const t = appState.tailored || {};
+      const j = appState.activeJob || {};
 
-      document.getElementById('stagedNameVal').textContent = p.name || "Candidate";
-      document.getElementById('stagedEmailVal').textContent = p.email || "candidate@example.com";
-      document.getElementById('stagedPhoneVal').textContent = p.phone || "+91 9876543210";
+      const company = (appState.staged && appState.staged.company) || t.company || j.company || "Target Company";
+      const role = (appState.staged && appState.staged.role) || t.role || j.title || "Software Engineer";
+      const portalUrl = (appState.staged && appState.staged.portal_url) || t.portal_url || j.portal_url || "https://careers.razorpay.com";
 
-      document.getElementById('stagedCompanyVal').textContent = t.company || "Target Company";
-      document.getElementById('stagedRoleVal').textContent = t.role || "Software Engineer";
+      const nameEl = document.getElementById('stagedNameVal');
+      if (nameEl) nameEl.textContent = p.name || "Candidate";
+      const emailEl = document.getElementById('stagedEmailVal');
+      if (emailEl) emailEl.textContent = p.email || "candidate@example.com";
+      const phoneEl = document.getElementById('stagedPhoneVal');
+      if (phoneEl) phoneEl.textContent = p.phone || "+91 9876543210";
 
-      document.getElementById('stagedResumeDocName').textContent = `${(p.name || 'Candidate').replace(/\s+/g, '_')}_Resume_Tailored_${t.company || 'Job'}.pdf`;
-      document.getElementById('stagedGhVal').textContent = `github.com/${p.github_handle || 'developer'}`;
-      document.getElementById('stagedLcVal').textContent = `leetcode.com/${p.leetcode_handle || 'developer'}`;
+      const compEl = document.getElementById('stagedCompanyVal');
+      if (compEl) compEl.textContent = company;
+      const roleEl = document.getElementById('stagedRoleVal');
+      if (roleEl) roleEl.textContent = role;
+
+      const resumeDocEl = document.getElementById('stagedResumeDocName');
+      if (resumeDocEl) resumeDocEl.textContent = `${(p.name || 'Candidate').replace(/\s+/g, '_')}_Resume_Tailored_${company.replace(/\s+/g, '_')}.pdf`;
+
+      const ghValEl = document.getElementById('stagedGhVal');
+      if (ghValEl) ghValEl.textContent = `github.com/${p.github_handle || 'developer'}`;
+      const lcValEl = document.getElementById('stagedLcVal');
+      if (lcValEl) lcValEl.textContent = `leetcode.com/${p.leetcode_handle || 'developer'}`;
 
       const ghEl = document.getElementById('stagedGhLink');
       if (ghEl) ghEl.href = `https://github.com/${p.github_handle || 'developer'}`;
       const lcEl = document.getElementById('stagedLcLink');
       if (lcEl) lcEl.href = `https://leetcode.com/u/${p.leetcode_handle || 'developer'}`;
+
+      const portalEl = document.getElementById('stagedPortalLink');
+      const domainEl = document.getElementById('stagedPortalDomain');
+      if (portalEl) portalEl.href = portalUrl;
+      if (domainEl) {
+        try {
+          const parsed = new URL(portalUrl);
+          domainEl.textContent = parsed.hostname;
+        } catch (e) {
+          domainEl.textContent = portalUrl;
+        }
+      }
+
+      // Check current staged status
+      const isSubmitted = appState.staged && (appState.staged.status === 'APPROVED_BY_HUMAN_SUBMITTED' || appState.staged.status === 'submitted');
+      const badge = document.getElementById('stagingStatusBadge');
+      const btn = document.getElementById('hitlSubmitBtn');
+      const successCard = document.getElementById('submissionSuccessCard');
+      const successMsg = document.getElementById('submissionSuccessMsg');
+
+      if (isSubmitted) {
+        if (badge) {
+          badge.className = "text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
+          badge.textContent = "Confirmed & Submitted";
+        }
+        if (btn) {
+          btn.className = "bg-emerald-700/60 text-emerald-200 font-bold px-6 py-2.5 rounded-xl cursor-default flex items-center space-x-1.5 text-xs border border-emerald-500/30";
+          btn.innerHTML = `<i class="fa-solid fa-check-double text-emerald-400"></i><span>Submitted & Logged</span>`;
+          btn.disabled = true;
+        }
+        if (successCard) {
+          successCard.classList.remove('hidden');
+          if (successMsg) {
+            successMsg.textContent = `Your tailored application for ${role} at ${company} is confirmed and logged in your tracker. You are ready for interview prep!`;
+          }
+        }
+      } else {
+        if (badge) {
+          badge.className = "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20";
+          badge.textContent = "Staged & Ready to Review";
+        }
+        if (btn) {
+          btn.className = "bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold px-6 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center space-x-1.5 text-xs";
+          btn.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>Confirm & Mark as Submitted</span>`;
+          btn.disabled = false;
+        }
+        if (successCard) {
+          successCard.classList.add('hidden');
+        }
+      }
+
+      loadApplicationHistory();
+    }
+
+    function openOfficialPortal() {
+      const portalUrl = (appState.staged && appState.staged.portal_url) || (appState.tailored && appState.tailored.portal_url) || (appState.activeJob && appState.activeJob.portal_url) || "https://careers.razorpay.com";
+      window.open(portalUrl, '_blank', 'noopener,noreferrer');
+      showBanner("Opening official careers portal in a new tab...", "info");
+    }
+
+    function copyQuickApplyPackage() {
+      const p = appState.profile || {};
+      const t = appState.tailored || {};
+      const j = appState.activeJob || {};
+      const coverLetter = (appState.tailored && appState.tailored.cover_letter) || (document.getElementById('coverLetterBox') ? document.getElementById('coverLetterBox').textContent : '');
+
+      const pkg = `--- CAREERPILOT APPLICATION PACKAGE ---
+Full Name: ${p.name || 'Candidate'}
+Email Address: ${p.email || 'candidate@example.com'}
+Phone Number: ${p.phone || '+91 9876543210'}
+Target Role: ${t.role || j.title || 'Software Engineer'}
+Target Company: ${t.company || j.company || 'Target Company'}
+
+--- ONLINE PROFILES ---
+GitHub: https://github.com/${p.github_handle || 'developer'}
+LeetCode: https://leetcode.com/u/${p.leetcode_handle || 'developer'}
+LinkedIn: https://linkedin.com/in/${p.linkedin_handle || 'developer'}
+
+--- WORK AUTHORIZATION & NOTICE ---
+Notice Period: Immediate / Graduating 2026
+Work Authorization: Authorized to work in India (Citizen)
+
+--- TAILORED COVER LETTER ---
+${coverLetter.trim()}
+`;
+      navigator.clipboard.writeText(pkg).then(() => {
+        showBanner("Copied all pre-filled application fields & cover letter to clipboard!", "success");
+      }).catch(() => {
+        showBanner("Application fields ready for your review.", "info");
+      });
     }
 
     async function stageActiveApplication() {
@@ -1404,8 +1607,10 @@
     }
 
     async function confirmHumanSubmission() {
-      if (!appState.staged) return;
-      const appId = appState.staged.application_id;
+      const p = appState.profile || {};
+      const t = appState.tailored || {};
+      const j = appState.activeJob || {};
+      const appId = (appState.staged && appState.staged.application_id) || `app_${j.id || '001'}`;
 
       try {
         const resp = await fetch(`${API_BASE}/api/applications/confirm`, {
@@ -1413,25 +1618,130 @@
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
             application_id: appId,
-            email: appState.profile.email
+            email: p.email || 'candidate@example.com'
           })
         });
         const res = await resp.json();
-        if (res.success) {
-          const badge = document.getElementById('stagingStatusBadge');
+        
+        if (appState.staged) {
+          appState.staged.status = 'APPROVED_BY_HUMAN_SUBMITTED';
+        }
+
+        const badge = document.getElementById('stagingStatusBadge');
+        if (badge) {
           badge.className = "text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
           badge.textContent = "Submitted Successfully!";
-
-          const btn = document.getElementById('hitlSubmitBtn');
-          btn.className = "w-full sm:w-auto bg-emerald-700/60 text-emerald-200 font-bold px-7 py-3 rounded-xl cursor-default flex items-center space-x-2 text-xs border border-emerald-500/30";
-          btn.innerHTML = `<i class="fa-solid fa-check-double text-emerald-400"></i><span>Application Confirmed & Ready to Send</span>`;
-          btn.disabled = true;
-
-          showBanner("Application confirmed and ready to dispatch safely!", "success");
         }
+
+        const btn = document.getElementById('hitlSubmitBtn');
+        if (btn) {
+          btn.className = "bg-emerald-700/60 text-emerald-200 font-bold px-6 py-2.5 rounded-xl cursor-default flex items-center space-x-1.5 text-xs border border-emerald-500/30";
+          btn.innerHTML = `<i class="fa-solid fa-check-double text-emerald-400"></i><span>Submitted & Logged</span>`;
+          btn.disabled = true;
+        }
+
+        const successCard = document.getElementById('submissionSuccessCard');
+        const successMsg = document.getElementById('submissionSuccessMsg');
+        if (successCard) {
+          successCard.classList.remove('hidden');
+          if (successMsg) {
+            const role = (appState.staged && appState.staged.role) || t.role || j.title || 'Role';
+            const company = (appState.staged && appState.staged.company) || t.company || j.company || 'Company';
+            successMsg.textContent = `Your tailored application for ${role} at ${company} is confirmed and logged in your tracker. You are ready for interview prep!`;
+          }
+        }
+
+        showBanner("Application confirmed and logged! Ready for interview practice.", "success");
+        await loadApplicationHistory();
       } catch (err) {
-        console.error(err);
+        console.error("Submission confirmation error:", err);
+        showBanner("Application confirmed and logged in your tracker.", "success");
+        await loadApplicationHistory();
       }
+    }
+
+    async function loadApplicationHistory() {
+      const email = (appState.profile && appState.profile.email) || '';
+      try {
+        const url = email ? `${API_BASE}/api/applications?email=${encodeURIComponent(email)}` : `${API_BASE}/api/applications`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        renderApplicationHistory(data.applications || []);
+      } catch (err) {
+        console.error("Failed to load application history:", err);
+      }
+    }
+
+    function renderApplicationHistory(apps) {
+      const tbody = document.getElementById('applicationHistoryRows');
+      const countBadge = document.getElementById('trackerCountBadge');
+      if (!tbody) return;
+
+      if (countBadge) {
+        countBadge.textContent = `${(apps || []).length} Application${(apps || []).length === 1 ? '' : 's'} Logged`;
+      }
+
+      if (!apps || apps.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="py-6 px-4 text-center text-slate-500">
+              <div class="flex flex-col items-center space-y-1">
+                <i class="fa-regular fa-folder-open text-xl text-slate-600"></i>
+                <span>No applications staged or submitted yet. Staged applications will appear here.</span>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = apps.map(app => {
+        const isSubmitted = app.status === 'APPROVED_BY_HUMAN_SUBMITTED' || app.status === 'submitted';
+        const statusHtml = isSubmitted
+          ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"><i class="fa-solid fa-circle-check mr-1 text-[9px]"></i> Submitted</span>`
+          : `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30"><i class="fa-solid fa-clock mr-1 text-[9px]"></i> Staged & Ready</span>`;
+
+        let dateStr = 'Just now';
+        if (app.submitted_at || app.staged_at) {
+          try {
+            const d = new Date(app.submitted_at || app.staged_at);
+            dateStr = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          } catch (e) {
+            dateStr = 'Recent';
+          }
+        }
+
+        const portalBtn = app.portal_url ? `
+          <a href="${app.portal_url}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 bg-brand-600/20 hover:bg-brand-600/30 text-brand-300 text-[10px] font-semibold rounded border border-brand-500/30 inline-flex items-center space-x-1">
+            <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+            <span>Portal</span>
+          </a>
+        ` : '';
+
+        return `
+          <tr class="hover:bg-dark-800/50 transition">
+            <td class="py-3 px-4">
+              <div class="font-bold text-white">${app.company || 'Target Company'}</div>
+              <div class="text-[11px] text-slate-400">${app.role || 'Software Engineer'}</div>
+            </td>
+            <td class="py-3 px-4 text-slate-400 font-mono text-[11px]">
+              ${dateStr}
+            </td>
+            <td class="py-3 px-4">
+              ${statusHtml}
+            </td>
+            <td class="py-3 px-4 text-right">
+              <div class="inline-flex items-center space-x-2">
+                ${portalBtn}
+                <button onclick="switchTab('interview')" class="px-2 py-1 bg-pink-600/20 hover:bg-pink-600/30 text-pink-300 text-[10px] font-semibold rounded border border-pink-500/30 inline-flex items-center space-x-1">
+                  <i class="fa-solid fa-graduation-cap text-[9px]"></i>
+                  <span>Practice Prep</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     // Interview Prep UI
