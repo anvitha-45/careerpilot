@@ -112,12 +112,12 @@
         </button>
 
         <!-- User Authentication Status & Modal Trigger -->
-        <div class="flex items-center space-x-1.5">
-          <span id="userStatusTag" class="text-xs text-slate-300 font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-dark-700/60 border border-dark-600">
-            <i class="fa-regular fa-circle-user text-brand-400"></i>
-            <span id="headerUserName">Guest</span>
+        <div class="flex items-center space-x-1.5 flex-shrink-0">
+          <span id="userStatusTag" class="text-xs text-slate-300 font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-dark-700/60 border border-dark-600 max-w-[160px]">
+            <i class="fa-regular fa-circle-user text-brand-400 flex-shrink-0"></i>
+            <span id="headerUserName" class="truncate">Guest</span>
           </span>
-          <button id="authBtn" onclick="openLoginModal()" class="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-dark-700 hover:bg-dark-600 text-slate-300 border border-dark-600 transition">
+          <button id="authBtn" onclick="openLoginModal()" class="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-dark-700 hover:bg-dark-600 text-slate-300 border border-dark-600 transition flex-shrink-0">
             Sign In
           </button>
         </div>
@@ -767,9 +767,31 @@
       ? 'http://127.0.0.1:8000'
       : '';
 
+    // Safe parsing of stored user (prevents raw JSON leaking into UI)
+    function parseStoredUser() {
+      const raw = localStorage.getItem('careerpilot_user');
+      if (!raw) return { name: 'Guest', email: '', isGuest: true };
+      try {
+        const obj = JSON.parse(raw);
+        if (obj && typeof obj === 'object') {
+          const cleanName = obj.name || obj.username || 'Candidate';
+          const cleanEmail = obj.email || '';
+          return { name: cleanName, email: cleanEmail, isGuest: false };
+        }
+      } catch (e) {
+        // Plain string
+      }
+      return {
+        name: raw,
+        email: '',
+        isGuest: (raw === 'Guest' || !raw)
+      };
+    }
+
     // State Store
     let appState = {
-      user: localStorage.getItem('careerpilot_user') || 'Guest',
+      user: 'Guest',
+      userEmail: '',
       profile: null,
       gaps: null,
       jobs: [],
@@ -783,15 +805,33 @@
 
     // User Authentication Logic
     function updateAuthUI() {
-      const name = appState.user || 'Guest';
-      document.getElementById('headerUserName').textContent = name;
+      const userInfo = parseStoredUser();
+      const name = userInfo.name || 'Guest';
+      appState.user = name;
+      appState.userEmail = userInfo.email || '';
+
+      // Clean up localStorage to keep only clean name string, not raw JSON
+      localStorage.setItem('careerpilot_user', name);
+
+      const headerNameEl = document.getElementById('headerUserName');
+      if (headerNameEl) {
+        headerNameEl.textContent = name;
+        headerNameEl.title = name;
+      }
+
       const authBtn = document.getElementById('authBtn');
-      if (name !== 'Guest') {
+      if (!userInfo.isGuest && name !== 'Guest') {
         authBtn.textContent = 'Log Out';
         authBtn.onclick = handleLogout;
         const nameInput = document.getElementById('candidateNameInput');
-        if (nameInput && (!nameInput.value || nameInput.value === 'Ananya Sharma')) {
+        if (nameInput) {
           nameInput.value = name;
+        }
+        if (userInfo.email) {
+          const emailInput = document.getElementById('candidateEmailInput');
+          if (emailInput) {
+            emailInput.value = userInfo.email;
+          }
         }
       } else {
         authBtn.textContent = 'Sign In';
@@ -814,28 +854,33 @@
         appState.user = username;
         localStorage.setItem('careerpilot_user', username);
         const nameInput = document.getElementById('candidateNameInput');
-        if (nameInput && (!nameInput.value || nameInput.value === 'Ananya Sharma')) {
+        if (nameInput) {
           nameInput.value = username;
         }
         updateAuthUI();
         closeLoginModal();
-        showBanner(`Signed in successfully as ${username}!`, "success");
+        runAssessmentPipeline();
+        showBanner(`Welcome back, ${username}! Profile updated.`, "success");
       }
     }
 
     function continueAsGuest() {
       appState.user = 'Guest';
+      appState.userEmail = '';
       localStorage.setItem('careerpilot_user', 'Guest');
       updateAuthUI();
       closeLoginModal();
+      loadSampleProfile();
       showBanner("Continuing as Guest. All features are fully accessible!", "info");
     }
 
     function handleLogout() {
       appState.user = 'Guest';
-      localStorage.removeItem('careerpilot_user');
+      appState.userEmail = '';
+      localStorage.setItem('careerpilot_user', 'Guest');
       updateAuthUI();
-      showBanner("Logged out successfully.", "info");
+      loadSampleProfile();
+      showBanner("Logged out successfully. Switched to guest mode.", "info");
     }
 
     // Tab Navigation
@@ -934,8 +979,17 @@
         await runAssessmentPipeline();
       });
 
-      // Auto load initial demo profile on first view
-      loadSampleProfile();
+      // Auto load profile: if candidate is logged in, load their profile; otherwise load demo profile
+      const userInfo = parseStoredUser();
+      if (!userInfo.isGuest && userInfo.name && userInfo.name !== 'Guest') {
+        document.getElementById('candidateNameInput').value = userInfo.name;
+        if (userInfo.email) {
+          document.getElementById('candidateEmailInput').value = userInfo.email;
+        }
+        await runAssessmentPipeline();
+      } else {
+        await loadSampleProfile();
+      }
     });
 
     function populateJobSelects() {
