@@ -27,8 +27,11 @@ class GapLearningAgent:
 
         # 1. Fetch all JDs relevant to domain
         all_jds = await db.find("jobs")
-        domain_jds = [j for j in all_jds if target_domain.lower() in j.get("domain", "").lower()]
-        active_jds = domain_jds if domain_jds else all_jds
+        if target_domain.lower() == "all":
+            active_jds = all_jds
+        else:
+            domain_jds = [j for j in all_jds if target_domain.lower() in j.get("domain", "").lower()]
+            active_jds = domain_jds if domain_jds else all_jds
         total_jds = len(active_jds) or 1
 
         # 2. Count empirical skill frequency across target postings
@@ -106,3 +109,4 @@ class GapLearningAgent:
         return result
 
 gap_learning_agent = GapLearningAgent()
+

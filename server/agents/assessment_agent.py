@@ -42,9 +42,12 @@ class AssessmentAgent:
 
         # 3. Retrieve target JDs from database
         all_jds = await db.find("jobs")
-        # Filter by domain if matching JDs exist, else take all
-        filtered_jds = [j for j in all_jds if target_domain.lower() in j.get("domain", "").lower()]
-        target_jds = filtered_jds if filtered_jds else all_jds
+        # Filter by domain if not "All", else take all JDs
+        if target_domain.lower() == "all":
+            target_jds = all_jds
+        else:
+            filtered_jds = [j for j in all_jds if target_domain.lower() in j.get("domain", "").lower()]
+            target_jds = filtered_jds if filtered_jds else all_jds
 
         # 4. Benchmark against target JDs
         benchmark_results = []
@@ -99,3 +102,4 @@ class AssessmentAgent:
         return profile_data
 
 assessment_agent = AssessmentAgent()
+
