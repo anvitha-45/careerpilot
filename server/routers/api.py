@@ -131,8 +131,10 @@ async def run_tailoring_and_staging(req: TailorRequest):
 @router.get("/applications")
 async def get_applications(email: Optional[str] = None):
     """Retrieve list of candidate's submitted / staged applications for the tracking dashboard."""
-    query = {"email": email} if email else {}
-    apps = await db.find("applications", query)
+    apps = await db.find("applications")
+    if email:
+        target = email.lower().strip()
+        apps = [a for a in apps if a.get("email", "").lower().strip() == target]
     return {"applications": apps}
 
 @router.post("/applications/confirm")

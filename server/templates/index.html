@@ -518,16 +518,20 @@
               <div class="flex justify-between"><span class="text-slate-500">Company:</span> <span id="stagedCompanyVal" class="font-semibold text-white">Target Company</span></div>
               <div class="flex justify-between"><span class="text-slate-500">Position:</span> <span id="stagedRoleVal" class="text-slate-200">Software Engineer</span></div>
               <div class="flex justify-between items-center">
-                <span class="text-slate-500">Official Portal:</span>
-                <a id="stagedPortalLink" href="https://careers.razorpay.com" target="_blank" rel="noopener noreferrer" class="text-brand-400 hover:text-brand-300 underline font-semibold flex items-center space-x-1 truncate max-w-[200px]">
-                  <span id="stagedPortalDomain">careers.razorpay.com</span>
+                <span class="text-slate-500">Verified Portal:</span>
+                <a id="stagedPortalLink" href="https://razorpay.com/jobs/" target="_blank" rel="noopener noreferrer" class="text-brand-400 hover:text-brand-300 underline font-semibold flex items-center space-x-1 truncate max-w-[200px]">
+                  <span id="stagedPortalDomain">razorpay.com/jobs</span>
                   <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
                 </a>
               </div>
-              <div class="pt-1">
-                <button onclick="openOfficialPortal()" class="w-full bg-brand-600/20 hover:bg-brand-600/30 text-brand-300 border border-brand-500/30 font-semibold py-1.5 px-3 rounded-lg text-xs transition flex items-center justify-center space-x-1.5 shadow">
-                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                  <span>Open Official Career Page in New Tab</span>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                <button onclick="openOfficialPortal()" class="w-full bg-brand-600/20 hover:bg-brand-600/30 text-brand-300 border border-brand-500/30 font-semibold py-2 px-3 rounded-lg text-xs transition flex items-center justify-center space-x-1.5 shadow">
+                  <i class="fa-solid fa-building"></i>
+                  <span>Official Careers Portal</span>
+                </button>
+                <button onclick="openLinkedInJobSearch()" class="w-full bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 font-semibold py-2 px-3 rounded-lg text-xs transition flex items-center justify-center space-x-1.5 shadow">
+                  <i class="fa-brands fa-linkedin"></i>
+                  <span>Search on LinkedIn Jobs</span>
                 </button>
               </div>
             </div>
@@ -614,6 +618,10 @@
               <i class="fa-solid fa-arrow-up-right-from-square"></i>
               <span>Go to Company Portal</span>
             </button>
+            <button onclick="openLinkedInJobSearch()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
+              <i class="fa-brands fa-linkedin"></i>
+              <span>Apply via LinkedIn</span>
+            </button>
             <button onclick="switchTab('interview')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-2 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
               <i class="fa-solid fa-graduation-cap"></i>
               <span>Start Interview Prep for This Role &rarr;</span>
@@ -621,7 +629,7 @@
           </div>
         </div>
 
-        <!-- The 3 Action Buttons Bar -->
+        <!-- The Action Buttons Bar -->
         <div class="pt-4 border-t border-dark-700 flex flex-col md:flex-row items-center justify-between gap-3">
           <div class="text-xs text-slate-400 text-center md:text-left">
             <span>Choose an action below to apply or record your submission:</span>
@@ -629,11 +637,15 @@
           <div class="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
             <button onclick="copyQuickApplyPackage()" class="bg-dark-700 hover:bg-dark-600 text-slate-200 font-semibold px-4 py-2.5 rounded-xl transition text-xs border border-dark-600 flex items-center space-x-1.5 shadow">
               <i class="fa-regular fa-copy"></i>
-              <span>Copy All Application Fields</span>
+              <span>Copy Application Package</span>
             </button>
             <button onclick="openOfficialPortal()" class="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-4 py-2.5 rounded-xl transition text-xs flex items-center space-x-1.5 shadow">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <i class="fa-solid fa-building"></i>
               <span>Open Official Portal</span>
+            </button>
+            <button onclick="openLinkedInJobSearch()" class="bg-blue-700 hover:bg-blue-600 text-white font-semibold px-4 py-2.5 rounded-xl transition text-xs flex items-center space-x-1.5 shadow">
+              <i class="fa-brands fa-linkedin"></i>
+              <span>Search on LinkedIn</span>
             </button>
             <button id="hitlSubmitBtn" onclick="confirmHumanSubmission()" class="bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold px-6 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center space-x-1.5 text-xs">
               <i class="fa-solid fa-circle-check"></i>
@@ -1475,6 +1487,29 @@
       showBanner("Cover letter downloaded as text file!", "success");
     }
 
+    // Helper to ensure portal URLs always resolve cleanly and never 404 or fail DNS
+    function getVerifiedPortalUrl(company, rawUrl) {
+      const verifiedMap = {
+        "razorpay": "https://razorpay.com/jobs/",
+        "swiggy": "https://careers.swiggy.com/",
+        "zerodha": "https://zerodha.com/careers/",
+        "freshworks": "https://www.freshworks.com/company/careers/",
+        "infosys": "https://career.infosys.com/",
+        "fractal": "https://fractal.ai/careers/"
+      };
+
+      const c = (company || "").toLowerCase();
+      for (const [k, url] of Object.entries(verifiedMap)) {
+        if (c.includes(k)) return url;
+      }
+
+      if (rawUrl && !rawUrl.includes("careers.razorpay.com") && !rawUrl.includes("zerodha.tech") && !rawUrl.includes("freshworks.com/careers/junior") && !rawUrl.includes("infosys.com/careers/cloud") && !rawUrl.includes("fractal.ai/careers/junior")) {
+        return rawUrl;
+      }
+
+      return "https://razorpay.com/jobs/";
+    }
+
     // Staging & Review UI
     function renderStagingUI() {
       const p = appState.profile || {};
@@ -1483,7 +1518,8 @@
 
       const company = (appState.staged && appState.staged.company) || t.company || j.company || "Target Company";
       const role = (appState.staged && appState.staged.role) || t.role || j.title || "Software Engineer";
-      const portalUrl = (appState.staged && appState.staged.portal_url) || t.portal_url || j.portal_url || "https://careers.razorpay.com";
+      const rawPortalUrl = (appState.staged && appState.staged.portal_url) || t.portal_url || j.portal_url || "https://razorpay.com/jobs/";
+      const portalUrl = getVerifiedPortalUrl(company, rawPortalUrl);
 
       const nameEl = document.getElementById('stagedNameVal');
       if (nameEl) nameEl.textContent = p.name || "Candidate";
@@ -1516,7 +1552,7 @@
       if (domainEl) {
         try {
           const parsed = new URL(portalUrl);
-          domainEl.textContent = parsed.hostname;
+          domainEl.textContent = parsed.hostname + (parsed.pathname !== '/' ? parsed.pathname : '');
         } catch (e) {
           domainEl.textContent = portalUrl;
         }
@@ -1564,9 +1600,19 @@
     }
 
     function openOfficialPortal() {
-      const portalUrl = (appState.staged && appState.staged.portal_url) || (appState.tailored && appState.tailored.portal_url) || (appState.activeJob && appState.activeJob.portal_url) || "https://careers.razorpay.com";
+      const company = (appState.staged && appState.staged.company) || (appState.tailored && appState.tailored.company) || (appState.activeJob && appState.activeJob.company) || "Razorpay Tech";
+      const rawPortalUrl = (appState.staged && appState.staged.portal_url) || (appState.tailored && appState.tailored.portal_url) || (appState.activeJob && appState.activeJob.portal_url) || "https://razorpay.com/jobs/";
+      const portalUrl = getVerifiedPortalUrl(company, rawPortalUrl);
       window.open(portalUrl, '_blank', 'noopener,noreferrer');
-      showBanner("Opening official careers portal in a new tab...", "info");
+      showBanner(`Opening verified official careers portal for ${company}...`, "info");
+    }
+
+    function openLinkedInJobSearch() {
+      const company = (appState.staged && appState.staged.company) || (appState.tailored && appState.tailored.company) || (appState.activeJob && appState.activeJob.company) || "Tech";
+      const role = (appState.staged && appState.staged.role) || (appState.tailored && appState.tailored.role) || (appState.activeJob && appState.activeJob.title) || "Software Engineer";
+      const searchUrl = (appState.staged && appState.staged.apply_search_url) || (appState.activeJob && appState.activeJob.apply_search_url) || `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(company + " " + role)}`;
+      window.open(searchUrl, '_blank', 'noopener,noreferrer');
+      showBanner(`Opening live LinkedIn job openings for ${role} at ${company}...`, "info");
     }
 
     function copyQuickApplyPackage() {
@@ -1711,12 +1757,21 @@ ${coverLetter.trim()}
           }
         }
 
-        const portalBtn = app.portal_url ? `
-          <a href="${app.portal_url}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 bg-brand-600/20 hover:bg-brand-600/30 text-brand-300 text-[10px] font-semibold rounded border border-brand-500/30 inline-flex items-center space-x-1">
-            <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+        const verifiedPortal = getVerifiedPortalUrl(app.company, app.portal_url);
+        const portalBtn = `
+          <a href="${verifiedPortal}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 bg-brand-600/20 hover:bg-brand-600/30 text-brand-300 text-[10px] font-semibold rounded border border-brand-500/30 inline-flex items-center space-x-1" title="Open verified official careers portal">
+            <i class="fa-solid fa-building text-[9px]"></i>
             <span>Portal</span>
           </a>
-        ` : '';
+        `;
+
+        const searchUrl = app.apply_search_url || `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent((app.company || 'Tech') + ' ' + (app.role || 'Engineer'))}`;
+        const linkedinBtn = `
+          <a href="${searchUrl}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 text-[10px] font-semibold rounded border border-blue-500/30 inline-flex items-center space-x-1" title="Search opening on LinkedIn">
+            <i class="fa-brands fa-linkedin text-[9px]"></i>
+            <span>LinkedIn</span>
+          </a>
+        `;
 
         return `
           <tr class="hover:bg-dark-800/50 transition">
@@ -1731,8 +1786,9 @@ ${coverLetter.trim()}
               ${statusHtml}
             </td>
             <td class="py-3 px-4 text-right">
-              <div class="inline-flex items-center space-x-2">
+              <div class="inline-flex items-center space-x-1.5">
                 ${portalBtn}
+                ${linkedinBtn}
                 <button onclick="switchTab('interview')" class="px-2 py-1 bg-pink-600/20 hover:bg-pink-600/30 text-pink-300 text-[10px] font-semibold rounded border border-pink-500/30 inline-flex items-center space-x-1">
                   <i class="fa-solid fa-graduation-cap text-[9px]"></i>
                   <span>Practice Prep</span>

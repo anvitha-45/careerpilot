@@ -10,7 +10,8 @@
     "description": "We are seeking a Junior Backend Engineer passionate about distributed systems. You will build high-throughput REST APIs, optimize database queries, and integrate message queues.",
     "required_skills": ["Python", "FastAPI", "PostgreSQL", "Docker", "Git", "REST APIs", "Redis"],
     "preferred_skills": ["Kafka", "AWS", "Celery", "Microservices", "Unit Testing"],
-    "portal_url": "https://careers.razorpay.com/jobs/backend-jr-01"
+    "portal_url": "https://razorpay.com/jobs/",
+    "apply_search_url": "https://www.linkedin.com/jobs/search/?keywords=Razorpay+Junior+Backend+Engineer"
   },
   {
     "id": "jd-002",
@@ -23,7 +24,8 @@
     "description": "Looking for entry-level Software Engineers to join our Logistics & Order Management team. Strong fundamentals in Java, Object-Oriented Design, and Multi-threading required.",
     "required_skills": ["Java", "Spring Boot", "MySQL", "Data Structures", "Algorithms", "Git"],
     "preferred_skills": ["Kafka", "Docker", "Kubernetes", "Redis", "Distributed Systems"],
-    "portal_url": "https://careers.swiggy.com/jobs/swe-backend-java"
+    "portal_url": "https://careers.swiggy.com/",
+    "apply_search_url": "https://www.linkedin.com/jobs/search/?keywords=Swiggy+Software+Engineer+Backend"
   },
   {
     "id": "jd-003",
@@ -36,7 +38,8 @@
     "description": "Work across our trading infrastructure and customer web interfaces. We value engineers with clean coding practices, curiosity for performance, and strong systems fundamentals.",
     "required_skills": ["React", "JavaScript", "TypeScript", "Python", "PostgreSQL", "HTML5", "CSS3", "Git"],
     "preferred_skills": ["Go", "Docker", "Tailwind CSS", "WebSockets", "Linux"],
-    "portal_url": "https://zerodha.tech/careers/fullstack-assoc"
+    "portal_url": "https://zerodha.com/careers/",
+    "apply_search_url": "https://www.linkedin.com/jobs/search/?keywords=Zerodha+Full+Stack+Developer"
   },
   {
     "id": "jd-004",
@@ -49,7 +52,8 @@
     "description": "Join our design systems and web platforms team. Create responsive, accessible web applications with modern React, TypeScript, and state management libraries.",
     "required_skills": ["React", "TypeScript", "JavaScript", "HTML5", "CSS3", "Tailwind CSS", "Git"],
     "preferred_skills": ["Next.js", "Redux", "Jest", "Web Performance", "REST APIs"],
-    "portal_url": "https://freshworks.com/careers/junior-frontend-dev"
+    "portal_url": "https://www.freshworks.com/company/careers/",
+    "apply_search_url": "https://www.linkedin.com/jobs/search/?keywords=Freshworks+Junior+Frontend+Engineer"
   },
   {
     "id": "jd-005",
@@ -62,7 +66,8 @@
     "description": "Build automated CI/CD pipelines, containerize backend microservices, and manage basic cloud resources on AWS and Azure.",
     "required_skills": ["Linux", "Docker", "Git", "Python", "Bash", "Networking"],
     "preferred_skills": ["Kubernetes", "AWS", "Terraform", "CI/CD", "Prometheus"],
-    "portal_url": "https://infosys.com/careers/cloud-trainee"
+    "portal_url": "https://career.infosys.com/",
+    "apply_search_url": "https://www.linkedin.com/jobs/search/?keywords=Infosys+Cloud+DevOps"
   },
   {
     "id": "jd-006",
@@ -75,6 +80,7 @@
     "description": "Develop automated data ingestion pipelines, perform exploratory data analysis, and train predictive machine learning models in production.",
     "required_skills": ["Python", "SQL", "Pandas", "NumPy", "Scikit-Learn", "Git"],
     "preferred_skills": ["PyTorch", "FastAPI", "Docker", "Apache Spark", "MLflow"],
-    "portal_url": "https://fractal.ai/careers/junior-ml-engineer"
+    "portal_url": "https://fractal.ai/careers/",
+    "apply_search_url": "https://www.linkedin.com/jobs/search/?keywords=Fractal+Analytics+Junior+Data+ML+Engineer"
   }
 ]

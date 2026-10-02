@@ -20,7 +20,8 @@ class ApplicationAgent:
         target_jd: Dict[str, Any],
         tailored_data: Dict[str, Any]
     ) -> Dict[str, Any]:
-        portal_url = target_jd.get("portal_url", "https://careers.razorpay.com/jobs/backend-jr-01")
+        portal_url = target_jd.get("portal_url", "https://razorpay.com/jobs/")
+        apply_search_url = target_jd.get("apply_search_url", "")
         company = target_jd.get("company", "Target Company")
         role = target_jd.get("title", "Software Engineer")
         email = candidate_profile.get("email", "candidate@careerpilot.ai")
@@ -73,9 +74,12 @@ class ApplicationAgent:
         staging_payload = {
             "application_id": f"app_{target_jd.get('id', '001')}",
             "job_id": target_jd.get("id"),
+            "email": email.lower().strip() if email else "candidate@careerpilot.ai",
+            "candidate_name": name,
             "company": company,
             "role": role,
             "portal_url": portal_url,
+            "apply_search_url": apply_search_url or f"https://www.linkedin.com/jobs/search/?keywords={company}+{role}".replace(" ", "+"),
             "staged_at": datetime.utcnow().isoformat(),
             "status": "STAGED_AWAITING_APPROVAL",
             "staged_fields": staged_fields,
