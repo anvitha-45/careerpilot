@@ -58,26 +58,94 @@ def extract_text_from_pdf(pdf_bytes: bytes) -> str:
     return text_content.strip()
 
 def parse_contact_info(text: str) -> Dict[str, str]:
-    """Extract email, phone, github, and linkedin links via regex."""
+    """
+    Extract candidate full name, email, phone, github handle, leetcode handle,
+    and linkedin handle via robust regex and heuristics.
+    """
+    # 1. Email Extraction
     email_match = re.search(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+", text)
-    phone_match = re.search(r"(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}", text)
-    github_match = re.search(r"(?:github\.com/)([a-zA-Z0-9-]+)", text, re.IGNORECASE)
-    linkedin_match = re.search(r"(?:linkedin\.com/in/)([a-zA-Z0-9-_]+)", text, re.IGNORECASE)
+    email = email_match.group(0).strip() if email_match else ""
 
-    # Heuristic for name: first non-empty line with letters
+    # 2. Phone Extraction (Supports Indian mobile numbers, +91, USA/international)
+    phone_match = re.search(
+        r"(?:\+?91[\-\s]?)?[6-9]\d{4}[\s\-]?\d{5}|\+?\d{1,3}[-.\s]?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}",
+        text
+    )
+    phone = phone_match.group(0).strip() if phone_match else ""
+
+    # 3. GitHub Handle Extraction
+    github_handle = ""
+    gh_match = re.search(r"(?:https?://)?(?:www\.)?github\.com/([a-zA-Z0-9_-]+)", text, re.IGNORECASE)
+    if not gh_match:
+        gh_match = re.search(r"(?:github\s*:\s*@?)([a-zA-Z0-9_-]+)", text, re.IGNORECASE)
+    if gh_match:
+        cand = gh_match.group(1).strip()
+        if cand.lower() not in ("features", "explore", "topics", "trending", "http", "https", "developer", "none"):
+            github_handle = cand
+
+    # 4. LeetCode Handle Extraction
+    leetcode_handle = ""
+    lc_match = re.search(r"(?:https?://)?(?:www\.)?leetcode\.com/(?:u/)?([a-zA-Z0-9_-]+)", text, re.IGNORECASE)
+    if not lc_match:
+        lc_match = re.search(r"(?:leetcode\s*:\s*@?)([a-zA-Z0-9_-]+)", text, re.IGNORECASE)
+    if lc_match:
+        cand = lc_match.group(1).strip()
+        if cand.lower() not in ("problems", "contest", "explore", "http", "https", "developer", "none"):
+            leetcode_handle = cand
+
+    # 5. LinkedIn Handle Extraction
+    linkedin_handle = ""
+    li_match = re.search(r"(?:https?://)?(?:www\.)?linkedin\.com/in/([a-zA-Z0-9_-]+)", text, re.IGNORECASE)
+    if not li_match:
+        li_match = re.search(r"(?:linkedin\s*:\s*@?)([a-zA-Z0-9_-]+)", text, re.IGNORECASE)
+    if li_match:
+        cand = li_match.group(1).strip()
+        if cand.lower() not in ("http", "https", "in", "developer"):
+            linkedin_handle = cand
+
+    # 6. Candidate Name Extraction Heuristic
     lines = [line.strip() for line in text.splitlines() if line.strip()]
+    ignore_header_keywords = {
+        "resume", "curriculum vitae", "cv", "profile", "software engineer",
+        "developer", "contact", "education", "experience", "projects", "skills",
+        "summary", "objective", "certifications", "phone", "email", "address"
+    }
+
     guessed_name = "Candidate"
-    for line in lines[:5]:
-        if 2 <= len(line.split()) <= 4 and re.match(r"^[A-Za-z\s.'-]+$", line):
-            guessed_name = line
-            break
+    for line in lines[:8]:
+        # Handle "Name: First Last"
+        name_prefix_match = re.search(r"^name\s*:\s*([A-Za-z\s.'-]+)", line, re.IGNORECASE)
+        if name_prefix_match:
+            candidate_val = name_prefix_match.group(1).strip()
+            if 2 <= len(candidate_val.split()) <= 4:
+                guessed_name = candidate_val.title() if candidate_val.isupper() else candidate_val
+                break
+
+        # Ignore lines containing email, URL, or phone
+        if "@" in line or "http" in line.lower() or "github" in line.lower() or "linkedin" in line.lower() or "leetcode" in line.lower():
+            # Check if name is the first part before a delimiter like '|' or '•'
+            parts = re.split(r"[|,•–\t]", line)
+            first_part = parts[0].strip()
+            if first_part.lower() not in ignore_header_keywords and 2 <= len(first_part.split()) <= 4 and re.match(r"^[A-Za-z\s.'-]+$", first_part):
+                guessed_name = first_part.title() if first_part.isupper() else first_part
+                break
+            continue
+
+        # Check clean standalone lines
+        cleaned_line = re.sub(r"^[•*–-]\s*", "", line).strip()
+        words = cleaned_line.split()
+        if 2 <= len(words) <= 4 and cleaned_line.lower() not in ignore_header_keywords and re.match(r"^[A-Za-z\s.'-]+$", cleaned_line):
+            if not any(w.lower() in ignore_header_keywords for w in words):
+                guessed_name = cleaned_line.title() if cleaned_line.isupper() else cleaned_line
+                break
 
     return {
         "name": guessed_name,
-        "email": email_match.group(0) if email_match else "",
-        "phone": phone_match.group(0) if phone_match else "",
-        "github_handle": github_match.group(1) if github_match else "",
-        "linkedin_handle": linkedin_match.group(1) if linkedin_match else ""
+        "email": email,
+        "phone": phone,
+        "github_handle": github_handle,
+        "leetcode_handle": leetcode_handle,
+        "linkedin_handle": linkedin_handle
     }
 
 def extract_skills_from_text(text: str) -> List[str]:
@@ -184,6 +252,7 @@ def parse_full_resume(text_or_bytes: Any) -> Dict[str, Any]:
         "email": contact["email"],
         "phone": contact["phone"],
         "github_handle": contact["github_handle"],
+        "leetcode_handle": contact["leetcode_handle"],
         "linkedin_handle": contact["linkedin_handle"],
         "skills": skills,
         "projects": projects

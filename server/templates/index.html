@@ -179,26 +179,58 @@
 
           <!-- Resume Upload Zone -->
           <div class="space-y-2">
-            <label class="text-xs font-semibold text-slate-300">Your Resume (PDF or Text)</label>
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-300">Your Resume (PDF or Text)</label>
+              <span class="text-[11px] text-emerald-400 font-medium flex items-center space-x-1">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Auto-fills name & links</span>
+              </span>
+            </div>
             <div id="dropzone" class="border-2 border-dashed border-dark-600 hover:border-brand-500 rounded-xl p-4 text-center cursor-pointer transition bg-dark-900/40 relative">
               <input type="file" id="resumeFileInput" accept=".pdf,.txt,.docx" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
               <div class="space-y-1">
                 <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400"></i>
                 <p id="fileLabel" class="text-xs text-slate-300 font-medium">Click to upload or drag & drop your Resume (.PDF)</p>
-                <p class="text-[10px] text-slate-500">Upload your resume to see your instant match score</p>
+                <p class="text-[10px] text-slate-500">Upload to automatically extract your Name, Email, GitHub & LeetCode</p>
               </div>
             </div>
+
+            <!-- Auto-Extraction Live Status Alert -->
+            <div id="extractionStatusBox" class="hidden text-[11px] p-2.5 rounded-lg border transition flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <i id="extractionStatusIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+                <span id="extractionStatusText">Auto-extracting details...</span>
+              </div>
+              <span class="text-[10px] uppercase font-bold text-emerald-400/80 tracking-wider">AI Parser</span>
+            </div>
+
+            <!-- Direct Paste Resume Text Option -->
+            <details class="text-xs text-slate-400 group cursor-pointer pt-0.5">
+              <summary class="text-brand-400 hover:text-brand-300 select-none flex items-center space-x-1">
+                <i class="fa-solid fa-align-left text-[11px]"></i>
+                <span>Or paste resume text directly</span>
+              </summary>
+              <div class="pt-2">
+                <textarea id="resumeTextInput" rows="3" placeholder="Paste resume text here (Name, Email, GitHub, LeetCode, Projects, Skills) to auto-extract..." class="w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none" oninput="debounceAutoExtractText()"></textarea>
+              </div>
+            </details>
           </div>
 
           <!-- Candidate Contact Info -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="text-xs font-semibold text-slate-300">Your Full Name</label>
-              <input type="text" id="candidateNameInput" placeholder="e.g. Ananya Sharma" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Profile Details</span>
+              <span class="text-[10px] text-slate-500">Auto-extracted or editable</span>
             </div>
-            <div>
-              <label class="text-xs font-semibold text-slate-300">Email Address</label>
-              <input type="email" id="candidateEmailInput" placeholder="e.g. ananya@example.com" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-300">Your Full Name</label>
+                <input type="text" id="candidateNameInput" placeholder="e.g. Ananya Sharma" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-300">Email Address</label>
+                <input type="email" id="candidateEmailInput" placeholder="e.g. ananya@example.com" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition">
+              </div>
             </div>
           </div>
 
@@ -209,14 +241,14 @@
                 <i class="fa-brands fa-github text-slate-400"></i>
                 <span>GitHub Username</span>
               </label>
-              <input type="text" id="githubHandleInput" placeholder="e.g. torvalds" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none">
+              <input type="text" id="githubHandleInput" placeholder="e.g. torvalds" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition">
             </div>
             <div>
               <label class="text-xs font-semibold text-slate-300 flex items-center space-x-1.5">
                 <i class="fa-solid fa-code text-amber-500"></i>
                 <span>LeetCode Username</span>
               </label>
-              <input type="text" id="leetcodeHandleInput" placeholder="e.g. neetcode" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none">
+              <input type="text" id="leetcodeHandleInput" placeholder="e.g. neetcode" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition">
             </div>
           </div>
 
@@ -1021,7 +1053,7 @@
     window.addEventListener('DOMContentLoaded', async () => {
       updateAuthUI();
 
-      // File upload & Dropzone listeners
+      // File upload & Dropzone listeners with automatic extraction
       const fileInput = document.getElementById('resumeFileInput');
       const dropzone = document.getElementById('dropzone');
 
@@ -1033,7 +1065,8 @@
               <span class="text-emerald-400 font-bold"><i class="fa-solid fa-file-pdf"></i> ${file.name}</span>
               <span class="text-slate-400 text-[10px]">(${(file.size / 1024).toFixed(1)} KB)</span>
             `;
-            showBanner(`Resume selected: ${file.name}`, 'info');
+            showBanner(`Resume selected: ${file.name}. Reading details...`, 'info');
+            autoExtractFromResumeFile(file);
           }
         });
       }
@@ -1046,11 +1079,26 @@
           });
         });
 
-        ['dragleave', 'drop'].forEach(evName => {
+        ['dragleave'].forEach(evName => {
           dropzone.addEventListener(evName, (e) => {
             e.preventDefault();
             dropzone.classList.remove('border-brand-500', 'bg-brand-500/10');
           });
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('border-brand-500', 'bg-brand-500/10');
+          if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            const file = e.dataTransfer.files[0];
+            document.getElementById('fileLabel').innerHTML = `
+              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-file-pdf"></i> ${file.name}</span>
+              <span class="text-slate-400 text-[10px]">(${(file.size / 1024).toFixed(1)} KB)</span>
+            `;
+            showBanner(`Resume dropped: ${file.name}. Reading details...`, 'info');
+            autoExtractFromResumeFile(file);
+          }
         });
       }
 
@@ -1131,14 +1179,128 @@
       await switchActiveJob(selId);
     }
 
+    // Automatic Resume Entity Extraction (Name, Contact, GitHub, LeetCode)
+    async function autoExtractFromResumeFile(file) {
+      const box = document.getElementById('extractionStatusBox');
+      const textEl = document.getElementById('extractionStatusText');
+      const iconEl = document.getElementById('extractionStatusIcon');
+
+      if (box && textEl) {
+        box.classList.remove('hidden');
+        box.className = "text-[11px] p-2.5 rounded-lg border bg-brand-500/10 border-brand-500/30 text-brand-300 flex items-center justify-between";
+        if (iconEl) iconEl.className = "fa-solid fa-circle-notch fa-spin text-brand-400";
+        textEl.textContent = "AI parsing resume to extract Name, Email, GitHub & LeetCode...";
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append('resume_file', file);
+        const resp = await fetch(`${API_BASE}/api/resume/parse`, {
+          method: 'POST',
+          body: formData
+        });
+        const res = await resp.json();
+        if (res.success && res.data) {
+          applyExtractedData(res.data);
+        }
+      } catch (err) {
+        console.error("Auto extraction error:", err);
+      }
+    }
+
+    let extractTextTimeout = null;
+    function debounceAutoExtractText() {
+      clearTimeout(extractTextTimeout);
+      extractTextTimeout = setTimeout(async () => {
+        const text = (document.getElementById('resumeTextInput')?.value || '').trim();
+        if (text.length > 25) {
+          const box = document.getElementById('extractionStatusBox');
+          const textEl = document.getElementById('extractionStatusText');
+          const iconEl = document.getElementById('extractionStatusIcon');
+          if (box && textEl) {
+            box.classList.remove('hidden');
+            box.className = "text-[11px] p-2.5 rounded-lg border bg-brand-500/10 border-brand-500/30 text-brand-300 flex items-center justify-between";
+            if (iconEl) iconEl.className = "fa-solid fa-circle-notch fa-spin text-brand-400";
+            textEl.textContent = "Extracting contact & coding profiles from text...";
+          }
+
+          try {
+            const formData = new FormData();
+            formData.append('resume_text', text);
+            const resp = await fetch(`${API_BASE}/api/resume/parse`, {
+              method: 'POST',
+              body: formData
+            });
+            const res = await resp.json();
+            if (res.success && res.data) {
+              applyExtractedData(res.data);
+            }
+          } catch (e) {
+            console.error("Text extraction error:", e);
+          }
+        }
+      }, 500);
+    }
+
+    function applyExtractedData(data) {
+      const box = document.getElementById('extractionStatusBox');
+      const textEl = document.getElementById('extractionStatusText');
+      const iconEl = document.getElementById('extractionStatusIcon');
+      const found = [];
+
+      if (data.name && data.name !== "Candidate") {
+        document.getElementById('candidateNameInput').value = data.name;
+        highlightField('candidateNameInput');
+        found.push(`Name: ${data.name}`);
+      }
+      if (data.email) {
+        document.getElementById('candidateEmailInput').value = data.email;
+        highlightField('candidateEmailInput');
+        found.push(`Email`);
+      }
+      if (data.github_handle) {
+        document.getElementById('githubHandleInput').value = data.github_handle;
+        highlightField('githubHandleInput');
+        found.push(`GitHub: @${data.github_handle}`);
+      }
+      if (data.leetcode_handle) {
+        document.getElementById('leetcodeHandleInput').value = data.leetcode_handle;
+        highlightField('leetcodeHandleInput');
+        found.push(`LeetCode: @${data.leetcode_handle}`);
+      }
+
+      if (box && textEl) {
+        box.classList.remove('hidden');
+        box.className = "text-[11px] p-2.5 rounded-lg border bg-emerald-500/10 border-emerald-500/30 text-emerald-300 flex items-center justify-between";
+        if (iconEl) iconEl.className = "fa-solid fa-circle-check text-emerald-400";
+        textEl.innerHTML = `Auto-extracted: <strong>${found.join(' • ') || 'Contact & Skills'}</strong> (${data.skills.length} skills recognized)`;
+      }
+
+      showBanner(`Extracted details from resume: ${found.join(', ') || 'Ready'}!`, "success");
+    }
+
+    function highlightField(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.add('ring-2', 'ring-emerald-500/60', 'border-emerald-500', 'bg-emerald-500/10');
+        setTimeout(() => {
+          el.classList.remove('ring-2', 'ring-emerald-500/60', 'border-emerald-500', 'bg-emerald-500/10');
+        }, 3000);
+      }
+    }
+
     function clearFormAndReset() {
       document.getElementById('candidateNameInput').value = "";
       document.getElementById('candidateEmailInput').value = "";
       document.getElementById('githubHandleInput').value = "";
       document.getElementById('leetcodeHandleInput').value = "";
       document.getElementById('resumeFileInput').value = "";
+      const textInput = document.getElementById('resumeTextInput');
+      if (textInput) textInput.value = "";
+      const box = document.getElementById('extractionStatusBox');
+      if (box) box.classList.add('hidden');
       document.getElementById('fileLabel').innerHTML = "Click to upload or drag & drop your Resume (.PDF)";
-      showBanner("Form inputs cleared. Ready for your profile.", "info");
+      showBanner("Form inputs cleared. Ready for your resume.", "info");
     }
 
     // Sample Profile Quick-Loader
@@ -1159,9 +1321,14 @@
 
       const formData = new FormData();
       const fileInput = document.getElementById('resumeFileInput');
+      const textInput = document.getElementById('resumeTextInput');
+
       if (fileInput.files.length > 0) {
         formData.append('resume_file', fileInput.files[0]);
+      } else if (textInput && textInput.value.trim()) {
+        formData.append('resume_text', textInput.value.trim());
       }
+
       formData.append('full_name', document.getElementById('candidateNameInput').value.trim());
       formData.append('email', document.getElementById('candidateEmailInput').value.trim());
       formData.append('github_handle', document.getElementById('githubHandleInput').value.trim());
@@ -1177,6 +1344,26 @@
         if (res.success) {
           appState.profile = res.data.profile;
           appState.gaps = res.data.gaps;
+
+          // Sync auto-extracted values back to form if inputs were empty
+          const prof = res.data.profile;
+          if (prof.name && prof.name !== 'Candidate' && !document.getElementById('candidateNameInput').value) {
+            document.getElementById('candidateNameInput').value = prof.name;
+            highlightField('candidateNameInput');
+          }
+          if (prof.email && !document.getElementById('candidateEmailInput').value) {
+            document.getElementById('candidateEmailInput').value = prof.email;
+            highlightField('candidateEmailInput');
+          }
+          if (prof.github_handle && !document.getElementById('githubHandleInput').value) {
+            document.getElementById('githubHandleInput').value = prof.github_handle;
+            highlightField('githubHandleInput');
+          }
+          if (prof.leetcode_handle && !document.getElementById('leetcodeHandleInput').value) {
+            document.getElementById('leetcodeHandleInput').value = prof.leetcode_handle;
+            highlightField('leetcodeHandleInput');
+          }
+
           renderAssessmentUI();
           renderGapsUI();
           showBanner("Assessment complete: Verified skills benchmarked against live postings.", "success");

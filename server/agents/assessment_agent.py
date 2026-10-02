@@ -32,7 +32,8 @@ class AssessmentAgent:
         cand_email = email.strip() or parsed_resume.get("email") or "candidate@example.com"
         cand_phone = phone.strip() or parsed_resume.get("phone") or "+91 9876543210"
         gh_user = github_handle.strip() or parsed_resume.get("github_handle", "")
-        lc_user = leetcode_handle.strip()
+        lc_user = leetcode_handle.strip() or parsed_resume.get("leetcode_handle", "")
+        li_user = parsed_resume.get("linkedin_handle", "")
 
         # 2. Concurrently fetch verified signals from GitHub and LeetCode
         gh_task = fetch_github_profile(gh_user) if gh_user else asyncio.sleep(0, result={})
@@ -88,6 +89,7 @@ class AssessmentAgent:
             "github_stats": github_stats,
             "leetcode_handle": lc_user,
             "leetcode_stats": leetcode_stats,
+            "linkedin_handle": li_user,
             "skills": verified_skills,
             "raw_resume_text": parsed_resume["raw_text"],
             "projects": parsed_resume["projects"],

@@ -6,6 +6,7 @@ from server.database import db
 from server.agents.orchestrator import orchestrator
 from server.agents.application_agent import application_agent
 from server.agents.interview_agent import interview_agent
+from server.utils.resume_parser import parse_full_resume
 
 router = APIRouter(prefix="/api", tags=["Pipeline API"])
 
@@ -37,6 +38,46 @@ async def get_jobs():
     """Retrieve all available job descriptions for benchmarking."""
     jobs = await db.find("jobs")
     return {"jobs": jobs}
+
+@router.post("/resume/parse")
+async def parse_resume_endpoint(
+    resume_file: Optional[UploadFile] = File(None),
+    resume_text: Optional[str] = Form(None)
+):
+    """
+    Instantly extracts candidate name, contact info, GitHub, LeetCode, LinkedIn,
+    and skills from uploaded resume file or text.
+    """
+    try:
+        content = ""
+        if resume_file:
+            file_bytes = await resume_file.read()
+            if resume_file.filename.lower().endswith(".pdf"):
+                content = file_bytes
+            else:
+                content = file_bytes.decode("utf-8", errors="ignore")
+        elif resume_text and resume_text.strip():
+            content = resume_text.strip()
+        else:
+            raise HTTPException(status_code=400, detail="No resume file or text provided")
+
+        parsed = parse_full_resume(content)
+        return {
+            "success": True,
+            "data": {
+                "name": parsed.get("name", ""),
+                "email": parsed.get("email", ""),
+                "phone": parsed.get("phone", ""),
+                "github_handle": parsed.get("github_handle", ""),
+                "leetcode_handle": parsed.get("leetcode_handle", ""),
+                "linkedin_handle": parsed.get("linkedin_handle", ""),
+                "skills": parsed.get("skills", []),
+                "projects_count": len(parsed.get("projects", []))
+            }
+        }
+    except Exception as e:
+        print(f"[API] Error parsing resume: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/assess")
 async def run_assessment(
