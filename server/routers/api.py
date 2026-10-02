@@ -147,3 +147,4 @@ async def evaluate_mock_answer(req: InterviewEvalRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+

@@ -33,3 +33,4 @@ class CareerPilotState(TypedDict):
     # Interview Preparation Loop
     mock_questions: List[Dict[str, Any]]
     mock_evaluations: List[Dict[str, Any]]
+

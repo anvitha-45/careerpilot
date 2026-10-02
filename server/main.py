@@ -61,3 +61,4 @@ async def catch_all(full_path: str):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("server.main:app", host=settings.HOST, port=settings.PORT, reload=True)
+

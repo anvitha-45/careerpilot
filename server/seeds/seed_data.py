@@ -20,3 +20,4 @@ async def seed_initial_jobs():
             print("[Seed] Jobs collection already populated.")
     except Exception as e:
         print(f"[Seed] Exception during initial seeding: {e}")
+

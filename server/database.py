@@ -147,3 +147,4 @@ class DatabaseManager:
                 self._save_local_storage()
 
 db = DatabaseManager()
+
