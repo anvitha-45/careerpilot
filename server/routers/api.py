@@ -1,4 +1,6 @@
 import json
+import hashlib
+from datetime import datetime
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel
@@ -9,6 +11,30 @@ from server.agents.interview_agent import interview_agent
 from server.utils.resume_parser import parse_full_resume
 
 router = APIRouter(prefix="/api", tags=["Pipeline API"])
+
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+class AuthRegisterRequest(BaseModel):
+    username: str
+    password: str
+    name: Optional[str] = ""
+    email: Optional[str] = ""
+
+class AuthLoginRequest(BaseModel):
+    username: str
+    password: str
+
+class SaveProfileRequest(BaseModel):
+    username: str
+    email: str
+    name: Optional[str] = ""
+    phone: Optional[str] = ""
+    github_handle: Optional[str] = ""
+    leetcode_handle: Optional[str] = ""
+    linkedin_handle: Optional[str] = ""
+    skills: Optional[List[str]] = []
+    target_domain: Optional[str] = "All"
 
 class TailorRequest(BaseModel):
     email: str
@@ -206,4 +232,146 @@ async def evaluate_mock_answer(req: InterviewEvalRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/auth/register")
+async def register_user(req: AuthRegisterRequest):
+    """Registers a new user account with username and password."""
+    username = req.username.strip()
+    password = req.password.strip()
+    if not username or not password:
+        raise HTTPException(status_code=400, detail="Username and password are required.")
+    
+    if len(password) < 4:
+        raise HTTPException(status_code=400, detail="Password must be at least 4 characters long.")
+
+    # Check if username already exists
+    existing = await db.find_one("users", {"username": username})
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already exists. Please choose another or log in.")
+
+    email = (req.email or "").strip().lower()
+    if email:
+        existing_email = await db.find_one("users", {"email": email})
+        if existing_email:
+            raise HTTPException(status_code=400, detail="An account with this email already exists. Please log in.")
+
+    name = req.name.strip() if req.name and req.name.strip() else username
+    user_doc = {
+        "username": username,
+        "name": name,
+        "email": email,
+        "password_hash": hash_password(password),
+        "created_at": datetime.utcnow().isoformat()
+    }
+    await db.insert("users", user_doc)
+    
+    return {
+        "success": True,
+        "message": "Account created successfully.",
+        "user": {
+            "username": username,
+            "name": name,
+            "email": email
+        }
+    }
+
+@router.post("/auth/login")
+async def login_user(req: AuthLoginRequest):
+    """Authenticates an existing user via username/email and password."""
+    identifier = req.username.strip()
+    password = req.password.strip()
+    if not identifier or not password:
+        raise HTTPException(status_code=400, detail="Username/email and password are required.")
+
+    # Search by username or email
+    user = await db.find_one("users", {"username": identifier})
+    if not user and "@" in identifier:
+        user = await db.find_one("users", {"email": identifier.lower()})
+
+    if not user:
+        raise HTTPException(status_code=401, detail="Account not found. Please check your credentials or create an account.")
+
+    # Verify password hash
+    expected_hash = user.get("password_hash")
+    if expected_hash and expected_hash != hash_password(password):
+        if user.get("password") != password:
+            raise HTTPException(status_code=401, detail="Incorrect password. Please try again.")
+
+    return {
+        "success": True,
+        "message": "Logged in successfully.",
+        "user": {
+            "username": user["username"],
+            "name": user.get("name", user["username"]),
+            "email": user.get("email", "")
+        }
+    }
+
+@router.post("/profile/save")
+async def save_profile_endpoint(req: SaveProfileRequest):
+    """Saves candidate profile to their account in the database. Requires login."""
+    username = req.username.strip()
+    if not username or username.lower() == "guest":
+        raise HTTPException(status_code=401, detail="To save your information, you must log in or create an account.")
+
+    email = (req.email or "").strip().lower()
+    if not email:
+        raise HTTPException(status_code=400, detail="A valid email address is required to save your profile.")
+
+    profile_data = {
+        "username": username,
+        "name": req.name.strip() if req.name else username,
+        "email": email,
+        "phone": req.phone.strip() if req.phone else "",
+        "github_handle": req.github_handle.strip() if req.github_handle else "",
+        "leetcode_handle": req.leetcode_handle.strip() if req.leetcode_handle else "",
+        "linkedin_handle": req.linkedin_handle.strip() if req.linkedin_handle else "",
+        "skills": req.skills or [],
+        "target_domain": req.target_domain or "All",
+        "updated_at": datetime.utcnow().isoformat()
+    }
+
+    await db.update_one("profiles", {"email": email}, profile_data, upsert=True)
+    await db.update_one("users", {"username": username}, {
+        "name": profile_data["name"],
+        "email": email,
+        "phone": profile_data["phone"]
+    }, upsert=False)
+
+    return {
+        "success": True,
+        "message": "Profile saved successfully.",
+        "profile": profile_data
+    }
+
+@router.get("/profile")
+async def get_profile_endpoint(email: Optional[str] = None, username: Optional[str] = None):
+    """Retrieves saved profile for a user."""
+    query = {}
+    if email:
+        query["email"] = email.strip().lower()
+    elif username:
+        query["username"] = username.strip()
+    else:
+        raise HTTPException(status_code=400, detail="Email or username is required.")
+
+    profile = await db.find_one("profiles", query)
+    if not profile and username:
+        user = await db.find_one("users", {"username": username})
+        if user:
+            return {
+                "success": True,
+                "profile": {
+                    "username": user["username"],
+                    "name": user.get("name", user["username"]),
+                    "email": user.get("email", ""),
+                    "phone": user.get("phone", ""),
+                    "github_handle": "",
+                    "leetcode_handle": "",
+                    "skills": [],
+                    "target_domain": "All"
+                }
+            }
+
+    return {"success": True, "profile": profile}
 

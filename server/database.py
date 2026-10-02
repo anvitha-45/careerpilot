@@ -13,6 +13,7 @@ class DatabaseManager:
         self.is_connected = False
         # Embedded memory fallback for offline/development resilience
         self._local_store: Dict[str, List[Dict[str, Any]]] = {
+            "users": [],
             "profiles": [],
             "jobs": [],
             "applications": [],
@@ -40,6 +41,7 @@ class DatabaseManager:
             await self.db.jobs.create_index("id", unique=True)
             await self.db.applications.create_index("id", unique=True)
             await self.db.profiles.create_index("email")
+            await self.db.users.create_index("username", unique=True)
         except Exception:
             print("[Database] Local MongoDB not detected. Running seamlessly on embedded document store.")
             self.is_connected = False

@@ -112,13 +112,14 @@
         </button>
 
         <!-- User Authentication Status & Modal Trigger -->
-        <div class="flex items-center space-x-1.5 flex-shrink-0">
-          <span id="userStatusTag" class="text-xs text-slate-300 font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-dark-700/60 border border-dark-600 max-w-[160px]">
-            <i class="fa-regular fa-circle-user text-brand-400 flex-shrink-0"></i>
-            <span id="headerUserName" class="truncate">Guest</span>
-          </span>
-          <button id="authBtn" onclick="openLoginModal()" class="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-dark-700 hover:bg-dark-600 text-slate-300 border border-dark-600 transition flex-shrink-0">
-            Sign In
+        <div class="flex items-center space-x-1.5 flex-shrink-0" id="headerAuthContainer">
+          <div id="userStatusTag" class="text-xs font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 max-w-[200px]">
+            <i class="fa-solid fa-triangle-exclamation text-amber-400 flex-shrink-0"></i>
+            <span id="headerUserName" class="truncate font-semibold">Guest (Unsaved)</span>
+          </div>
+          <button id="authBtn" onclick="openAuthModal('login')" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition flex-shrink-0 flex items-center space-x-1 shadow-sm">
+            <i class="fa-solid fa-right-to-bracket text-xs"></i>
+            <span>Log In to Save</span>
           </button>
         </div>
       </div>
@@ -266,15 +267,25 @@
           </div>
 
           <!-- Actions -->
-          <div class="flex items-center space-x-2 pt-1">
-            <button id="runAssessBtn" onclick="runAssessmentPipeline()" class="flex-1 bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-brand-500/20 flex items-center justify-center space-x-2 text-xs">
-              <i class="fa-solid fa-bolt"></i>
-              <span>Check My Job Match</span>
-            </button>
-            <button onclick="clearFormAndReset()" title="Reset / Clear Inputs" class="bg-dark-700 hover:bg-dark-600 text-slate-300 px-3 py-2.5 rounded-xl transition border border-dark-600 text-xs flex items-center space-x-1">
-              <i class="fa-solid fa-rotate-left"></i>
-              <span>Reset</span>
-            </button>
+          <div class="space-y-2 pt-1">
+            <div class="flex items-center space-x-2">
+              <button id="runAssessBtn" onclick="runAssessmentPipeline()" class="flex-1 bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-brand-500/20 flex items-center justify-center space-x-2 text-xs">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Check My Job Match</span>
+              </button>
+              <button onclick="saveCandidateInfo()" id="saveInfoBtn" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 font-semibold px-3.5 py-2.5 rounded-xl transition text-xs flex items-center space-x-1.5 shadow-sm">
+                <i class="fa-solid fa-floppy-disk"></i>
+                <span>Save Info</span>
+              </button>
+              <button onclick="clearFormAndReset()" title="Reset / Clear Inputs" class="bg-dark-700 hover:bg-dark-600 text-slate-300 px-3 py-2.5 rounded-xl transition border border-dark-600 text-xs flex items-center space-x-1">
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>Reset</span>
+              </button>
+            </div>
+            <div id="saveInfoNotice" class="text-[11px] text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-lg p-2 flex items-center space-x-1.5">
+              <i class="fa-solid fa-lock text-amber-400"></i>
+              <span>To save your info, please log in or create an account.</span>
+            </div>
           </div>
         </div>
 
@@ -518,8 +529,19 @@
           <i class="fa-solid fa-shield-check text-blue-400 text-lg mt-0.5 shrink-0"></i>
           <div>
             <strong class="font-bold text-blue-300">How Job Submission Works:</strong>
-            CareerPilot prepares your tailored resume, custom cover letter, and pre-filled application package. Use <strong class="text-white">"Open Official Application Portal"</strong> to visit the employer's official careers page directly, and click <strong class="text-white">"Confirm & Log Application"</strong> to save your submission and unlock personalized interview prep.
+            CareerPilot prepares your tailored resume, custom cover letter, and pre-filled application package. Use <strong class="text-white">"Open Official Application Portal"</strong> to visit the employer's official careers page directly, and click <strong class="text-white">"Confirm & Mark as Submitted"</strong> to save your submission and unlock personalized interview prep.
           </div>
+        </div>
+
+        <!-- Auth Save Status Notice for Application Submissions -->
+        <div id="stagingAuthNotice" class="text-xs p-3.5 rounded-xl border flex items-center justify-between transition bg-amber-500/10 border-amber-500/30 text-amber-200">
+          <div class="flex items-center space-x-2.5">
+            <i id="stagingAuthIcon" class="fa-solid fa-lock text-amber-400 text-base shrink-0"></i>
+            <span id="stagingAuthText">You are exploring in <strong>Guest Mode</strong>. To permanently save and track your application submission, you must log in.</span>
+          </div>
+          <button id="stagingAuthLoginBtn" onclick="promptLoginToSave('application')" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition shrink-0 shadow-sm">
+            Log In to Save
+          </button>
         </div>
 
         <!-- Pre-Filled Application Summary (4 Cards) -->
@@ -847,36 +869,100 @@
     </div>
   </footer>
 
-  <!-- SIMPLE LOGIN MODAL -->
-  <div id="loginModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-    <div class="bg-dark-800 border border-dark-700 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative">
-      <div class="text-center space-y-1">
+  <!-- IMMEDIATE AUTH GATE MODAL: EXACTLY 3 OPTIONS (LOG IN, CREATE ACCOUNT, CONTINUE WITHOUT LOGIN) -->
+  <div id="authGateModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+    <div class="bg-dark-800 border border-dark-700 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
+      
+      <!-- Modal Header -->
+      <div class="text-center space-y-1.5">
         <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center mx-auto text-white text-xl font-bold shadow-lg shadow-brand-500/20">
-          <i class="fa-solid fa-user-lock"></i>
+          <i class="fa-solid fa-paper-plane"></i>
         </div>
-        <h3 class="text-lg font-bold text-white">Sign In to CareerPilot</h3>
-        <p class="text-xs text-slate-400">Save your progress or explore freely without signing in.</p>
+        <h3 id="authModalTitle" class="text-lg font-bold text-white tracking-tight">Welcome to CareerPilot</h3>
+        <p id="authModalSubtitle" class="text-xs text-slate-400">
+          Log in or create an account to save your profile, tailored resumes, and tracked applications.
+        </p>
       </div>
 
-      <form onsubmit="handleLoginSubmit(event)" class="space-y-3">
+      <!-- Action Required Banner (shown when user clicks Save Info / Submit while in Guest mode) -->
+      <div id="authSaveRequiredAlert" class="hidden p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center space-x-2">
+        <i class="fa-solid fa-triangle-exclamation text-amber-400 text-base shrink-0"></i>
+        <span id="authSaveRequiredText">To save your info and track applications permanently, please log in or create an account.</span>
+      </div>
+
+      <!-- Tabs: 1. Log In | 2. Create Account -->
+      <div class="flex rounded-xl bg-dark-900/80 p-1 border border-dark-700 text-xs font-semibold">
+        <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg transition text-white bg-brand-600 shadow-sm flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-right-to-bracket text-xs"></i>
+          <span>Log In</span>
+        </button>
+        <button type="button" id="tabBtnRegister" onclick="switchAuthTab('register')" class="flex-1 py-2 rounded-lg transition text-slate-400 hover:text-white flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-user-plus text-xs"></i>
+          <span>Create Account</span>
+        </button>
+      </div>
+
+      <!-- Option 1: Log In Form -->
+      <form id="authLoginForm" onsubmit="handleAuthLoginSubmit(event)" class="space-y-3">
         <div>
-          <label class="text-xs font-semibold text-slate-300">Username</label>
-          <input type="text" id="loginUsername" required placeholder="Enter your username" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none">
+          <label class="text-xs font-semibold text-slate-300">Username or Email</label>
+          <input type="text" id="loginIdentifier" required placeholder="Enter your username or email" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition">
         </div>
         <div>
           <label class="text-xs font-semibold text-slate-300">Password</label>
-          <input type="password" id="loginPassword" required placeholder="••••••••" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none">
+          <input type="password" id="loginPassword" required placeholder="••••••••" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition">
         </div>
-        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-lg shadow-brand-500/20">
-          Sign In
+        <div id="loginErrorMsg" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-lg flex items-center space-x-1.5">
+          <i class="fa-solid fa-circle-exclamation shrink-0"></i>
+          <span id="loginErrorText">Invalid username or password.</span>
+        </div>
+        <button type="submit" id="loginSubmitBtn" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-lg shadow-brand-500/25 flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          <span>Log In & Save My Info</span>
         </button>
       </form>
 
-      <div class="pt-2 border-t border-dark-700 text-center">
-        <button onclick="continueAsGuest()" class="w-full text-xs text-slate-400 hover:text-white py-2 rounded-lg border border-dark-600 hover:bg-dark-700/50 transition font-medium">
-          Continue without Login (Guest Mode)
+      <!-- Option 2: Create Account Form -->
+      <form id="authRegisterForm" onsubmit="handleAuthRegisterSubmit(event)" class="space-y-2.5 hidden">
+        <div>
+          <label class="text-xs font-semibold text-slate-300">Full Name</label>
+          <input type="text" id="regFullName" required placeholder="e.g. Ananya Sharma" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-semibold text-slate-300">Username</label>
+            <input type="text" id="regUsername" required placeholder="ananya_codes" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300">Email Address</label>
+            <input type="email" id="regEmail" required placeholder="ananya@example.com" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition">
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-300">Password</label>
+          <input type="password" id="regPassword" required placeholder="At least 4 characters" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition">
+        </div>
+        <div id="regErrorMsg" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-lg flex items-center space-x-1.5">
+          <i class="fa-solid fa-circle-exclamation shrink-0"></i>
+          <span id="regErrorText">Error creating account.</span>
+        </div>
+        <button type="submit" id="regSubmitBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-lg shadow-emerald-500/25 flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-user-plus"></i>
+          <span>Create Account & Save My Info</span>
         </button>
+      </form>
+
+      <!-- Option 3: Continue without Login (Strictly No Other Option) -->
+      <div class="pt-3 border-t border-dark-700/80 text-center space-y-2">
+        <button type="button" onclick="continueWithoutLogin()" class="w-full text-xs text-slate-300 hover:text-white py-2.5 rounded-xl border border-dark-600 hover:bg-dark-700/60 transition font-medium flex items-center justify-center space-x-1.5">
+          <i class="fa-regular fa-compass text-slate-400"></i>
+          <span>Continue without login (Guest Mode)</span>
+        </button>
+        <p class="text-[11px] text-slate-500 leading-normal">
+          <span class="text-amber-400 font-medium">To save your info,</span> you must log in or create an account.
+        </p>
       </div>
+
     </div>
   </div>
 
@@ -888,31 +974,30 @@
       ? 'http://127.0.0.1:8000'
       : '';
 
-    // Safe parsing of stored user (prevents raw JSON leaking into UI)
-    function parseStoredUser() {
-      const raw = localStorage.getItem('careerpilot_user');
-      if (!raw) return { name: 'Guest', email: '', isGuest: true };
+    // Auth Store & State Management
+    function getStoredAuth() {
+      const raw = localStorage.getItem('careerpilot_auth_user');
+      if (!raw) return { isLoggedIn: false, username: 'Guest', name: 'Guest', email: '' };
       try {
         const obj = JSON.parse(raw);
-        if (obj && typeof obj === 'object') {
-          const cleanName = obj.name || obj.username || 'Candidate';
-          const cleanEmail = obj.email || '';
-          return { name: cleanName, email: cleanEmail, isGuest: false };
+        if (obj && obj.username && obj.username !== 'Guest') {
+          return {
+            isLoggedIn: true,
+            username: obj.username,
+            name: obj.name || obj.username,
+            email: obj.email || ''
+          };
         }
-      } catch (e) {
-        // Plain string
-      }
-      return {
-        name: raw,
-        email: '',
-        isGuest: (raw === 'Guest' || !raw)
-      };
+      } catch (e) {}
+      return { isLoggedIn: false, username: 'Guest', name: 'Guest', email: '' };
     }
 
-    // State Store
+    // Global Application State Store
     let appState = {
       user: 'Guest',
       userEmail: '',
+      isLoggedIn: false,
+      pendingAction: null, // 'profile' or 'application'
       profile: null,
       gaps: null,
       jobs: [],
@@ -924,84 +1009,357 @@
       userAnswers: {}
     };
 
-    // User Authentication Logic
     function updateAuthUI() {
-      const userInfo = parseStoredUser();
-      const name = userInfo.name || 'Guest';
-      appState.user = name;
-      appState.userEmail = userInfo.email || '';
-
-      // Clean up localStorage to keep only clean name string, not raw JSON
-      localStorage.setItem('careerpilot_user', name);
-
-      const headerNameEl = document.getElementById('headerUserName');
-      if (headerNameEl) {
-        headerNameEl.textContent = name;
-        headerNameEl.title = name;
-      }
-
+      const statusTag = document.getElementById('userStatusTag');
       const authBtn = document.getElementById('authBtn');
-      if (!userInfo.isGuest && name !== 'Guest') {
-        authBtn.textContent = 'Log Out';
-        authBtn.onclick = handleLogout;
-        const nameInput = document.getElementById('candidateNameInput');
-        if (nameInput) {
-          nameInput.value = name;
+      const saveNotice = document.getElementById('saveInfoNotice');
+      const stagingAuth = document.getElementById('stagingAuthNotice');
+      const stagingBtn = document.getElementById('stagingAuthLoginBtn');
+      const stagingText = document.getElementById('stagingAuthText');
+      const stagingIcon = document.getElementById('stagingAuthIcon');
+
+      if (appState.isLoggedIn) {
+        if (statusTag) {
+          statusTag.className = "text-xs font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 max-w-[200px]";
+          statusTag.innerHTML = `
+            <i class="fa-solid fa-circle-check text-emerald-400 flex-shrink-0"></i>
+            <span id="headerUserName" class="truncate font-semibold">${appState.user}</span>
+            <span class="text-[10px] text-emerald-300 font-normal pl-1 border-l border-emerald-500/30">Saved</span>
+          `;
         }
-        if (userInfo.email) {
-          const emailInput = document.getElementById('candidateEmailInput');
-          if (emailInput) {
-            emailInput.value = userInfo.email;
-          }
+        if (authBtn) {
+          authBtn.className = "text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-dark-700 hover:bg-dark-600 text-slate-300 border border-dark-600 transition flex-shrink-0";
+          authBtn.innerHTML = `<span>Log Out</span>`;
+          authBtn.onclick = handleLogout;
+        }
+        if (saveNotice) {
+          saveNotice.className = "text-[11px] text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-2 flex items-center space-x-1.5";
+          saveNotice.innerHTML = `<i class="fa-solid fa-cloud-check text-emerald-400"></i><span>Logged in as <strong>${appState.user}</strong>. Your info is saved to your account.</span>`;
+        }
+        if (stagingAuth) {
+          stagingAuth.className = "text-xs p-3.5 rounded-xl border flex items-center justify-between transition bg-emerald-500/10 border-emerald-500/30 text-emerald-200";
+          if (stagingIcon) stagingIcon.className = "fa-solid fa-circle-check text-emerald-400 text-base shrink-0";
+          if (stagingText) stagingText.innerHTML = `Logged in as <strong>${appState.user}</strong>. Confirmed applications are recorded permanently in your tracker.`;
+          if (stagingBtn) stagingBtn.classList.add('hidden');
         }
       } else {
-        authBtn.textContent = 'Sign In';
-        authBtn.onclick = openLoginModal;
-      }
-    }
-
-    function openLoginModal() {
-      document.getElementById('loginModal').classList.remove('hidden');
-    }
-
-    function closeLoginModal() {
-      document.getElementById('loginModal').classList.add('hidden');
-    }
-
-    function handleLoginSubmit(e) {
-      e.preventDefault();
-      const username = document.getElementById('loginUsername').value.trim();
-      if (username) {
-        appState.user = username;
-        localStorage.setItem('careerpilot_user', username);
-        const nameInput = document.getElementById('candidateNameInput');
-        if (nameInput) {
-          nameInput.value = username;
+        if (statusTag) {
+          statusTag.className = "text-xs font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 max-w-[200px]";
+          statusTag.innerHTML = `
+            <i class="fa-solid fa-triangle-exclamation text-amber-400 flex-shrink-0"></i>
+            <span id="headerUserName" class="truncate font-semibold">Guest (Unsaved)</span>
+          `;
         }
-        updateAuthUI();
-        closeLoginModal();
-        runAssessmentPipeline();
-        showBanner(`Welcome back, ${username}! Profile updated.`, "success");
+        if (authBtn) {
+          authBtn.className = "text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition flex-shrink-0 flex items-center space-x-1 shadow-sm";
+          authBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-xs"></i><span>Log In to Save</span>`;
+          authBtn.onclick = () => openAuthModal('login');
+        }
+        if (saveNotice) {
+          saveNotice.className = "text-[11px] text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-lg p-2 flex items-center space-x-1.5";
+          saveNotice.innerHTML = `<i class="fa-solid fa-lock text-amber-400"></i><span>To save your info, please log in or create an account.</span>`;
+        }
+        if (stagingAuth) {
+          stagingAuth.className = "text-xs p-3.5 rounded-xl border flex items-center justify-between transition bg-amber-500/10 border-amber-500/30 text-amber-200";
+          if (stagingIcon) stagingIcon.className = "fa-solid fa-lock text-amber-400 text-base shrink-0";
+          if (stagingText) stagingText.innerHTML = `You are exploring in <strong>Guest Mode</strong>. To permanently save and track your application submission, you must log in.`;
+          if (stagingBtn) stagingBtn.classList.remove('hidden');
+        }
       }
     }
 
-    function continueAsGuest() {
+    function openAuthModal(tab = 'login', saveNotice = '') {
+      const modal = document.getElementById('authGateModal');
+      const alertBox = document.getElementById('authSaveRequiredAlert');
+      const alertText = document.getElementById('authSaveRequiredText');
+      const title = document.getElementById('authModalTitle');
+      const subtitle = document.getElementById('authModalSubtitle');
+
+      if (saveNotice) {
+        alertBox.classList.remove('hidden');
+        alertText.textContent = saveNotice;
+        title.textContent = "Log In to Save Your Info";
+        subtitle.textContent = "You must log in or create an account so your information is saved permanently.";
+      } else {
+        alertBox.classList.add('hidden');
+        title.textContent = "Welcome to CareerPilot";
+        subtitle.textContent = "Log in or create an account to save your profile, tailored resumes, and tracked applications.";
+      }
+
+      switchAuthTab(tab);
+      modal.classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      const modal = document.getElementById('authGateModal');
+      modal.classList.add('hidden');
+      document.getElementById('loginErrorMsg').classList.add('hidden');
+      document.getElementById('regErrorMsg').classList.add('hidden');
+    }
+
+    function switchAuthTab(tab) {
+      const loginBtn = document.getElementById('tabBtnLogin');
+      const regBtn = document.getElementById('tabBtnRegister');
+      const loginForm = document.getElementById('authLoginForm');
+      const regForm = document.getElementById('authRegisterForm');
+      document.getElementById('loginErrorMsg').classList.add('hidden');
+      document.getElementById('regErrorMsg').classList.add('hidden');
+
+      if (tab === 'login') {
+        loginBtn.className = "flex-1 py-2 rounded-lg transition text-white bg-brand-600 shadow-sm flex items-center justify-center space-x-1.5";
+        regBtn.className = "flex-1 py-2 rounded-lg transition text-slate-400 hover:text-white flex items-center justify-center space-x-1.5";
+        loginForm.classList.remove('hidden');
+        regForm.classList.add('hidden');
+      } else {
+        regBtn.className = "flex-1 py-2 rounded-lg transition text-white bg-brand-600 shadow-sm flex items-center justify-center space-x-1.5";
+        loginBtn.className = "flex-1 py-2 rounded-lg transition text-slate-400 hover:text-white flex items-center justify-center space-x-1.5";
+        regForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+      }
+    }
+
+    async function handleAuthLoginSubmit(e) {
+      e.preventDefault();
+      const identifier = document.getElementById('loginIdentifier').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const errBox = document.getElementById('loginErrorMsg');
+      const errText = document.getElementById('loginErrorText');
+      const submitBtn = document.getElementById('loginSubmitBtn');
+
+      errBox.classList.add('hidden');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Logging In...</span>`;
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ username: identifier, password: password })
+        });
+        const res = await resp.json();
+
+        if (resp.ok && res.success) {
+          const u = res.user;
+          localStorage.setItem('careerpilot_auth_user', JSON.stringify(u));
+          localStorage.setItem('careerpilot_user', u.name || u.username);
+          appState.isLoggedIn = true;
+          appState.user = u.name || u.username;
+          appState.userEmail = u.email || '';
+          updateAuthUI();
+          closeAuthModal();
+
+          // Sync credentials to profile inputs
+          if (document.getElementById('candidateNameInput') && !document.getElementById('candidateNameInput').value) {
+            document.getElementById('candidateNameInput').value = u.name || u.username;
+          }
+          if (document.getElementById('candidateEmailInput') && u.email) {
+            document.getElementById('candidateEmailInput').value = u.email;
+          }
+
+          // Load user's saved profile if available
+          await loadUserProfile(u.username, u.email);
+
+          showBanner(`Welcome back, ${u.name || u.username}! Your info is saved to your account.`, "success");
+
+          // Execute pending action if user was prompted to log in to save
+          if (appState.pendingAction === 'profile') {
+            appState.pendingAction = null;
+            await saveCandidateInfo();
+          } else if (appState.pendingAction === 'application') {
+            appState.pendingAction = null;
+            await confirmHumanSubmission();
+          }
+        } else {
+          errBox.classList.remove('hidden');
+          errText.textContent = res.detail || "Invalid username or password. Please try again.";
+        }
+      } catch (err) {
+        errBox.classList.remove('hidden');
+        errText.textContent = "Network error. Please verify server connection.";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i><span>Log In & Save My Info</span>`;
+      }
+    }
+
+    async function handleAuthRegisterSubmit(e) {
+      e.preventDefault();
+      const fullName = document.getElementById('regFullName').value.trim();
+      const username = document.getElementById('regUsername').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+      const errBox = document.getElementById('regErrorMsg');
+      const errText = document.getElementById('regErrorText');
+      const submitBtn = document.getElementById('regSubmitBtn');
+
+      errBox.classList.add('hidden');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Creating Account...</span>`;
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/auth/register`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            username: username,
+            name: fullName,
+            email: email,
+            password: password
+          })
+        });
+        const res = await resp.json();
+
+        if (resp.ok && res.success) {
+          const u = res.user;
+          localStorage.setItem('careerpilot_auth_user', JSON.stringify(u));
+          localStorage.setItem('careerpilot_user', u.name || u.username);
+          appState.isLoggedIn = true;
+          appState.user = u.name || u.username;
+          appState.userEmail = u.email || '';
+          updateAuthUI();
+          closeAuthModal();
+
+          if (document.getElementById('candidateNameInput')) {
+            document.getElementById('candidateNameInput').value = u.name;
+          }
+          if (document.getElementById('candidateEmailInput')) {
+            document.getElementById('candidateEmailInput').value = u.email;
+          }
+
+          showBanner(`Account created successfully! Welcome, ${u.name}.`, "success");
+
+          // Automatically save current candidate info to initialize user profile
+          await saveCandidateInfo();
+
+          if (appState.pendingAction === 'application') {
+            appState.pendingAction = null;
+            await confirmHumanSubmission();
+          }
+        } else {
+          errBox.classList.remove('hidden');
+          errText.textContent = res.detail || "Unable to create account. Please check inputs.";
+        }
+      } catch (err) {
+        errBox.classList.remove('hidden');
+        errText.textContent = "Network error. Please verify server connection.";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fa-solid fa-user-plus"></i><span>Create Account & Save My Info</span>`;
+      }
+    }
+
+    function continueWithoutLogin() {
+      appState.isLoggedIn = false;
       appState.user = 'Guest';
       appState.userEmail = '';
-      localStorage.setItem('careerpilot_user', 'Guest');
+      appState.pendingAction = null;
       updateAuthUI();
-      closeLoginModal();
-      loadSampleProfile();
-      showBanner("Continuing as Guest. All features are fully accessible!", "info");
+      closeAuthModal();
+
+      // If form doesn't have data, load sample profile so they can test features
+      if (!document.getElementById('candidateNameInput').value) {
+        loadSampleProfile();
+      }
+      showBanner("Continuing in Guest Mode. All tools are unlocked for exploring. Log in anytime to save your info.", "info");
     }
 
     function handleLogout() {
+      localStorage.removeItem('careerpilot_auth_user');
+      localStorage.setItem('careerpilot_user', 'Guest');
+      appState.isLoggedIn = false;
       appState.user = 'Guest';
       appState.userEmail = '';
-      localStorage.setItem('careerpilot_user', 'Guest');
+      appState.pendingAction = null;
       updateAuthUI();
-      loadSampleProfile();
       showBanner("Logged out successfully. Switched to guest mode.", "info");
+      openAuthModal('login');
+    }
+
+    function promptLoginToSave(actionType) {
+      appState.pendingAction = actionType;
+      const msg = actionType === 'application'
+        ? "To save your job application submission and track your status, you must log in or create an account."
+        : "To save your profile and info permanently, you must log in or create an account.";
+      openAuthModal('login', msg);
+    }
+
+    async function saveCandidateInfo() {
+      if (!appState.isLoggedIn) {
+        promptLoginToSave('profile');
+        return;
+      }
+
+      const name = document.getElementById('candidateNameInput').value.trim() || appState.user;
+      const email = document.getElementById('candidateEmailInput').value.trim() || appState.userEmail;
+      const phone = (appState.profile && appState.profile.phone) || "+91 9876543210";
+      const gh = document.getElementById('githubHandleInput').value.trim();
+      const lc = document.getElementById('leetcodeHandleInput').value.trim();
+      const domain = document.getElementById('domainSelect').value;
+      const skills = (appState.profile && appState.profile.skills) || [];
+
+      if (!email) {
+        showBanner("Please enter your email address to save your profile.", "warning");
+        return;
+      }
+
+      const saveBtn = document.getElementById('saveInfoBtn');
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Saving...</span>`;
+      }
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/profile/save`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            username: appState.user,
+            email: email,
+            name: name,
+            phone: phone,
+            github_handle: gh,
+            leetcode_handle: lc,
+            skills: skills,
+            target_domain: domain
+          })
+        });
+        const res = await resp.json();
+        if (resp.ok && res.success) {
+          showBanner("Profile and verified skills saved successfully to your account!", "success");
+        } else {
+          showBanner(res.detail || "Unable to save profile.", "warning");
+        }
+      } catch (err) {
+        showBanner("Error saving profile: " + err.message, "warning");
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i><span>Save Info</span>`;
+        }
+      }
+    }
+
+    async function loadUserProfile(username, email) {
+      try {
+        const query = email ? `email=${encodeURIComponent(email)}` : `username=${encodeURIComponent(username)}`;
+        const resp = await fetch(`${API_BASE}/api/profile?${query}`);
+        if (!resp.ok) return;
+        const res = await resp.json();
+        if (res.success && res.profile) {
+          const p = res.profile;
+          if (p.name) document.getElementById('candidateNameInput').value = p.name;
+          if (p.email) document.getElementById('candidateEmailInput').value = p.email;
+          if (p.github_handle) document.getElementById('githubHandleInput').value = p.github_handle;
+          if (p.leetcode_handle) document.getElementById('leetcodeHandleInput').value = p.leetcode_handle;
+          if (p.target_domain) {
+            document.getElementById('domainSelect').value = p.target_domain;
+            document.getElementById('headerDomainSelect').value = p.target_domain;
+          }
+          await runAssessmentPipeline();
+        }
+      } catch (e) {
+        console.error("Failed to load user profile:", e);
+      }
     }
 
     // Tab Navigation
@@ -1121,16 +1479,18 @@
         await runAssessmentPipeline();
       });
 
-      // Auto load profile: if candidate is logged in, load their profile; otherwise load demo profile
-      const userInfo = parseStoredUser();
-      if (!userInfo.isGuest && userInfo.name && userInfo.name !== 'Guest') {
-        document.getElementById('candidateNameInput').value = userInfo.name;
-        if (userInfo.email) {
-          document.getElementById('candidateEmailInput').value = userInfo.email;
-        }
-        await runAssessmentPipeline();
+      // Check authentication state on page entry: User must log in, create account, or continue without login
+      const auth = getStoredAuth();
+      if (auth && auth.isLoggedIn && auth.username) {
+        appState.isLoggedIn = true;
+        appState.user = auth.name || auth.username;
+        appState.userEmail = auth.email || '';
+        updateAuthUI();
+        await loadUserProfile(auth.username, auth.email);
       } else {
-        await loadSampleProfile();
+        // First entry / unauthenticated: immediately show Auth Gate Modal
+        updateAuthUI();
+        openAuthModal('login');
       }
     });
 
@@ -1840,6 +2200,10 @@ ${coverLetter.trim()}
     }
 
     async function confirmHumanSubmission() {
+      if (!appState.isLoggedIn) {
+        promptLoginToSave('application');
+        return;
+      }
       const p = appState.profile || {};
       const t = appState.tailored || {};
       const j = appState.activeJob || {};
