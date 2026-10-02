@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.env
+.env.local
+.venv*
+
+# IDEs
+.idea/
+.vscode/*
+!.vscode/settings.json
+*.swp
+*.swo
+
+# Database & Cache
+*.sqlite3
+*.db
+chroma_db/
+.chroma/
+
+# Testing & Logs
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Playwright & Browsers
+test-results/
+playwright-report/
+blob-report/
+
