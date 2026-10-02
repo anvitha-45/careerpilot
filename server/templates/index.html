@@ -353,69 +353,82 @@
     <!-- TAB 3: TAILOR RESUME & DOWNLOAD -->
     <section id="tab-tailoring" class="tab-content hidden space-y-6">
       <div class="bg-dark-800 border border-dark-700 rounded-2xl p-6 shadow-xl space-y-6">
+        
+        <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-dark-700">
           <div>
             <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-              <i class="fa-solid fa-pen-fancy text-emerald-400"></i>
-              <span>Tailor Your Resume for This Job</span>
+              <i class="fa-solid fa-file-lines text-emerald-400"></i>
+              <span>Your Tailored Resume & Cover Letter</span>
             </h2>
-            <p class="text-xs text-slate-400 mt-0.5">We rewrite your project points into clear, impactful bullet points that highlight what this specific employer is looking for.</p>
+            <p class="text-xs text-slate-400 mt-0.5">Structured for ATS scanning with quantified project achievements tailored for this specific role.</p>
           </div>
 
           <div class="flex flex-wrap items-center gap-2">
             <div class="flex items-center space-x-2">
-              <label class="text-xs text-slate-400">Choose a Job:</label>
+              <label class="text-xs text-slate-400">Target Role:</label>
               <select id="tailoringJobSelect" onchange="onJobSelectChange()" class="bg-dark-900 text-slate-200 border border-dark-600 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500">
                 <!-- Rendered dynamically -->
               </select>
             </div>
-            
-            <button onclick="runTailoringPipeline()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
-              <i class="fa-solid fa-arrows-rotate"></i>
-              <span>Update Points</span>
+
+            <button onclick="downloadResumePDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3.5 py-1.5 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
+              <i class="fa-solid fa-print"></i>
+              <span>Download PDF / Print</span>
             </button>
 
-            <!-- Big Impactful Resume Download Action -->
-            <button onclick="openResumePreviewModal()" class="bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold px-3.5 py-1.5 rounded-lg text-xs transition flex items-center space-x-1.5 shadow-lg shadow-brand-500/20">
-              <i class="fa-solid fa-file-pdf"></i>
-              <span>Preview & Download Resume</span>
+            <button onclick="downloadResumeTXT()" class="bg-dark-700 hover:bg-dark-600 text-slate-300 font-semibold px-3 py-1.5 rounded-lg text-xs border border-dark-600 transition flex items-center space-x-1.5">
+              <i class="fa-solid fa-file-arrow-down"></i>
+              <span>Download TXT</span>
             </button>
           </div>
         </div>
 
-        <!-- STAR Comparison Cards -->
-        <div class="space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Before & After: How Your Project Points Improve</h3>
-            <span class="text-[11px] text-emerald-400 font-medium"><i class="fa-solid fa-circle-check text-[10px]"></i> STAR Formatted with Metrics</span>
-          </div>
-          <div id="starBulletsContainer" class="space-y-3">
-            <!-- Rendered dynamically -->
-          </div>
-        </div>
+        <!-- 2-Column Responsive Layout: Left = Impactful Tailored Resume, Right = Personalized Cover Letter -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Left Column (8 cols): Impactful Tailored Resume Document -->
+          <div class="lg:col-span-8 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
+                <i class="fa-solid fa-file-circle-check text-emerald-400"></i>
+                <span>ATS-Optimized Tailored Resume</span>
+              </span>
+              <span class="text-[11px] text-emerald-400 font-medium">Ready for PDF / Print Export</span>
+            </div>
 
-        <!-- Custom Cover Letter Section -->
-        <div class="space-y-3 pt-4 border-t border-dark-700">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
-              <i class="fa-solid fa-envelope-open-text text-brand-400"></i>
-              <span>Personalized Cover Letter</span>
-            </h3>
-            <div class="flex items-center space-x-2">
-              <button onclick="copyCoverLetter()" class="text-xs px-2.5 py-1 rounded bg-dark-700 hover:bg-dark-600 text-slate-300 border border-dark-600 transition flex items-center space-x-1">
-                <i class="fa-regular fa-copy"></i>
-                <span>Copy Letter</span>
-              </button>
-              <button onclick="downloadCoverLetterTXT()" class="text-xs px-2.5 py-1 rounded bg-dark-700 hover:bg-dark-600 text-emerald-400 border border-dark-600 transition flex items-center space-x-1">
-                <i class="fa-solid fa-download"></i>
-                <span>Download .TXT</span>
-              </button>
+            <!-- Printable/Viewable Clean ATS Resume Document -->
+            <div id="resumePrintArea" class="bg-white text-slate-900 rounded-xl p-7 shadow-lg font-sans text-xs space-y-4 border border-slate-200 leading-normal">
+              <!-- Rendered dynamically -->
             </div>
           </div>
-          <div id="coverLetterBox" class="bg-dark-900 border border-dark-700 rounded-xl p-4 text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap select-all">
-            Loading tailored cover letter...
+
+          <!-- Right Column (4 cols): Personalized Cover Letter -->
+          <div class="lg:col-span-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
+                <i class="fa-solid fa-envelope-open-text text-brand-400"></i>
+                <span>Personalized Cover Letter</span>
+              </span>
+              <div class="flex items-center space-x-1.5">
+                <button onclick="copyCoverLetter()" title="Copy to clipboard" class="text-xs px-2 py-1 rounded bg-dark-700 hover:bg-dark-600 text-slate-300 border border-dark-600 transition flex items-center space-x-1">
+                  <i class="fa-regular fa-copy"></i>
+                  <span>Copy</span>
+                </button>
+                <button onclick="downloadCoverLetterTXT()" title="Download as text file" class="text-xs px-2 py-1 rounded bg-dark-700 hover:bg-dark-600 text-emerald-400 border border-dark-600 transition flex items-center space-x-1">
+                  <i class="fa-solid fa-download"></i>
+                  <span>.TXT</span>
+                </button>
+              </div>
+            </div>
+
+            <div id="coverLetterBox" class="bg-dark-900 border border-dark-700 rounded-xl p-4 text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap select-all max-h-[600px] overflow-y-auto">
+              Loading tailored cover letter...
+            </div>
           </div>
+
         </div>
+
       </div>
     </section>
 
@@ -729,36 +742,6 @@
     </div>
   </div>
 
-  <!-- IMPACTFUL TAILORED RESUME PREVIEW & DOWNLOAD MODAL -->
-  <div id="resumePreviewModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
-    <div class="bg-dark-800 border border-dark-700 rounded-2xl max-w-4xl w-full p-6 space-y-4 shadow-2xl my-auto">
-      <div class="flex items-center justify-between pb-3 border-b border-dark-700">
-        <div>
-          <h3 class="text-base font-bold text-white flex items-center space-x-2">
-            <i class="fa-solid fa-file-lines text-emerald-400"></i>
-            <span>Impactful Tailored Resume</span>
-          </h3>
-          <p class="text-xs text-slate-400">Structured for ATS scanning with quantified STAR bullet points</p>
-        </div>
-        <div class="flex items-center space-x-2">
-          <button onclick="downloadResumePDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
-            <i class="fa-solid fa-print"></i>
-            <span>Download PDF / Print</span>
-          </button>
-          <button onclick="downloadResumeTXT()" class="bg-dark-700 hover:bg-dark-600 text-slate-300 font-semibold px-3 py-1.5 rounded-lg text-xs border border-dark-600 transition flex items-center space-x-1.5">
-            <i class="fa-solid fa-file-arrow-down"></i>
-            <span>Download TXT</span>
-          </button>
-          <button onclick="closeResumeModal()" class="text-slate-400 hover:text-white px-2 py-1"><i class="fa-solid fa-xmark text-sm"></i></button>
-        </div>
-      </div>
-
-      <!-- Printable/Viewable Clean ATS Resume Document -->
-      <div id="resumePrintArea" class="bg-white text-slate-900 rounded-xl p-8 shadow-inner font-sans text-xs space-y-5 border border-slate-200 leading-normal max-h-[70vh] overflow-y-auto">
-        <!-- Rendered dynamically -->
-      </div>
-    </div>
-  </div>
 
   <!-- FRONTEND SCRIPT -->
   <script>
@@ -1257,29 +1240,10 @@
 
     function renderTailoringUI() {
       const t = appState.tailored;
-      const container = document.getElementById('starBulletsContainer');
-      container.innerHTML = '';
-
-      (t.tailored_bullets || []).forEach(b => {
-        const card = document.createElement('div');
-        card.className = "bg-dark-900 border border-dark-700 rounded-xl p-4 space-y-2";
-        card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-white flex items-center space-x-1.5">
-              <i class="fa-solid fa-code-commit text-brand-400"></i>
-              <span>${b.project_title}</span>
-            </span>
-            <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">STAR Enhanced</span>
-          </div>
-          <p class="text-xs text-slate-400 line-through">${b.original_bullet}</p>
-          <p class="text-xs text-emerald-300 font-medium leading-relaxed bg-emerald-950/20 p-2.5 rounded-lg border border-emerald-500/20">
-            <i class="fa-solid fa-arrow-right text-[10px] mr-1 text-emerald-400"></i> ${b.star_tailored_bullet}
-          </p>
-        `;
-        container.appendChild(card);
-      });
-
-      document.getElementById('coverLetterBox').textContent = t.cover_letter;
+      const coverBox = document.getElementById('coverLetterBox');
+      if (coverBox && t) {
+        coverBox.textContent = t.cover_letter || 'Tailored statement generated.';
+      }
       renderResumeDocument();
     }
 
@@ -1351,12 +1315,13 @@
     }
 
     function openResumePreviewModal() {
+      switchTab('tailoring');
       renderResumeDocument();
-      document.getElementById('resumePreviewModal').classList.remove('hidden');
+      showBanner("Viewing your tailored resume below.", "info");
     }
 
     function closeResumeModal() {
-      document.getElementById('resumePreviewModal').classList.add('hidden');
+      // Maintained for backwards compatibility
     }
 
     function downloadResumePDF() {
