@@ -685,7 +685,7 @@
   <!-- FOOTER -->
   <footer class="border-t border-dark-700 bg-dark-800 py-4 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-      <span>CareerPilot © 2026 • Helping Students Land Their Dream Tech Job</span>
+      <span>CareerPilot &copy; 2026 &bull; Helping Engineers Land Their Dream Tech Job</span>
       <div class="flex items-center space-x-4">
         <span>Auto-Save Enabled</span>
         <span>•</span>
@@ -762,6 +762,11 @@
 
   <!-- FRONTEND SCRIPT -->
   <script>
+    // Dynamic API Base URL to support direct FastAPI serving, VS Code Live Server, and local preview
+    const API_BASE = (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '8000' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')))
+      ? 'http://127.0.0.1:8000'
+      : '';
+
     // State Store
     let appState = {
       user: localStorage.getItem('careerpilot_user') || 'Guest',
@@ -911,7 +916,7 @@
       }
 
       try {
-        const resp = await fetch('/api/jobs');
+        const resp = await fetch(`${API_BASE}/api/jobs`);
         const data = await resp.json();
         appState.jobs = data.jobs || [];
         populateJobSelects();
@@ -1016,7 +1021,7 @@
       formData.append('target_domain', document.getElementById('domainSelect').value);
 
       try {
-        const resp = await fetch('/api/assess', {
+        const resp = await fetch(`${API_BASE}/api/assess`, {
           method: 'POST',
           body: formData
         });
@@ -1167,11 +1172,6 @@
       showBanner("14-Day study plan copied to clipboard!", "success");
     }
 
-    async function onJobSelectChange() {
-      const selId = document.getElementById('tailoringJobSelect').value;
-      appState.activeJob = appState.jobs.find(j => j.id === selId);
-      await runTailoringPipeline();
-    }
 
     // Run Agent 3, 4, 5 for selected job
     async function runTailoringPipeline() {
@@ -1179,7 +1179,7 @@
       const selJobId = document.getElementById('tailoringJobSelect').value || (appState.jobs[0] ? appState.jobs[0].id : "jd-001");
 
       try {
-        const resp = await fetch('/api/tailor', {
+        const resp = await fetch(`${API_BASE}/api/tailor`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -1389,7 +1389,7 @@
       const appId = appState.staged.application_id;
 
       try {
-        const resp = await fetch('/api/applications/confirm', {
+        const resp = await fetch(`${API_BASE}/api/applications/confirm`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -1491,7 +1491,7 @@
       btn.disabled = true;
 
       try {
-        const resp = await fetch('/api/interview/evaluate', {
+        const resp = await fetch(`${API_BASE}/api/interview/evaluate`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({

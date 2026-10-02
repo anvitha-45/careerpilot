@@ -40,8 +40,8 @@ class DatabaseManager:
             await self.db.jobs.create_index("id", unique=True)
             await self.db.applications.create_index("id", unique=True)
             await self.db.profiles.create_index("email")
-        except Exception as e:
-            print(f"[Database] MongoDB not available ({e}). Using embedded document store.")
+        except Exception:
+            print("[Database] Local MongoDB not detected. Running seamlessly on embedded document store.")
             self.is_connected = False
             self._load_local_storage()
 
