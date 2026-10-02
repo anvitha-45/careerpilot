@@ -69,9 +69,9 @@
         <div>
           <div class="flex items-center space-x-2">
             <span class="text-xl font-bold tracking-tight text-white">Career<span class="text-brand-500">Pilot</span></span>
-            <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20">Agentic v2.0</span>
+            <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20">Student Edition</span>
           </div>
-          <p class="text-xs text-slate-400 hidden sm:block">Orchestrated 5-Agent Copilot for Graduating Engineers</p>
+          <p class="text-xs text-slate-400 hidden sm:block">Your Personal Job Readiness & Application Assistant</p>
         </div>
       </div>
 
@@ -79,7 +79,7 @@
         <div class="hidden md:flex items-center space-x-1 text-xs bg-dark-700/50 p-1 rounded-lg border border-dark-600">
           <span class="px-2 py-1 text-slate-400">Target Role:</span>
           <select id="headerDomainSelect" class="bg-dark-800 text-brand-400 font-medium rounded px-2 py-1 border border-dark-600 focus:outline-none text-xs">
-            <option value="All">All Domains (Comprehensive)</option>
+            <option value="All">All Tech Roles (Compare All)</option>
             <option value="Backend">Backend Engineering</option>
             <option value="Full Stack">Full Stack Development</option>
             <option value="Frontend">Frontend Engineering</option>
@@ -90,7 +90,7 @@
 
         <button onclick="loadSampleProfile()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition flex items-center space-x-1.5 shadow-sm">
           <i class="fa-solid fa-wand-magic-sparkles"></i>
-          <span>Quick Demo Load</span>
+          <span>Try Demo Profile</span>
         </button>
       </div>
     </div>
@@ -100,23 +100,23 @@
       <nav class="flex space-x-2 sm:space-x-4 py-2 text-xs font-medium whitespace-nowrap" id="pipelineNav">
         <button onclick="switchTab('assessment')" id="nav-assessment" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-2 transition bg-brand-600 text-white">
           <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center font-bold text-[10px]">1</span>
-          <span>Self-Assessment</span>
+          <span>1. Profile & Skills</span>
         </button>
         <button onclick="switchTab('gaps')" id="nav-gaps" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-dark-700">
           <span class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center font-bold text-[10px]">2</span>
-          <span>Gaps & Free Resources</span>
+          <span>2. Skills & Free Courses</span>
         </button>
         <button onclick="switchTab('tailoring')" id="nav-tailoring" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-dark-700">
           <span class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center font-bold text-[10px]">3</span>
-          <span>STAR Tailoring Studio</span>
+          <span>3. Tailor Resume</span>
         </button>
         <button onclick="switchTab('staging')" id="nav-staging" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-dark-700">
           <span class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center font-bold text-[10px]">4</span>
-          <span>Application Staging (HITL)</span>
+          <span>4. Review & Apply</span>
         </button>
         <button onclick="switchTab('interview')" id="nav-interview" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-dark-700">
           <span class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center font-bold text-[10px]">5</span>
-          <span>Role Interview Prep</span>
+          <span>5. Mock Interview</span>
         </button>
       </nav>
     </div>
@@ -143,20 +143,20 @@
           <div>
             <h2 class="text-lg font-bold text-white flex items-center space-x-2">
               <i class="fa-solid fa-id-card-clip text-brand-500"></i>
-              <span>Candidate Signals Ingestion</span>
+              <span>Your Profile & Resume</span>
             </h2>
-            <p class="text-xs text-slate-400 mt-1">Agent 1 parses your resume and fetches live verification stats from GitHub and LeetCode.</p>
+            <p class="text-xs text-slate-400 mt-1">Upload your resume and enter your coding profiles to check how ready you are for real tech jobs.</p>
           </div>
 
           <!-- Resume Upload Zone -->
           <div class="space-y-2">
-            <label class="text-xs font-semibold text-slate-300">Resume Document (PDF or Text)</label>
+            <label class="text-xs font-semibold text-slate-300">Your Resume (PDF or Text)</label>
             <div id="dropzone" class="border-2 border-dashed border-dark-600 hover:border-brand-500 rounded-xl p-4 text-center cursor-pointer transition bg-dark-900/40 relative">
               <input type="file" id="resumeFileInput" accept=".pdf,.txt,.docx" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
               <div class="space-y-1">
                 <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400"></i>
-                <p id="fileLabel" class="text-xs text-slate-300 font-medium">Click to upload or drag & drop Resume (.PDF)</p>
-                <p class="text-[10px] text-slate-500">Max size 5MB • Formatted for ATS and layout parsing</p>
+                <p id="fileLabel" class="text-xs text-slate-300 font-medium">Click to upload or drag & drop your Resume (.PDF)</p>
+                <p class="text-[10px] text-slate-500">Upload your resume to see your instant match score</p>
               </div>
             </div>
           </div>
@@ -166,14 +166,14 @@
             <div>
               <label class="text-xs font-semibold text-slate-300 flex items-center space-x-1.5">
                 <i class="fa-brands fa-github text-slate-400"></i>
-                <span>GitHub Handle</span>
+                <span>GitHub Username</span>
               </label>
               <input type="text" id="githubHandleInput" placeholder="e.g. torvalds" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none">
             </div>
             <div>
               <label class="text-xs font-semibold text-slate-300 flex items-center space-x-1.5">
                 <i class="fa-solid fa-code text-amber-500"></i>
-                <span>LeetCode Handle</span>
+                <span>LeetCode Username</span>
               </label>
               <input type="text" id="leetcodeHandleInput" placeholder="e.g. neetcode" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none">
             </div>
@@ -181,9 +181,9 @@
 
           <!-- Target Role Domain -->
           <div>
-            <label class="text-xs font-semibold text-slate-300">Target Role Domain</label>
+            <label class="text-xs font-semibold text-slate-300">Target Role</label>
             <select id="domainSelect" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white focus:outline-none">
-              <option value="All">All Tech Domains (Comprehensive Benchmark across all roles)</option>
+              <option value="All">All Tech Roles (Compare All)</option>
               <option value="Backend">Junior Backend Engineer (Python / Java / Go)</option>
               <option value="Full Stack">Full Stack Web Developer (React / Node / Python)</option>
               <option value="Frontend">Junior Frontend Engineer (React / TypeScript)</option>
@@ -194,7 +194,7 @@
 
           <button id="runAssessBtn" onclick="runAssessmentPipeline()" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-brand-500/20 flex items-center justify-center space-x-2 text-xs">
             <i class="fa-solid fa-bolt"></i>
-            <span>Run Multi-Agent Assessment</span>
+            <span>Check My Job Match</span>
           </button>
         </div>
 
@@ -204,17 +204,17 @@
           <div class="bg-dark-800 border border-dark-700 rounded-2xl p-5 sm:p-6 shadow-xl">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div class="space-y-2 text-center sm:text-left">
-                <span class="text-xs uppercase tracking-wider font-semibold text-brand-400 bg-brand-500/10 px-2.5 py-1 rounded-md border border-brand-500/20">Market Benchmark</span>
+                <span class="text-xs uppercase tracking-wider font-semibold text-brand-400 bg-brand-500/10 px-2.5 py-1 rounded-md border border-brand-500/20">Your Readiness</span>
                 <h3 id="candidateName" class="text-xl font-bold text-white">Ananya Sharma</h3>
                 <p id="candidateContact" class="text-xs text-slate-400">ananya.sharma@example.com • Bengaluru, India</p>
                 <div class="flex flex-wrap gap-2 pt-1 justify-center sm:justify-start">
                   <span id="ghBadge" class="text-[11px] px-2.5 py-1 rounded-full bg-dark-700 border border-dark-600 text-slate-300 flex items-center space-x-1">
                     <i class="fa-brands fa-github text-slate-400"></i>
-                    <span>GitHub: Verified (6 Repos, 5 Stars)</span>
+                    <span>GitHub: 6 Repos, 5 Stars</span>
                   </span>
                   <span id="lcBadge" class="text-[11px] px-2.5 py-1 rounded-full bg-dark-700 border border-dark-600 text-slate-300 flex items-center space-x-1">
                     <i class="fa-solid fa-code text-amber-500"></i>
-                    <span>LeetCode: 142 Solved (75E / 58M / 9H)</span>
+                    <span>LeetCode: 142 Solved (75 Easy / 58 Medium / 9 Hard)</span>
                   </span>
                 </div>
               </div>
@@ -227,14 +227,14 @@
                 </svg>
                 <div class="absolute flex flex-col items-center justify-center">
                   <span id="readinessScoreVal" class="text-2xl font-extrabold text-white">76%</span>
-                  <span class="text-[10px] text-slate-400 uppercase font-semibold">Readiness</span>
+                  <span class="text-[10px] text-slate-400 uppercase font-semibold">Job Match</span>
                 </div>
               </div>
             </div>
 
             <!-- Verified Skills Badges -->
             <div class="mt-6 pt-5 border-t border-dark-700/80">
-              <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2.5">Verified Technical Skills</h4>
+              <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2.5">Skills Found on Your Profile</h4>
               <div id="verifiedSkillsContainer" class="flex flex-wrap gap-1.5">
                 <span class="text-xs px-2.5 py-1 rounded-md bg-dark-700 text-slate-200 border border-dark-600">Python</span>
                 <span class="text-xs px-2.5 py-1 rounded-md bg-dark-700 text-slate-200 border border-dark-600">FastAPI</span>
@@ -249,8 +249,8 @@
           <!-- Target Postings Benchmark List -->
           <div class="bg-dark-800 border border-dark-700 rounded-2xl p-5 shadow-xl space-y-3">
             <div class="flex items-center justify-between">
-              <h4 class="text-xs font-bold text-white uppercase tracking-wider">Benchmark Against Live Market Postings</h4>
-              <span class="text-[11px] text-slate-400">Scraped Regional Postings</span>
+              <h4 class="text-xs font-bold text-white uppercase tracking-wider">How You Match Real Jobs Right Now</h4>
+              <span class="text-[11px] text-slate-400">Current Openings</span>
             </div>
             <div id="benchmarkJobsList" class="space-y-2">
               <!-- Rendered dynamically -->
@@ -268,16 +268,16 @@
           <div>
             <h2 class="text-lg font-bold text-white flex items-center space-x-2">
               <i class="fa-solid fa-graduation-cap text-indigo-400"></i>
-              <span>Market-Driven Skill Gaps & Free Learning Paths</span>
+              <span>Skills You Need & Free Courses to Learn Them</span>
             </h2>
-            <p class="text-xs text-slate-400 mt-0.5">Identified by empirical frequency across live JDs. Curated with free NPTEL, YouTube, and official documentation.</p>
+            <p class="text-xs text-slate-400 mt-0.5">These are the top skills employers want in real job postings that are missing from your resume. Click any link to learn them for free.</p>
           </div>
-          <span class="text-xs bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20 font-medium self-start">Agent 2 Verified</span>
+          <span class="text-xs bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20 font-medium self-start">Based on Real Job Postings</span>
         </div>
 
         <!-- Ranked Missing Skills Badges -->
         <div class="space-y-2">
-          <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">High-Priority Missing Market Skills</label>
+          <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Most In-Demand Missing Skills</label>
           <div id="rankedGapsList" class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <!-- Rendered dynamically -->
           </div>
@@ -287,7 +287,7 @@
         <div class="mt-6 pt-4 border-t border-dark-700">
           <h3 class="text-sm font-bold text-white mb-3 flex items-center space-x-2">
             <i class="fa-solid fa-calendar-days text-brand-500"></i>
-            <span>Actionable 14-Day Micro-Upskilling Roadmap</span>
+            <span>Your 14-Day Free Learning Plan</span>
           </h3>
           <div id="roadmapTimeline" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <!-- Rendered dynamically -->
@@ -303,26 +303,26 @@
           <div>
             <h2 class="text-lg font-bold text-white flex items-center space-x-2">
               <i class="fa-solid fa-pen-fancy text-emerald-400"></i>
-              <span>Role-Specific STAR Tailoring Studio</span>
+              <span>Tailor Your Resume for This Job</span>
             </h2>
-            <p class="text-xs text-slate-400 mt-0.5">Agent 3 contextualizes your genuine projects into STAR format without fabricating credentials.</p>
+            <p class="text-xs text-slate-400 mt-0.5">We rewrite your project points into clear, impactful bullet points that highlight what this specific employer is looking for.</p>
           </div>
 
           <div class="flex items-center space-x-2">
-            <label class="text-xs text-slate-400">Select Job:</label>
+            <label class="text-xs text-slate-400">Choose a Job:</label>
             <select id="tailoringJobSelect" onchange="onJobSelectChange()" class="bg-dark-900 text-slate-200 border border-dark-600 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500">
               <!-- Rendered dynamically -->
             </select>
             <button onclick="runTailoringPipeline()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-1.5 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
               <i class="fa-solid fa-arrows-rotate"></i>
-              <span>Regenerate STAR</span>
+              <span>Update Tailored Points</span>
             </button>
           </div>
         </div>
 
         <!-- STAR Comparison Cards -->
         <div class="space-y-4">
-          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Before & After: Project Achievements (STAR Enhanced)</h3>
+          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Before & After: How Your Project Points Improve</h3>
           <div id="starBulletsContainer" class="space-y-3">
             <!-- Rendered dynamically -->
           </div>
@@ -333,11 +333,11 @@
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
               <i class="fa-solid fa-envelope-open-text text-brand-400"></i>
-              <span>Role-Tailored Cover Letter</span>
+              <span>Personalized Cover Letter</span>
             </h3>
             <button onclick="copyCoverLetter()" class="text-xs px-2.5 py-1 rounded bg-dark-700 hover:bg-dark-600 text-slate-300 border border-dark-600 transition flex items-center space-x-1">
               <i class="fa-regular fa-copy"></i>
-              <span>Copy to Clipboard</span>
+              <span>Copy Cover Letter</span>
             </button>
           </div>
           <div id="coverLetterBox" class="bg-dark-900 border border-dark-700 rounded-xl p-4 text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap select-all">
@@ -357,19 +357,19 @@
             <div class="flex items-center space-x-2">
               <h2 class="text-lg font-bold text-white flex items-center space-x-2">
                 <i class="fa-solid fa-robot text-purple-400"></i>
-                <span>Application Staging & Human-in-the-Loop Gate</span>
+                <span>Auto-Fill Application & Safety Review</span>
               </h2>
               <span id="stagingStatusBadge" class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
-                Awaiting Human Review
+                Ready for Your Review
               </span>
             </div>
-            <p class="text-xs text-slate-400 mt-1">Playwright browser automation auto-populates form inputs and stops prior to dispatch for ToS compliance.</p>
+            <p class="text-xs text-slate-400 mt-1">We automatically fill in the application form fields for you, then pause so you can double-check everything before sending.</p>
           </div>
 
           <div class="flex items-center space-x-2">
             <button onclick="stageActiveApplication()" class="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-4 py-2 rounded-xl text-xs transition flex items-center space-x-1.5 shadow">
               <i class="fa-solid fa-play"></i>
-              <span>Stage in Browser</span>
+              <span>Fill in Application Form</span>
             </button>
           </div>
         </div>
@@ -378,23 +378,22 @@
         <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-start space-x-3 text-xs text-amber-200">
           <i class="fa-solid fa-shield-halved text-amber-400 text-lg mt-0.5"></i>
           <div>
-            <strong class="font-bold text-amber-300">Responsible AI Engineering Principle:</strong>
-            Fully autonomous auto-submission scripts violate LinkedIn & Naukri Terms of Service, often resulting in permanent candidate account bans.
-            CareerPilot deliberately enforces this <strong>Human-in-the-Loop review checkpoint</strong>: all fields are staged and verified, but you trigger the final submission.
+            <strong class="font-bold text-amber-300">Why we pause before submitting:</strong>
+            Auto-apply bots violate LinkedIn and Naukri rules and can get your account banned. CareerPilot saves you time by filling out all the tedious forms, but leaves the final "Submit" button to you. Safe, compliant, and always under your control.
           </div>
         </div>
 
         <!-- Staged Fields Table -->
         <div class="space-y-3">
-          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Staged Application Payload for Review</h3>
+          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Information Filled into the Application Form</h3>
           <div class="overflow-x-auto rounded-xl border border-dark-700">
             <table class="w-full text-left text-xs">
               <thead class="bg-dark-900 text-slate-400 uppercase text-[10px] tracking-wider border-b border-dark-700">
                 <tr>
-                  <th class="px-4 py-3">Portal Field</th>
-                  <th class="px-4 py-3">Auto-Populated Value</th>
-                  <th class="px-4 py-3">Source Signal</th>
-                  <th class="px-4 py-3">Verification State</th>
+                  <th class="px-4 py-3">Form Field</th>
+                  <th class="px-4 py-3">Filled Value</th>
+                  <th class="px-4 py-3">Where It Came From</th>
+                  <th class="px-4 py-3">Status</th>
                 </tr>
               </thead>
               <tbody id="stagedFieldsTableBody" class="divide-y divide-dark-700/60 font-mono text-[11px]">
@@ -408,21 +407,21 @@
         <div class="space-y-2">
           <label class="text-xs font-semibold text-slate-300 flex items-center space-x-1.5">
             <i class="fa-solid fa-terminal text-slate-400"></i>
-            <span>Playwright Automation Execution Trace</span>
+            <span>Automation Activity Log</span>
           </label>
           <div id="browserLogBox" class="bg-dark-900 border border-dark-700 rounded-xl p-3 text-[11px] font-mono text-emerald-400 h-24 overflow-y-auto space-y-1">
-            [Playwright Engine] Ready for staging execution.
+            [Automation Engine] Ready to fill in your application.
           </div>
         </div>
 
         <!-- The HITL Approval Gate Action -->
         <div class="pt-4 border-t border-dark-700 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div class="text-xs text-slate-400 text-center sm:text-left">
-            <span>By clicking submit, you confirm inspection of the staged application payload.</span>
+            <span>Review the details above. When you are happy with everything, click below to confirm your application.</span>
           </div>
           <button id="hitlSubmitBtn" onclick="confirmHumanSubmission()" class="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold px-6 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 text-xs">
             <i class="fa-solid fa-circle-check"></i>
-            <span>Approve & Confirm Submission</span>
+            <span>Confirm & Submit Application</span>
           </button>
         </div>
 
@@ -435,14 +434,14 @@
         <div>
           <h2 class="text-lg font-bold text-white flex items-center space-x-2">
             <i class="fa-solid fa-microphone-lines text-pink-500"></i>
-            <span>Role-Grounded Mock Interview Studio</span>
+            <span>Practice Mock Interview</span>
           </h2>
-          <p class="text-xs text-slate-400 mt-0.5">Agent 5 simulates senior technical interviewers, evaluating your responses on technical depth and STAR communication.</p>
+          <p class="text-xs text-slate-400 mt-0.5">Practice answering real questions for this specific role and get instant helpful feedback on how to improve your answers.</p>
         </div>
 
         <!-- Question Selector Cards -->
         <div class="space-y-2">
-          <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Select Question to Practice</label>
+          <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Choose a Question to Practice</label>
           <div id="interviewQuestionsList" class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <!-- Dynamically rendered -->
           </div>
@@ -451,20 +450,20 @@
         <!-- Active Question Box & Input -->
         <div class="bg-dark-900 border border-dark-700 rounded-2xl p-5 space-y-4">
           <div>
-            <span id="activeQuestionType" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 border border-brand-500/20">Technical Deep-Dive</span>
+            <span id="activeQuestionType" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 border border-brand-500/20">Technical Question</span>
             <h3 id="activeQuestionText" class="text-sm font-semibold text-white mt-1.5">Loading interview question...</h3>
-            <p id="activeQuestionConcepts" class="text-xs text-slate-400 mt-1">Interviewer listening for: Concurrency, Threading, Latency</p>
+            <p id="activeQuestionConcepts" class="text-xs text-slate-400 mt-1">Key topics the interviewer wants to hear: Concurrency, Threading, Latency</p>
           </div>
 
           <!-- Answer Textarea -->
           <div class="space-y-1.5">
-            <label class="text-xs font-semibold text-slate-300">Your Structured Response (Aim for STAR structure)</label>
+            <label class="text-xs font-semibold text-slate-300">Type Your Answer (Explain the situation, what you did, and the result)</label>
             <textarea id="candidateAnswerInput" rows="5" placeholder="Type your response here or explain your past project experience..." class="w-full bg-dark-800 border border-dark-600 focus:border-brand-500 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none leading-relaxed"></textarea>
           </div>
 
           <button id="evaluateAnswerBtn" onclick="evaluateAnswer()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold px-5 py-2.5 rounded-xl transition text-xs flex items-center space-x-2 shadow-lg shadow-pink-500/20">
             <i class="fa-solid fa-chart-line"></i>
-            <span>Evaluate Response with AI</span>
+            <span>Get Feedback on My Answer</span>
           </button>
         </div>
 
@@ -472,31 +471,31 @@
         <div id="evaluationFeedbackCard" class="hidden bg-dark-900 border border-dark-700 rounded-2xl p-5 space-y-4">
           <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
             <i class="fa-solid fa-clipboard-check text-emerald-400"></i>
-            <span>Evaluation Scorecard & Constructive Critique</span>
+            <span>How You Did & How to Improve</span>
           </h4>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div class="bg-dark-800 p-3 rounded-xl border border-dark-700 text-center">
-              <span class="text-[10px] uppercase font-semibold text-slate-400">Technical Depth</span>
+              <span class="text-[10px] uppercase font-semibold text-slate-400">Technical Details</span>
               <div id="scoreTechVal" class="text-xl font-extrabold text-blue-400 mt-1">8/10</div>
             </div>
             <div class="bg-dark-800 p-3 rounded-xl border border-dark-700 text-center">
-              <span class="text-[10px] uppercase font-semibold text-slate-400">STAR Communication</span>
+              <span class="text-[10px] uppercase font-semibold text-slate-400">Clarity & Structure</span>
               <div id="scoreCommVal" class="text-xl font-extrabold text-purple-400 mt-1">7/10</div>
             </div>
             <div class="bg-dark-800 p-3 rounded-xl border border-dark-700 text-center">
-              <span class="text-[10px] uppercase font-semibold text-slate-400">Overall Impression</span>
+              <span class="text-[10px] uppercase font-semibold text-slate-400">Overall Rating</span>
               <div id="scoreOverallVal" class="text-xl font-extrabold text-emerald-400 mt-1">7.5/10</div>
             </div>
           </div>
 
           <div class="space-y-1">
-            <span class="text-xs font-bold text-slate-300">Actionable Feedback:</span>
+            <span class="text-xs font-bold text-slate-300">Helpful Tips to Improve:</span>
             <p id="evalCritiqueText" class="text-xs text-slate-300 leading-relaxed bg-dark-800 p-3 rounded-lg border border-dark-700"></p>
           </div>
 
           <div class="space-y-1">
-            <span class="text-xs font-bold text-emerald-400">Model Answer Snippet:</span>
+            <span class="text-xs font-bold text-emerald-400">Example of a Strong Answer:</span>
             <p id="evalModelAnswerText" class="text-xs text-slate-300 italic leading-relaxed bg-dark-800/80 p-3 rounded-lg border border-dark-700"></p>
           </div>
         </div>
@@ -509,13 +508,13 @@
   <!-- FOOTER -->
   <footer class="border-t border-dark-700 bg-dark-800 py-4 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-      <span>CareerPilot © 2026 • Responsible AI Agent Architecture</span>
+      <span>CareerPilot © 2026 • Helping Students Land Their Dream Tech Job</span>
       <div class="flex items-center space-x-4">
-        <span>MongoDB Connected</span>
+        <span>Auto-Save Enabled</span>
         <span>•</span>
-        <span>Playwright Staging Ready</span>
+        <span>Safe Application Review</span>
         <span>•</span>
-        <span>Zero-Cost Free Tier</span>
+        <span>100% Free Resources</span>
       </div>
     </div>
   </footer>
@@ -840,8 +839,8 @@
         tr.innerHTML = `
           <td class="px-4 py-2.5 text-slate-300 font-sans font-medium">${key}</td>
           <td class="px-4 py-2.5 text-slate-100">${val}</td>
-          <td class="px-4 py-2.5 text-slate-400 font-sans text-[10px]">Verified Signal</td>
-          <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-sans font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Awaiting Human Submit</span></td>
+          <td class="px-4 py-2.5 text-slate-400 font-sans text-[10px]">Your Profile</td>
+          <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-sans font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Ready for Review</span></td>
         `;
         tbody.appendChild(tr);
       }
@@ -858,7 +857,7 @@
 
     async function stageActiveApplication() {
       await runTailoringPipeline();
-      showBanner("Playwright staging refreshed in browser environment.", "info");
+      showBanner("Application fields updated and ready for your review.", "info");
     }
 
     // Human-in-the-Loop Explicit Confirmation
@@ -879,12 +878,12 @@
         if (res.success) {
           const badge = document.getElementById('stagingStatusBadge');
           badge.className = "text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
-          badge.textContent = "Approved & Submitted Safely";
+          badge.textContent = "Submitted Successfully!";
 
           document.getElementById('hitlSubmitBtn').className = "w-full sm:w-auto bg-dark-700 text-slate-400 font-bold px-6 py-2.5 rounded-xl cursor-not-allowed";
           document.getElementById('hitlSubmitBtn').disabled = true;
 
-          showBanner("Application confirmed and legally dispatched with Human-in-the-Loop verification!", "success");
+          showBanner("Your application has been safely confirmed and submitted!", "success");
         }
       } catch (err) {
         console.error(err);
