@@ -1,0 +1,80 @@
+[
+  {
+    "id": "jd-001",
+    "title": "Junior Backend Engineer (Python / FastAPI)",
+    "company": "Razorpay Tech",
+    "location": "Bengaluru, India (Hybrid)",
+    "domain": "Backend",
+    "experience": "0-1 Years",
+    "salary": "₹8 - ₹12 LPA",
+    "description": "We are seeking a Junior Backend Engineer passionate about distributed systems. You will build high-throughput REST APIs, optimize database queries, and integrate message queues.",
+    "required_skills": ["Python", "FastAPI", "PostgreSQL", "Docker", "Git", "REST APIs", "Redis"],
+    "preferred_skills": ["Kafka", "AWS", "Celery", "Microservices", "Unit Testing"],
+    "portal_url": "https://careers.razorpay.com/jobs/backend-jr-01"
+  },
+  {
+    "id": "jd-002",
+    "title": "Software Engineer - Backend (Java / Spring Boot)",
+    "company": "Swiggy",
+    "location": "Bengaluru, India (On-site)",
+    "domain": "Backend",
+    "experience": "0-2 Years",
+    "salary": "₹10 - ₹15 LPA",
+    "description": "Looking for entry-level Software Engineers to join our Logistics & Order Management team. Strong fundamentals in Java, Object-Oriented Design, and Multi-threading required.",
+    "required_skills": ["Java", "Spring Boot", "MySQL", "Data Structures", "Algorithms", "Git"],
+    "preferred_skills": ["Kafka", "Docker", "Kubernetes", "Redis", "Distributed Systems"],
+    "portal_url": "https://careers.swiggy.com/jobs/swe-backend-java"
+  },
+  {
+    "id": "jd-003",
+    "title": "Associate Full Stack Developer",
+    "company": "Zerodha Tech",
+    "location": "Bengaluru, India (Remote)",
+    "domain": "Full Stack",
+    "experience": "0-1 Years",
+    "salary": "₹9 - ₹14 LPA",
+    "description": "Work across our trading infrastructure and customer web interfaces. We value engineers with clean coding practices, curiosity for performance, and strong systems fundamentals.",
+    "required_skills": ["React", "JavaScript", "TypeScript", "Python", "PostgreSQL", "HTML5", "CSS3", "Git"],
+    "preferred_skills": ["Go", "Docker", "Tailwind CSS", "WebSockets", "Linux"],
+    "portal_url": "https://zerodha.tech/careers/fullstack-assoc"
+  },
+  {
+    "id": "jd-004",
+    "title": "Junior Frontend Engineer",
+    "company": "Freshworks",
+    "location": "Chennai, India (Hybrid)",
+    "domain": "Frontend",
+    "experience": "0-2 Years",
+    "salary": "₹7 - ₹11 LPA",
+    "description": "Join our design systems and web platforms team. Create responsive, accessible web applications with modern React, TypeScript, and state management libraries.",
+    "required_skills": ["React", "TypeScript", "JavaScript", "HTML5", "CSS3", "Tailwind CSS", "Git"],
+    "preferred_skills": ["Next.js", "Redux", "Jest", "Web Performance", "REST APIs"],
+    "portal_url": "https://freshworks.com/careers/junior-frontend-dev"
+  },
+  {
+    "id": "jd-005",
+    "title": "Cloud & DevOps Trainee",
+    "company": "Infosys Finacle",
+    "location": "Hyderabad, India (Hybrid)",
+    "domain": "DevOps / Cloud",
+    "experience": "0-1 Years",
+    "salary": "₹6 - ₹9 LPA",
+    "description": "Build automated CI/CD pipelines, containerize backend microservices, and manage basic cloud resources on AWS and Azure.",
+    "required_skills": ["Linux", "Docker", "Git", "Python", "Bash", "Networking"],
+    "preferred_skills": ["Kubernetes", "AWS", "Terraform", "CI/CD", "Prometheus"],
+    "portal_url": "https://infosys.com/careers/cloud-trainee"
+  },
+  {
+    "id": "jd-006",
+    "title": "Junior Data / ML Engineer",
+    "company": "Fractal Analytics",
+    "location": "Bengaluru, India (Hybrid)",
+    "domain": "Data / AI",
+    "experience": "0-2 Years",
+    "salary": "₹8 - ₹13 LPA",
+    "description": "Develop automated data ingestion pipelines, perform exploratory data analysis, and train predictive machine learning models in production.",
+    "required_skills": ["Python", "SQL", "Pandas", "NumPy", "Scikit-Learn", "Git"],
+    "preferred_skills": ["PyTorch", "FastAPI", "Docker", "Apache Spark", "MLflow"],
+    "portal_url": "https://fractal.ai/careers/junior-ml-engineer"
+  }
+]

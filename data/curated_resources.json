@@ -1,0 +1,218 @@
+{
+  "Docker": [
+    {
+      "platform": "YouTube",
+      "title": "Docker Tutorial for Beginners (Full Course)",
+      "instructor": "TechWorld with Nana",
+      "url": "https://www.youtube.com/watch?v=3c-iBn73dDE",
+      "type": "Video",
+      "duration": "3 Hours"
+    },
+    {
+      "platform": "Official Docs",
+      "title": "Docker Get Started & Containerization Guide",
+      "instructor": "Docker Documentation Team",
+      "url": "https://docs.docker.com/get-started/",
+      "type": "Documentation",
+      "duration": "Self-paced"
+    }
+  ],
+  "Kubernetes": [
+    {
+      "platform": "YouTube",
+      "title": "Kubernetes Course for Beginners",
+      "instructor": "freeCodeCamp",
+      "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
+      "type": "Video",
+      "duration": "4 Hours"
+    },
+    {
+      "platform": "Official Docs",
+      "title": "Kubernetes Basics & Architecture",
+      "instructor": "Kubernetes.io",
+      "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/",
+      "type": "Documentation",
+      "duration": "Self-paced"
+    }
+  ],
+  "FastAPI": [
+    {
+      "platform": "YouTube",
+      "title": "FastAPI Full Course - Python Web API",
+      "instructor": "freeCodeCamp / Sanjeev Thiyagarajan",
+      "url": "https://www.youtube.com/watch?v=0sOvCWFmrtA",
+      "type": "Video",
+      "duration": "19 Hours"
+    },
+    {
+      "platform": "Official Docs",
+      "title": "FastAPI Tutorial - User Guide",
+      "instructor": "Sebastián Ramírez",
+      "url": "https://fastapi.tiangolo.com/tutorial/",
+      "type": "Documentation",
+      "duration": "Self-paced"
+    }
+  ],
+  "Redis": [
+    {
+      "platform": "YouTube",
+      "title": "Redis Crash Course",
+      "instructor": "Traversy Media",
+      "url": "https://www.youtube.com/watch?v=jgpVdJB2sKQ",
+      "type": "Video",
+      "duration": "1 Hour"
+    },
+    {
+      "platform": "Official Docs",
+      "title": "Redis University - Free Redis Developer Courses",
+      "instructor": "Redis Labs",
+      "url": "https://university.redis.com/",
+      "type": "Course",
+      "duration": "6 Hours"
+    }
+  ],
+  "Kafka": [
+    {
+      "platform": "YouTube",
+      "title": "Apache Kafka Full Course for Beginners",
+      "instructor": "freeCodeCamp",
+      "url": "https://www.youtube.com/watch?v=R873BlNVUB4",
+      "type": "Video",
+      "duration": "2.5 Hours"
+    },
+    {
+      "platform": "Official Docs",
+      "title": "Apache Kafka Quickstart",
+      "instructor": "Apache Foundation",
+      "url": "https://kafka.apache.org/quickstart",
+      "type": "Documentation",
+      "duration": "Self-paced"
+    }
+  ],
+  "PostgreSQL": [
+    {
+      "platform": "NPTEL",
+      "title": "Database Management System (NPTEL)",
+      "instructor": "Prof. Partha Pratim Das (IIT Kharagpur)",
+      "url": "https://nptel.ac.in/courses/106105175",
+      "type": "Academic Course",
+      "duration": "8 Weeks"
+    },
+    {
+      "platform": "YouTube",
+      "title": "PostgreSQL Tutorial for Beginners",
+      "instructor": "freeCodeCamp",
+      "url": "https://www.youtube.com/watch?v=qw--VYLpxG4",
+      "type": "Video",
+      "duration": "4 Hours"
+    }
+  ],
+  "React": [
+    {
+      "platform": "YouTube",
+      "title": "React JS Full Course 2024",
+      "instructor": "Dave Gray",
+      "url": "https://www.youtube.com/watch?v=RVFAyFWO4go",
+      "type": "Video",
+      "duration": "9 Hours"
+    },
+    {
+      "platform": "Official Docs",
+      "title": "Learn React - The Official Interactive Docs",
+      "instructor": "React Team",
+      "url": "https://react.dev/learn",
+      "type": "Documentation",
+      "duration": "Interactive"
+    }
+  ],
+  "TypeScript": [
+    {
+      "platform": "YouTube",
+      "title": "TypeScript Course for Beginners",
+      "instructor": "freeCodeCamp",
+      "url": "https://www.youtube.com/watch?v=gp5H0Vw39yw",
+      "type": "Video",
+      "duration": "2 Hours"
+    },
+    {
+      "platform": "Official Docs",
+      "title": "TypeScript Handbook",
+      "instructor": "Microsoft",
+      "url": "https://www.typescriptlang.org/docs/handbook/intro.html",
+      "type": "Documentation",
+      "duration": "Self-paced"
+    }
+  ],
+  "Data Structures": [
+    {
+      "platform": "NPTEL",
+      "title": "Programming, Data Structures And Algorithms Using Python",
+      "instructor": "Prof. Madhavan Mukund (CMI / NPTEL)",
+      "url": "https://nptel.ac.in/courses/106106145",
+      "type": "Academic Course",
+      "duration": "8 Weeks"
+    },
+    {
+      "platform": "YouTube",
+      "title": "Algorithms and Data Structures Tutorial",
+      "instructor": "freeCodeCamp",
+      "url": "https://www.youtube.com/watch?v=8hly31xKli0",
+      "type": "Video",
+      "duration": "5 Hours"
+    }
+  ],
+  "AWS": [
+    {
+      "platform": "YouTube",
+      "title": "AWS Certified Cloud Practitioner Course",
+      "instructor": "freeCodeCamp",
+      "url": "https://www.youtube.com/watch?v=SOTamWNgDKc",
+      "type": "Video",
+      "duration": "14 Hours"
+    },
+    {
+      "platform": "Official Docs",
+      "title": "AWS Skill Builder - Free Cloud Fundamentals",
+      "instructor": "Amazon Web Services",
+      "url": "https://explore.skillbuilder.aws/",
+      "type": "Course",
+      "duration": "Self-paced"
+    }
+  ],
+  "Linux": [
+    {
+      "platform": "NPTEL",
+      "title": "Introduction to Operating Systems",
+      "instructor": "Prof. Chester Rebeiro (IIT Madras)",
+      "url": "https://nptel.ac.in/courses/106106144",
+      "type": "Academic Course",
+      "duration": "8 Weeks"
+    },
+    {
+      "platform": "YouTube",
+      "title": "Linux Command Line Tutorial For Beginners",
+      "instructor": "freeCodeCamp",
+      "url": "https://www.youtube.com/watch?v=ZtqBQ68cfJc",
+      "type": "Video",
+      "duration": "5 Hours"
+    }
+  ],
+  "Spring Boot": [
+    {
+      "platform": "YouTube",
+      "title": "Spring Boot Full Course - Learn Spring Boot",
+      "instructor": "Amigoscode",
+      "url": "https://www.youtube.com/watch?v=9SGDpanrc8U",
+      "type": "Video",
+      "duration": "4 Hours"
+    },
+    {
+      "platform": "Official Docs",
+      "title": "Building a RESTful Web Service with Spring Boot",
+      "instructor": "VMware Spring Team",
+      "url": "https://spring.io/guides/gs/rest-service",
+      "type": "Documentation",
+      "duration": "15 Mins"
+    }
+  ]
+}

@@ -39,6 +39,7 @@ wheels/
 # Database & Cache
 *.sqlite3
 *.db
+data/local_db.json
 chroma_db/
 .chroma/
 
