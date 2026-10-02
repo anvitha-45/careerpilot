@@ -16,6 +16,9 @@ class PipelineOrchestrator:
     async def run_assessment_pipeline(
         self,
         resume_bytes_or_text: Any,
+        full_name: str = "",
+        email: str = "",
+        phone: str = "",
         github_handle: str = "",
         leetcode_handle: str = "",
         target_domain: str = "Backend"
@@ -24,6 +27,9 @@ class PipelineOrchestrator:
         # 1. Agent 1: Assessment
         profile = await assessment_agent.execute(
             resume_bytes_or_text=resume_bytes_or_text,
+            full_name=full_name,
+            email=email,
+            phone=phone,
             github_handle=github_handle,
             leetcode_handle=leetcode_handle,
             target_domain=target_domain

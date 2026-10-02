@@ -93,8 +93,138 @@ class InterviewPrepAgent:
         if not questions:
             primary_skill = skills[0] if skills else "Python"
             secondary_skill = skills[1] if len(skills) > 1 else "SQL"
+            domain_low = domain.lower()
             
-            if "backend" in domain.lower():
+            if "frontend" in domain_low:
+                questions = [
+                    {
+                        "id": 1,
+                        "type": "Technical Deep-Dive",
+                        "question": f"In a modern web app using {primary_skill} and TypeScript, how does the Virtual DOM reconciliation algorithm work? How do you prevent unnecessary re-renders in deep component trees?",
+                        "why_asked": "Evaluates understanding of UI render lifecycles, diffing algorithms, memoization (React.memo, useMemo, useCallback), and component purity.",
+                        "key_concepts": ["Fiber Tree reconciliation", "Key props uniqueness", "Memoization hooks (useMemo, useCallback)", "Immutable state updates"],
+                        "hint": "Explain how the diffing algorithm compares virtual trees, how stable keys avoid recreating DOM nodes, and when to memoize expensive sub-trees."
+                    },
+                    {
+                        "id": 2,
+                        "type": "System & Data Architecture",
+                        "question": "How do you optimize Core Web Vitals (LCP, INP, CLS) for a high-traffic e-commerce storefront? What techniques do you use to reduce JavaScript execution time and bundle size?",
+                        "why_asked": "Tests real-world web performance engineering, Lighthouse auditing, code-splitting, and layout stability.",
+                        "key_concepts": ["Dynamic import() & code splitting", "Image optimization (WebP, srcset, aspect-ratio)", "Minimizing Long Tasks (INP)", "Critical CSS inlining"],
+                        "hint": "Discuss lazy-loading offscreen routes, reserving layout dimensions to avoid CLS, and offloading heavy tasks so the main browser thread stays responsive."
+                    },
+                    {
+                        "id": 3,
+                        "type": "Technical Deep-Dive",
+                        "question": f"When handling asynchronous network requests with {secondary_skill or 'REST APIs'}, how do you implement optimistic UI updates with automatic rollback on server error?",
+                        "why_asked": "Assesses client-side state predictability, error handling UX, and network synchronization.",
+                        "key_concepts": ["Optimistic mutations", "Rollback snapshot state", "Retry backoff logic", "Global toast error boundaries"],
+                        "hint": "Walk through immediately updating local UI state, storing a rollback snapshot, sending the network request, and reverting to snapshot if 5xx errors occur."
+                    },
+                    {
+                        "id": 4,
+                        "type": "Behavioral (STAR)",
+                        "question": "Describe a situation where a designer provided an interactive mockup that caused severe performance lag or layout breaking on mobile devices. How did you resolve the conflict?",
+                        "why_asked": "Measures cross-functional communication with designers, technical compromise, and mobile-first responsiveness.",
+                        "key_concepts": ["CSS Grid/Flexbox responsiveness", "Mobile constraint communication", "Pragmatic UI compromises", "Smooth 60fps animations"],
+                        "hint": "Use STAR: Situation (the heavy mockup), Task (identifying mobile jank), Action (proposing CSS transforms over layout recalculations), Result (smooth 60fps on mobile)."
+                    },
+                    {
+                        "id": 5,
+                        "type": "Behavioral (STAR)",
+                        "question": f"Why are you eager to join {company} as a Frontend Engineer, and how do you ensure the web experiences you build are accessible (WCAG 2.1 AA) to all users?",
+                        "why_asked": "Evaluates genuine interest in the company, empathy for diverse users, and mastery of semantic HTML and ARIA standards.",
+                        "key_concepts": ["Semantic HTML elements", "Keyboard navigation & focus trapping", "Color contrast ratios", "Screen reader aria-labels"],
+                        "hint": "Mention a specific product feature of the company, and outline testing accessibility via keyboard-only navigation and screen readers."
+                    }
+                ]
+            elif "data" in domain_low or "ai" in domain_low:
+                questions = [
+                    {
+                        "id": 1,
+                        "type": "Technical Deep-Dive",
+                        "question": f"When training machine learning models using {primary_skill} and Scikit-Learn on highly imbalanced real-world datasets (e.g. 99% negative, 1% positive), why is Accuracy a misleading metric, and what techniques do you use to train and evaluate effectively?",
+                        "why_asked": "Evaluates fundamental ML evaluation literacy, understanding of confusion matrices, and resampling strategies.",
+                        "key_concepts": ["Precision, Recall, and PR-AUC", "F1-Score / Balanced Accuracy", "SMOTE / Class-weighting", "Stratified K-Fold Cross Validation"],
+                        "hint": "Explain how a naive model predicting all negatives gets 99% accuracy but 0% recall, and describe setting class weights or optimizing the PR-AUC threshold."
+                    },
+                    {
+                        "id": 2,
+                        "type": "System & Data Architecture",
+                        "question": f"How do you design a reliable batch and streaming ETL pipeline using {secondary_skill or 'SQL'} and Pandas that guarantees zero data leakage between training and testing sets during feature scaling?",
+                        "why_asked": "Tests data pipeline integrity, feature engineering safety, and prevention of subtle test contamination in production.",
+                        "key_concepts": ["Pipeline transformer isolation (fit on train only)", "Data leakage prevention", "Handling missing values & imputers", "Outlier capping vs removal"],
+                        "hint": "Emphasize that scalers and imputers must only be fitted on the training split and transformed on test/validation splits to prevent future information leakage."
+                    },
+                    {
+                        "id": 3,
+                        "type": "Technical Deep-Dive",
+                        "question": "Suppose your machine learning model has high training accuracy (97%) but low validation accuracy (68%). How do you systematically diagnose whether the issue is overfitting, feature noise, or data drift, and what corrective actions do you take?",
+                        "why_asked": "Evaluates practical model debugging, bias-variance tradeoff, regularization, and feature selection.",
+                        "key_concepts": ["Bias-Variance tradeoff", "L1/L2 Regularization (Lasso/Ridge)", "Dropout / Tree pruning", "Feature importance pruning"],
+                        "hint": "Identify the high variance symptom (overfitting), and outline cross-validation, adding regularization, reducing model complexity, or collecting more data."
+                    },
+                    {
+                        "id": 4,
+                        "type": "Behavioral (STAR)",
+                        "question": "Tell me about a data project where the raw dataset was messy, contained corrupted values, or had missing timestamps. How did you audit and clean it without biasing the end results?",
+                        "why_asked": "Tests pragmatic data wrangling resilience, statistical sanity checking, and documentation discipline.",
+                        "key_concepts": ["Exploratory Data Analysis (EDA)", "Imputation vs dropping criteria", "Domain validation checks", "Documenting data cleaning choices"],
+                        "hint": "Use STAR: Situation (the raw messy data), Task (identifying anomalies), Action (auditing distributions and applying domain-informed cleaning), Result (clean model dataset)."
+                    },
+                    {
+                        "id": 5,
+                        "type": "Behavioral (STAR)",
+                        "question": f"How would you explain the predictions and decision boundaries of a complex ML model to non-technical business stakeholders at {company}?",
+                        "why_asked": "Evaluates model explainability, SHAP/LIME familiarity, and translating math into business impact.",
+                        "key_concepts": ["Feature attribution (SHAP values)", "Translating coefficients to business metrics", "Risk and confidence bounds", "User-friendly visual reporting"],
+                        "hint": "Discuss using feature importance or partial dependence plots, avoiding deep technical jargon, and tying predictions back to ROI or operational cost."
+                    }
+                ]
+            elif "devops" in domain_low or "cloud" in domain_low:
+                questions = [
+                    {
+                        "id": 1,
+                        "type": "Technical Deep-Dive",
+                        "question": f"When containerizing microservices with {primary_skill or 'Docker'}, how do multi-stage builds work, and what security practices do you follow to minimize image size and eliminate vulnerabilities?",
+                        "why_asked": "Tests container optimization fundamentals, non-root user execution, and attack surface reduction.",
+                        "key_concepts": ["Multi-stage Dockerfile stages", "Distroless / Alpine base images", "Running as non-root user", "Layer caching efficiency"],
+                        "hint": "Explain separating the build environment (compilers/headers) from the minimal runtime image, and scanning layers for CVEs."
+                    },
+                    {
+                        "id": 2,
+                        "type": "System & Data Architecture",
+                        "question": "Suppose a production microservice running in Linux containers starts reporting 502 Bad Gateway errors. Walk through your step-by-step diagnostic workflow using Linux command-line tools and container logs.",
+                        "why_asked": "Evaluates live Linux troubleshooting methodology, process inspection, and network socket debugging.",
+                        "key_concepts": ["systemctl / journalctl logs", "Process monitoring (top, ps aux, htop)", "Network verification (netstat, curl -v, ss)", "OOMKilled exit code 137 checks"],
+                        "hint": "Start from ingress logs, check if container process exited due to Out Of Memory (OOM), test socket connectivity locally with curl, and inspect system logs."
+                    },
+                    {
+                        "id": 3,
+                        "type": "Technical Deep-Dive",
+                        "question": f"How do you design a GitHub Actions or GitLab CI/CD pipeline that enforces automated unit testing, linting, security scanning, and blue-green or rolling zero-downtime deployment?",
+                        "why_asked": "Assesses modern CI/CD automation principles, artifact generation, and deployment safety guards.",
+                        "key_concepts": ["Parallel test matrix jobs", "Artifact passing between stages", "Automated rollbacks on healthcheck failure", "Zero-downtime rolling updates"],
+                        "hint": "Describe defining fail-fast test stages, caching dependencies, publishing signed container images, and verifying health probes before routing traffic."
+                    },
+                    {
+                        "id": 4,
+                        "type": "Behavioral (STAR)",
+                        "question": "Describe an incident where a deployment pipeline broke or a configuration drift caused a service interruption in a test or personal environment. How did you conduct root-cause analysis?",
+                        "why_asked": "Tests blameless post-mortem culture, root-cause identification, and preventing recurrence through Infrastructure-as-Code.",
+                        "key_concepts": ["Blameless root cause analysis", "Git commit history auditing", "Fixing root cause vs symptom", "Adding automated safeguards"],
+                        "hint": "Use STAR: Situation (pipeline failure), Task (isolating failure), Action (inspecting recent commits and environment variable drift), Result (remediation and added test)."
+                    },
+                    {
+                        "id": 5,
+                        "type": "Behavioral (STAR)",
+                        "question": f"Why do you want to pursue Cloud & Infrastructure engineering at {company}, and what is your strategy for keeping cloud resource costs lean while maintaining high availability?",
+                        "why_asked": "Measures FinOps awareness, architectural efficiency, and proactive engineering responsibility.",
+                        "key_concepts": ["Right-sizing compute instances", "Auto-scaling groups based on metric triggers", "Spot/Preemptible instance usage", "Lifecycle policies on storage"],
+                        "hint": "Discuss auto-scaling rules based on traffic, stopping idle dev environments, and setting up automated budget billing alerts."
+                    }
+                ]
+            elif "backend" in domain_low:
                 questions = [
                     {
                         "id": 1,
@@ -123,9 +253,9 @@ class InterviewPrepAgent:
                     {
                         "id": 4,
                         "type": "Behavioral (STAR)",
-                        "question": "Describe a difficult technical bug or merge conflict you encountered in a team or academic project close to a deadline. How did you diagnose it, prioritize fixes, and verify the resolution?",
+                        "question": "Describe a difficult technical bug or race condition you encountered in a team or academic project close to a deadline. How did you diagnose it, prioritize fixes, and verify the resolution?",
                         "why_asked": "Tests composure under stress, structured debugging (logs over guessing), and team communication.",
-                        "key_concepts": ["Git bisect / structured log isolation", "Calm root-cause analysis", "Clear communication with teammates", "Regression unit tests"],
+                        "key_concepts": ["Structured log isolation", "Calm root-cause analysis", "Clear communication with teammates", "Regression unit tests"],
                         "hint": "Use the STAR method: Situation (the deadline), Task (what failed), Action (your diagnostic approach), Result (resolution and post-mortem prevention)."
                     },
                     {
@@ -264,8 +394,13 @@ class InterviewPrepAgent:
                 print(f"[{self.name}] Failed to parse evaluation JSON: {e}")
 
         # High-precision heuristic scoring based on technical depth and structure
-        has_metrics = any(char.isdigit() for char in clean_ans) or "%" in clean_ans or "ms" in clean_ans
-        has_tech_terms = any(t in clean_ans.lower() for t in ["index", "async", "cache", "redis", "database", "query", "thread", "api", "latency", "pool", "lock", "scale", "test", "fastapi", "postgres"])
+        has_metrics = any(char.isdigit() for char in clean_ans) or "%" in clean_ans or "ms" in clean_ans or "fps" in clean_ans or "sec" in clean_ans
+        has_tech_terms = any(t in clean_ans.lower() for t in [
+            "index", "async", "cache", "redis", "database", "query", "thread", "api", "latency",
+            "pool", "lock", "scale", "test", "fastapi", "postgres", "react", "component", "virtual dom",
+            "memo", "hook", "bundle", "lighthouse", "docker", "container", "linux", "ci/cd", "pipeline",
+            "kubernetes", "pandas", "scikit", "model", "f1", "precision", "recall", "sql", "git"
+        ])
         
         tech_score = 5
         if has_tech_terms: tech_score = 7
@@ -274,26 +409,51 @@ class InterviewPrepAgent:
 
         comm_score = 6
         if word_count > 20: comm_score = 7
-        if any(w in clean_ans.lower() for w in ["because", "result", "implemented", "used", "reduced"]): comm_score = 8
+        if any(w in clean_ans.lower() for w in ["because", "result", "implemented", "used", "reduced", "achieved", "optimized"]): comm_score = 8
         if word_count > 50 and has_metrics: comm_score = 9
 
         overall = round((tech_score + comm_score) / 2.0, 1)
 
         critique_parts = []
         if not has_metrics:
-            critique_parts.append("Include quantified engineering metrics (e.g. latency reduced by X%, throughput of Y req/sec) to substantiate your claims.")
+            critique_parts.append("Include quantified engineering metrics (e.g. latency reduced by X%, throughput of Y req/sec, bundle size decreased by Z%) to substantiate your claims.")
         if not has_tech_terms:
             critique_parts.append("Reference concrete tools, protocols, or architectural patterns rather than speaking in abstract generalities.")
         if not critique_parts:
-            critique_parts.append("Strong technical explanation! To refine further, clearly articulate the trade-offs (e.g. memory usage vs CPU speed) of the approach you chose.")
+            critique_parts.append("Strong technical explanation! To refine further, clearly articulate the trade-offs (e.g. memory footprint vs CPU efficiency) of the approach you chose.")
 
         feedback_msg = " ".join(critique_parts)
 
-        model_answer = (
-            "\"In my backend services project, I addressed this concurrency and latency challenge by structuring our endpoints with asynchronous I/O using FastAPI and asyncpg for non-blocking database connections. "
-            "To resolve high read latency on user feeds, I analyzed query performance using EXPLAIN ANALYZE and implemented a composite B-Tree index on (tenant_id, created_at), which dropped query latency from 450ms to 28ms. "
-            "Furthermore, I introduced an in-memory Redis cache-aside layer with atomic key expiry, allowing the service to reliably sustain 1,200 requests/sec under Apache JMeter load tests with zero dropped connections.\""
-        )
+        # Domain-aware Senior Engineer Model Answers
+        role_low = role.lower()
+        q_low = question.lower()
+
+        if "frontend" in role_low or "virtual dom" in q_low or "vitals" in q_low or "react" in q_low:
+            model_answer = (
+                "\"In my frontend web application project, I tackled UI performance and re-render overhead by profiling component render cycles with React DevTools Profiler. "
+                "I identified that unnecessary re-renders in our product catalog were caused by inline callback definitions and unmemoized object props. "
+                "I wrapped the list item components in React.memo with custom comparison functions and stabilized callback references using useCallback. "
+                "Combined with implementing route-level code splitting via React.lazy and Suspense, this dropped initial bundle size by 38% and improved our Google Lighthouse Performance score from 64 to 96, guaranteeing 60fps scrolling on mobile devices.\""
+            )
+        elif "data" in role_low or "ml" in role_low or "imbalanced" in q_low or "etl" in q_low or "leakage" in q_low or "overfitting" in q_low:
+            model_answer = (
+                "\"In my machine learning project, I addressed class imbalance (98:2 ratio) by replacing standard Accuracy with Precision-Recall AUC (PR-AUC) and Macro F1-Score as primary evaluation metrics. "
+                "To prevent data leakage during preprocessing, I encapsulated all feature scaling, one-hot encoding, and median imputers inside a Scikit-Learn Pipeline that fitted strictly on training folds within a 5-fold Stratified K-Fold setup. "
+                "I applied class weighting and tuned decision thresholds, which elevated minority class recall from 24% to 83% while sustaining an 88.5% PR-AUC on completely unseen holdout test data.\""
+            )
+        elif "devops" in role_low or "cloud" in role_low or "docker" in q_low or "container" in q_low or "pipeline" in q_low or "linux" in q_low:
+            model_answer = (
+                "\"In my cloud deployment project, I optimized our microservice build and deployment lifecycle by architecting multi-stage Dockerfiles. "
+                "The build stage compiled binary dependencies and ran static linting with Ruff, while the minimal runtime stage copied only release artifacts onto an Alpine distroless base image running as a non-root user. "
+                "This slashed image size from 850MB to 54MB and eliminated 14 high-severity CVE vulnerabilities. "
+                "I automated this in GitHub Actions with self-hosted cache layers, shortening our pull request test and build pipeline duration from 18 minutes down to 3.5 minutes.\""
+            )
+        else:
+            model_answer = (
+                "\"In my backend services project, I addressed this concurrency and latency challenge by structuring our endpoints with asynchronous I/O using FastAPI and asyncpg for non-blocking database connections. "
+                "To resolve high read latency on user feeds, I analyzed query performance using EXPLAIN ANALYZE and implemented a composite B-Tree index on (tenant_id, created_at), which dropped query latency from 450ms to 28ms. "
+                "Furthermore, I introduced an in-memory Redis cache-aside layer with atomic key expiry, allowing the service to reliably sustain 1,200 requests/sec under Apache JMeter load tests with zero dropped connections.\""
+            )
 
         return {
             "technical_score": tech_score,

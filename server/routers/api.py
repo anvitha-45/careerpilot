@@ -42,9 +42,12 @@ async def get_jobs():
 async def run_assessment(
     resume_file: Optional[UploadFile] = File(None),
     resume_text: Optional[str] = Form(None),
+    full_name: Optional[str] = Form(""),
+    email: Optional[str] = Form(""),
+    phone: Optional[str] = Form(""),
     github_handle: Optional[str] = Form(""),
     leetcode_handle: Optional[str] = Form(""),
-    target_domain: Optional[str] = Form("Backend")
+    target_domain: Optional[str] = Form("All")
 ):
     """Agent 1 + Agent 2: Ingests resume, scrapes GitHub/LeetCode, and computes market readiness and gaps."""
     content = ""
@@ -58,42 +61,48 @@ async def run_assessment(
         content = resume_text.strip()
     else:
         # Provide default engineering student resume text for instant 1-click test
-        content = """
-        ANANYA SHARMA
-        Email: ananya.sharma@example.com | Phone: +91 9876543210
-        GitHub: github.com/ananya-dev | LinkedIn: linkedin.com/in/ananya-sharma
+        display_name = full_name.strip() or "Ananya Sharma"
+        display_email = email.strip() or "ananya.sharma@example.com"
+        display_phone = phone.strip() or "+91 9876543210"
+        content = f"""
+        {display_name.upper()}
+        Email: {display_email} | Phone: {display_phone}
+        GitHub: github.com/{github_handle or 'developer'} | LinkedIn: linkedin.com/in/{display_name.lower().replace(' ', '-')}
         
         EDUCATION
         B.Tech in Computer Science and Engineering (2022 - 2026)
         CGPA: 8.7/10
         
         TECHNICAL SKILLS
-        Languages: Python, JavaScript, SQL, HTML5, CSS3
-        Frameworks: FastAPI, Flask, React.js
-        Databases: PostgreSQL, SQLite
-        Tools: Git, GitHub, Linux, Docker (Basics), Postman
+        Languages: Python, JavaScript, TypeScript, SQL, HTML5, CSS3
+        Frameworks: FastAPI, React, Flask, Scikit-Learn, Pandas
+        Databases: PostgreSQL, Redis, SQLite
+        Tools: Git, GitHub, Linux, Docker, Postman
         Core CS: Data Structures & Algorithms, Object-Oriented Programming, DBMS, Computer Networks
         
         PROJECTS
-        1. E-Commerce Order Management Microservice
-        - Developed asynchronous backend service with Python and FastAPI handling 200+ concurrent requests.
-        - Designed relational database schema using PostgreSQL and SQLAlchemy ORM.
-        - Implemented JWT authentication and role-based access control.
+        1. High-Performance REST API & Microservice Backend
+        - Developed asynchronous backend services using Python and FastAPI handling 500+ concurrent requests.
+        - Designed relational database schema using PostgreSQL and SQLAlchemy with connection pooling.
+        - Implemented JWT authentication and role-based access control with Redis caching.
         
-        2. Real-Time Collaborative Whiteboard
-        - Built frontend using React and HTML5 Canvas with WebSocket support.
-        - Handled state synchronization across multiple connected browser clients.
+        2. Real-Time Collaborative Web Application
+        - Built frontend client using React, TypeScript, and HTML5 Canvas with WebSocket support.
+        - Handled client-side state synchronization with optimistic UI updates and responsive layout styling.
         
-        3. Automated Job Search Crawler
-        - Wrote Python automation scripts using requests and BeautifulSoup for extracting tech job keywords.
+        3. Automated Job Search & Data Analytics Crawler
+        - Wrote Python automation scripts using Pandas and BeautifulSoup for extracting tech job keywords.
         """
 
     try:
         pipeline_output = await orchestrator.run_assessment_pipeline(
             resume_bytes_or_text=content,
+            full_name=full_name or "",
+            email=email or "",
+            phone=phone or "",
             github_handle=github_handle or "",
             leetcode_handle=leetcode_handle or "",
-            target_domain=target_domain or "Backend"
+            target_domain=target_domain or "All"
         )
         return {
             "success": True,

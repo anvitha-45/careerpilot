@@ -15,6 +15,9 @@ class AssessmentAgent:
     async def execute(
         self,
         resume_bytes_or_text: Any,
+        full_name: str = "",
+        email: str = "",
+        phone: str = "",
         github_handle: str = "",
         leetcode_handle: str = "",
         target_domain: str = "Backend"
@@ -24,7 +27,10 @@ class AssessmentAgent:
         # 1. Parse Resume Content
         parsed_resume = parse_full_resume(resume_bytes_or_text)
         
-        # Override handles if candidate provided in input form
+        # Override handles & contact info if candidate provided in input form
+        cand_name = full_name.strip() or parsed_resume.get("name") or "Candidate"
+        cand_email = email.strip() or parsed_resume.get("email") or "candidate@example.com"
+        cand_phone = phone.strip() or parsed_resume.get("phone") or "+91 9876543210"
         gh_user = github_handle.strip() or parsed_resume.get("github_handle", "")
         lc_user = leetcode_handle.strip()
 
@@ -75,9 +81,9 @@ class AssessmentAgent:
 
         # Construct Candidate Profile
         profile_data = {
-            "name": parsed_resume["name"] or "Student Candidate",
-            "email": parsed_resume["email"] or "candidate@careerpilot.ai",
-            "phone": parsed_resume["phone"] or "",
+            "name": cand_name,
+            "email": cand_email,
+            "phone": cand_phone,
             "github_handle": gh_user,
             "github_stats": github_stats,
             "leetcode_handle": lc_user,
