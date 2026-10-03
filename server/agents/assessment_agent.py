@@ -73,6 +73,8 @@ class AssessmentAgent:
                 "title": jd.get("title"),
                 "company": jd.get("company"),
                 "location": jd.get("location"),
+                "is_live": jd.get("is_live", False),
+                "source": jd.get("source", "Benchmark"),
                 "readiness_score": eval_res["readiness_score"],
                 "matched_skills": eval_res["matched_skills"],
                 "missing_skills": eval_res["missing_skills"]

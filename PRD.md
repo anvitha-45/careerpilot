@@ -69,19 +69,19 @@ flowchart TD
      * GitHub API: Repositories, top programming languages, commit activity, project complexity.
      * LeetCode API / Scraper: Solved count by difficulty (Easy/Medium/Hard).
   3. **Skill Matrix Normalization**: Merges extracted resume skills with languages verified from GitHub.
-  4. **JD Benchmarking**: Calculates TF-IDF term frequency and cosine similarity against the curated tech JD benchmark corpus; computes matched vs. missing skills.
+  4. **JD Benchmarking**: Calculates TF-IDF term frequency and cosine similarity against both curated tech benchmark JDs and live-synced developer job postings (fetched on-demand via public APIs); computes matched vs. missing skills.
 * **Output**:
   * Baseline Overall Readiness Score (0–100%).
   * Current Verified Skill Matrix.
-  * Role Benchmark Match List.
+  * Role Benchmark Match List (with visual LIVE indicators for real-time postings).
 
 ---
 
 #### 4.2. Agent 2: Gap & Learning Agent
-* **Objective**: Identify critical capability deficits based on benchmark market demand and generate a targeted learning roadmap.
+* **Objective**: Identify critical capability deficits based on benchmark and live market demand, and generate a targeted learning roadmap.
 * **Inputs**:
   * Verified Skill Matrix (from Agent 1).
-  * Target Domain & Curated Benchmark JDs Corpus.
+  * Target Domain, Curated Benchmark JDs & Live-Synced Postings.
 * **Execution Logic**:
   1. **Market Frequency Extraction**: Tokenizes and clusters required technical skills across the target JD dataset; ranks skills by empirical appearance frequency.
   2. **Set-Difference & Gap Detection**: Computes `Target_Market_Skills − Candidate_Verified_Skills`.

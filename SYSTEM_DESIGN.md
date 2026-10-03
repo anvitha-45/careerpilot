@@ -247,6 +247,7 @@ Careerpilot/
 │       ├── resume_parser.py       # Layout-aware resume text and entity extractor
 │       ├── github_client.py       # Public GitHub API client
 │       ├── leetcode_client.py     # Public LeetCode GraphQL client
+│       ├── job_fetcher.py         # Asynchronous live job fetcher via free public APIs
 │       └── similarity.py          # TF-IDF cosine similarity & scoring engine
 ```
 
