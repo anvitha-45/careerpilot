@@ -5,9 +5,9 @@
 ---
 
 ### 1. Executive Summary & Vision
-**CareerPilot** is an end-to-end, multi-agent AI copilot designed for graduating engineering students. Rather than a superficial form-filler or a generic resume evaluator, CareerPilot orchestrates a stateful 5-agent pipeline that guides a candidate from **Self-Assessment → Targeted Gap Upskilling → Job-Specific Tailoring → Staged Application Automation → Role-Specific Interview Preparation**.
+**CareerPilot** is an end-to-end, multi-agent AI copilot designed for graduating engineering students. Rather than a superficial form-filler or a generic resume evaluator, CareerPilot orchestrates a stateful 5-agent pipeline that guides a candidate from **Self-Assessment → Targeted Gap Upskilling → Job-Specific Tailoring → Application Staging & Portal Verification → Role-Specific Interview Preparation**.
 
-A foundational design pillar is the **Human-in-the-Loop (HITL) Approval Gate**: the system pre-fills and stages job applications via browser automation but stops prior to submission. This ensures strict compliance with job portal Terms of Service (ToS), prevents account bans, and enforces responsible AI deployment.
+A foundational design pillar is the **Human-in-the-Loop (HITL) Gate**: the system pre-fills and stages verified application packages (contact info, STAR resume, cover letter, verified career portal links) but requires human review and confirmation before logging submissions. This ensures strict compliance with job portal Terms of Service (ToS), prevents account bans, and enforces responsible AI deployment.
 
 ---
 
@@ -25,30 +25,32 @@ A foundational design pillar is the **Human-in-the-Loop (HITL) Approval Gate**: 
 
 ```mermaid
 flowchart TD
-    User([Graduating Student]) -->|Upload Resume + GitHub / LeetCode IDs| A1[Agent 1: Assessment Agent]
+    User([Graduating Student]) -->|Upload Resume + GitHub / LeetCode Handles| A1[Agent 1: Assessment Agent]
     
-    subgraph Data Layer
-        JDs[(Target Job Postings DB / Scraped JDs)]
-        Res[(Curated Free Resources: NPTEL, YouTube, Docs)]
+    subgraph Data & Storage Layer
+        JDs[(Target Job Postings DB)]
+        Res[(Curated Free Resources DB)]
+        UserDB[(Users & Application Tracker DB)]
     end
 
     JDs --> A1
-    A1 -->|Skill Vector & Benchmark Scores| A2[Agent 2: Gap & Learning Agent]
+    A1 -->|Skill Vectors & Readiness Score 0-100%| A2[Agent 2: Gap & Learning Agent]
     Res --> A2
     
-    A2 -->|Ranked Missing Skills & Study Plan| Dashboard[User Dashboard]
+    A2 -->|Ranked Gaps & 14-Day Free Study Plan| Dashboard[User Dashboard - FastAPI / SPA]
     
     Dashboard -->|Select Target Role / JD| A3[Agent 3: Tailoring Agent]
-    A3 -->|Tailored Resume Bullets STAR + Cover Letter| StagingEnv[Tailored Application Payload]
+    A3 -->|STAR Resume Bullets + Custom Cover Letter| StagingEnv[Tailored Application Package]
     
-    StagingEnv --> A4[Agent 4: Application Staging Agent]
-    A4 -->|Playwright Form Pre-fill & File Upload| Portal[Job Portal e.g., Naukri / LinkedIn]
+    StagingEnv --> A4[Agent 4: Application Staging & Verification Agent]
+    A4 -->|Pre-filled Application Cards & Verified Portal Links| HITL{Human-in-the-Loop Gate: Review & Confirm}
     
-    Portal --> HITL{Human-in-the-Loop Gate: Review & Confirm}
-    HITL -->|User Approves & Manually Clicks Submit| Submitted([Application Submitted Safely])
+    HITL -->|Direct Link: Candidate Applies on Portal| Portal[Verified Careers Portal e.g., Razorpay / Swiggy]
+    HITL -->|User Confirms & Logs Submission| UserDB
+    UserDB --> Submitted([Application Confirmed & Saved])
     
-    StagingEnv --> A5[Agent 5: Interview Prep Agent]
-    A5 <-->|Mock Q&A Loop + Real-time Feedback| User
+    StagingEnv --> A5[Agent 5: Mock Interview Prep Agent]
+    A5 <-->|Interactive Q&A Loop + Real-Time STAR Feedback| User
 ```
 
 ---
@@ -58,19 +60,20 @@ flowchart TD
 #### 4.1. Agent 1: Assessment Agent
 * **Objective**: Establish the student's true technical baseline and measure semantic alignment against target industry roles.
 * **Inputs**:
-  * Resume file (`.pdf` or `.docx`).
-  * Public Profile Handles: GitHub username, LeetCode username.
-  * Target Role / Domain (e.g., "Junior Backend Engineer", "Full Stack Developer - Bangalore").
+  * Resume file (`.pdf` or raw text).
+  * Public Profile Handles: GitHub username, LeetCode username, LinkedIn URL.
+  * Target Role / Domain (e.g., "Backend", "Full Stack", "Frontend", "DevOps / Cloud", "Data / AI", "All").
 * **Execution Logic**:
-  1. **Resume Parser**: Extracts structured entities (skills, projects, work experience, education) using a lightweight layout-aware text parser.
-  2. **Profile Extractor**:
-     * GitHub API: Repositories, top languages, commit frequency, project complexity (stars, dependencies).
-     * LeetCode API / Public Scraper: Solved count by difficulty (Easy/Medium/Hard), contest rating.
-  3. **Skill Vector Generator**: Creates a weighted embedding representation of the candidate's verified skills.
-  4. **JD Benchmarking**: Calculates cosine similarity against a curated/scraped corpus of live job postings for the designated target role and location.
+  1. **Resume Parser**: Extracts structured entities (candidate name, email, phone, skills, projects, links) using layout-aware regex and text segmentation.
+  2. **Profile Signals Extractor**:
+     * GitHub API: Repositories, top programming languages, commit activity, project complexity.
+     * LeetCode API / Scraper: Solved count by difficulty (Easy/Medium/Hard).
+  3. **Skill Matrix Normalization**: Merges extracted resume skills with languages verified from GitHub.
+  4. **JD Benchmarking**: Calculates TF-IDF term frequency and cosine similarity against live target job descriptions; computes matched vs. missing skills.
 * **Output**:
-  * Baseline Readiness Score (0–100%).
-  * Current Verified Skill Matrix (Languages, Frameworks, Core CS, System Design).
+  * Baseline Overall Readiness Score (0–100%).
+  * Current Verified Skill Matrix.
+  * Role Benchmark Match List.
 
 ---
 
@@ -78,17 +81,18 @@ flowchart TD
 * **Objective**: Identify critical capability deficits based on live market demand and generate a targeted learning roadmap.
 * **Inputs**:
   * Verified Skill Matrix (from Agent 1).
-  * Corpus of Target JDs (from Agent 1).
+  * Target Domain & Live JDs Corpus.
 * **Execution Logic**:
   1. **Market Frequency Extraction**: Tokenizes and clusters required technical skills across the target JD dataset; ranks skills by empirical appearance frequency.
-  2. **Set-Difference & Gap Detection**: Computes `Target_Market_Skills - Candidate_Verified_Skills`.
+  2. **Set-Difference & Gap Detection**: Computes `Target_Market_Skills − Candidate_Verified_Skills`.
   3. **Free Resource Indexing**: Matches missing high-frequency skills with verified free resources:
      * **NPTEL / SWAYAM** (for foundational theory: OS, DBMS, Networks).
      * **High-quality YouTube playlists** (for practical stacks: FastAPI, Docker, Spring Boot).
      * **Official Documentation** (for syntax and quickstarts).
+  4. **14-Day Roadmap Assembly**: Distributes high-priority missing skills across a sequential 2-week micro-learning plan.
 * **Output**:
-  * Ranked Gap Matrix: Skills sorted by impact score (`Demand_Frequency * Inverted_Difficulty`).
-  * Actionable 7–14 Day Micro-Learning Plan with direct links to free material.
+  * Ranked Gap Matrix with priority levels (Critical, High, Recommended) and market demand percentage.
+  * Structured 14-Day Micro-Learning Plan with direct links to free material.
 
 ---
 
@@ -103,47 +107,48 @@ flowchart TD
      * *Guardrail*: Explicit system instruction prohibiting the invention of unlisted tools, companies, or metrics.
   3. **Cover Letter Generator**: Generates a 3-paragraph, role-specific cover letter articulating alignment with the hiring team's stated challenges.
 * **Output**:
-  * Tailored Resume text / exportable `.pdf` draft.
+  * Tailored Resume text / exportable `.pdf` and `.txt` draft.
   * Custom Cover Letter text.
 
 ---
 
-#### 4.4. Agent 4: Application Staging Agent (Innovative Core)
-* **Objective**: Eliminate repetitive application data entry using browser automation while maintaining strict platform compliance and safety.
+#### 4.4. Agent 4: Application Staging & Verification Agent
+* **Objective**: Eliminate repetitive application chaos while maintaining strict platform compliance and safety without dangerous auto-filling.
 * **Inputs**:
-  * Target Job Portal URL (e.g., Naukri / LinkedIn Easy Apply / Greenhouse).
-  * Candidate Master Details (contact info, work authorization, education).
+  * Target Job Description (Company, Role, Portal URL, LinkedIn Search URL).
+  * Candidate Master Details (contact info, work authorization, notice period).
   * Tailored Resume & Cover Letter (from Agent 3).
 * **Execution Logic**:
-  1. **Browser Automation Engine (Playwright)**: Launches a controlled browser session (headed or user-visible debugging port).
-  2. **Form Field Mapping**: Identifies standard input fields (Name, Phone, Years of Experience, Notice Period, Current CTC/Expected CTC) and populates them.
-  3. **Document Attachment**: Uploads the newly generated tailored resume and cover letter.
-  4. **Staging & Halting**: Advances multi-step application wizards up to the final confirmation dialog.
-  5. **Approval Gate Interruption**: Halts execution immediately before triggering any action labeled "Submit", "Apply Now", or "Send Application".
+  1. **Package Structuring**: Compiles pre-filled application summary cards (contact info, role, attached documents, online profiles).
+  2. **Portal URL Verification**: Resolves and verifies employer careers portal URLs (e.g. Razorpay, Swiggy, Freshworks) and generates targeted LinkedIn job search links.
+  3. **Quick-Apply Bundle Generator**: Formats a 1-click clipboard bundle with cover letter and candidate links.
+  4. **Human-in-the-Loop (HITL) Gate**: Halts execution, presenting the pre-filled staging cards to the candidate for review before any portal visit or submission.
+  5. **Submission Logging**: When the candidate confirms submission, transitions state to `APPROVED_BY_HUMAN_SUBMITTED`, persisting the application record into the database with timestamps and status tracking.
 * **Output**:
-  * Staged browser state awaiting human confirmation.
-  * Status log sent to User Dashboard: "Application staged at [Portal URL] — Please review and click Submit."
+  * Staged application package awaiting human confirmation (`STAGED_AWAITING_APPROVAL`).
+  * Direct verified links to official careers portals and LinkedIn jobs.
+  * Application tracker record upon confirmation.
 
 ---
 
-#### 4.5. Agent 5: Interview Prep Agent
+#### 4.5. Agent 5: Mock Interview Prep Agent
 * **Objective**: Prepare the candidate for technical and behavioral interviews tailored specifically to the targeted JD.
 * **Inputs**:
   * Target JD.
   * Tailored Resume (from Agent 3).
 * **Execution Logic**:
-  1. **Question Generator**: Synthesizes probable interview questions categorized into:
+  1. **Question Generator**: Synthesizes 5 probable interview questions categorized into:
      * Technical Deep-Dive (based on projects listed on the tailored resume).
      * Concept Testing (based on high-priority JD requirements).
      * Behavioral / Situational (cultural and situational questions relevant to the role level).
-  2. **Interactive Mock Session**: Presents questions sequentially through the UI.
+  2. **Interactive Mock Session**: Presents questions sequentially through the UI with hints and concept tags.
   3. **Response Evaluation**: Assesses candidate responses on:
      * Technical Accuracy (0–10).
      * Clarity & Structure (STAR alignment) (0–10).
-     * Improvement Recommendation & Model Answer snippet.
+     * Improvement Recommendation & Senior Engineer Model Answer.
 * **Output**:
   * Role-specific Question Bank.
-  * Post-session Feedback Scorecard.
+  * Post-session Feedback Scorecard with ratings and critiques.
 
 ---
 
@@ -151,78 +156,56 @@ flowchart TD
 
 | Dimension | Autonomous Auto-Submit Bot | CareerPilot HITL Architecture |
 | :--- | :--- | :--- |
-| **Portal ToS Compliance** | Direct violation of LinkedIn / Naukri anti-bot policies. | Fully compliant: Automation serves as an assistant; final transaction is human-executed. |
-| **Account Safety** | High risk of IP blocks, CAPTCHA traps, and permanent account bans. | Safe: Browser actions mimic assistive typing; human handles any 2FA/CAPTCHA. |
+| **Portal ToS Compliance** | Direct violation of LinkedIn / Naukri anti-bot policies. | Fully compliant: Staged packages assist the student; application on portal is human-conducted. |
+| **Account Safety** | High risk of IP blocks, CAPTCHA traps, and permanent account bans. | Safe: No automated keystroke injection into live portals; human handles submission. |
 | **Accuracy & Liability** | Hallucinations or misfiled form entries lead to instant rejection. | Zero liability: Candidate reviews all pre-filled answers and uploaded files. |
-| **Academic Merit** | Scripting/scraping script. | Responsible AI Engineering: Explores ethical agent boundaries and supervisory control. |
+| **Academic Merit** | Scripting / scraping script. | Responsible AI Engineering: Explores ethical agent boundaries and supervisory control. |
 
-**Enforcement Rule**: The code pipeline state machine explicitly transitions to a terminal paused state (`AWAITING_USER_APPROVAL`) before any destructive/irreversible HTTP POST or button click.
-
----
-
-### 6. System State & Data Flow (LangGraph State Schema)
-
-To keep execution deterministic, modular, and maintainable, agents communicate via a unified, typed state dictionary:
-
-```python
-class CareerPilotState(TypedDict):
-    # Candidate Baseline
-    raw_resume_text: str
-    github_handle: str
-    leetcode_handle: str
-    verified_skills: list[str]
-    readiness_score: float
-
-    # Market & Gap Analysis
-    target_role: str
-    target_jds: list[dict]          # [{"title": str, "company": str, "description": str, "url": str}]
-    ranked_skill_gaps: list[dict]   # [{"skill": str, "frequency": int, "resources": list[str]}]
-
-    # Tailored Application Artifacts
-    active_jd: dict
-    tailored_resume_bullets: list[str]
-    tailored_cover_letter: str
-
-    # Application Staging
-    staging_status: str             # "IDLE" | "IN_PROGRESS" | "STAGED_AWAITING_APPROVAL" | "COMPLETED"
-    portal_url: str
-
-    # Interview Prep
-    mock_history: list[dict]        # [{"question": str, "answer": str, "feedback": str, "score": int}]
-```
+**Enforcement Rule**: The code pipeline state machine explicitly transitions to a terminal paused state (`STAGED_AWAITING_APPROVAL`) until the candidate reviews the package and explicitly confirms submission.
 
 ---
 
-### 7. Pragmatic Technology Stack (Zero-Cost / Free-Tier)
+### 6. Authentication Gate & Save Enforcement
+* **Immediate Auth Gate**: Upon entering the application, visitors are presented with an immediate modal offering strictly three options:
+  1. **Log In** (Username or Email + Password).
+  2. **Create Account** (Full Name, Username, Email, Password).
+  3. **Continue without Login** (Guest Mode).
+* **Save Enforcement ("To save info user should log in")**:
+  * In Guest Mode, candidates can explore all benchmark roles, skill gap analyses, and mock interview questions.
+  * All persistent saving actions (Saving Profile in Tab 1, Confirming Applications in Tab 4) are gated: guest actions prompt the auth modal to log in or register.
+  * Passwords are encrypted using SHA-256 hashing.
 
-To ensure smooth execution without prohibitive infrastructure or API costs:
+---
+
+### 7. Technology Stack
 
 | Component | Selected Technology | Rationale |
 | :--- | :--- | :--- |
-| **Agent Framework** | **LangGraph** (Python) | Clear state graphs, native support for human-in-the-loop checkpoints and pauses. |
-| **LLM Inference** | **Google Gemini 1.5 Flash** / **Groq (Llama-3-70B/8B)** | Generous free tier quotas, high token processing speed, zero cost. |
-| **Embeddings & Vector Store** | **ChromaDB (local)** + `all-MiniLM-L6-v2` | Runs locally in-memory/file; requires no paid vector database subscription. |
-| **Browser Automation** | **Playwright (Python)** | Modern async browser automation, robust selector handling, handles dynamic SPAs. |
-| **Document Parsing** | **PyPDF2 / pdfplumber** | Lightweight local text and layout extraction from resume PDFs. |
-| **Frontend UI** | **Streamlit** | Rapid single-file or multi-page dashboard development; minimal frontend boilerplate. |
-| **Storage / Cache** | **SQLite** | Zero-config, single-file relational persistence for profiles, JDs, and session logs. |
+| **Backend Framework** | **FastAPI** (Python 3.10+) | High-performance asynchronous REST API, automatic OpenAPI docs, modular routers. |
+| **Multi-Agent Orchestrator** | **Pipeline Orchestrator** (Stateful Pipeline) | Centralized, typed state dictionary (`CareerPilotState`) coordinating data handoffs. |
+| **LLM Inference** | **Google Gemini 1.5 Flash** / **Groq (Llama-3.1-70B)** | Fast token generation, high reliability, graceful deterministic fallback. |
+| **Similarity & Benchmarking** | **TF-IDF + Cosine Similarity & Skill Overlap** | High-speed, local matching without paid external vector database dependencies. |
+| **Frontend UI** | **FastAPI + Jinja2 + Tailwind CSS + Vanilla JS SPA** | Modern responsive single-page architecture, 5-tab stepper, dynamic auth modals. |
+| **Database / Persistence** | **MongoDB (Motor)** + **Embedded Document Store Fallback** | Asynchronous document store with local JSON fallback for zero-configuration resilience. |
+| **Resume & Profile Parsers** | **Regex & Layout-Aware Text Parser** | Extracts contact info, GitHub/LeetCode/LinkedIn links, and technical skill sets. |
+| **Hosting & Deployment** | **Render (Production)** + Uvicorn ASGI Server | Continuous deployment directly from GitHub repository with SSL endpoints. |
 
 ---
 
 ### 8. Scope Boundaries: In-Scope vs. Out-of-Scope
 
-#### In-Scope (Deliverables for Complete Working Prototype)
-1. Parsing student resume + fetching public GitHub/LeetCode stats.
-2. Benchmarking against a sample dataset of 15–20 real JDs for a designated target role.
+#### In-Scope (Implemented & Verified Deliverables)
+1. Parsing candidate resume + fetching public GitHub/LeetCode statistics.
+2. Benchmarking against real tech JDs across Backend, Full Stack, Frontend, Cloud/DevOps, and Data/AI.
 3. Calculating frequency-based skill gaps and surfacing verified free courses (NPTEL, YouTube, Docs).
-4. Generating tailored STAR resume bullets and custom cover letters via LLM.
-5. Playwright automation script demonstrating form pre-filling on a demo form / portal sandbox and pausing at review.
-6. Mock interview conversational loop with scoring and feedback.
-7. Integrated Streamlit UI connecting all 5 agents.
+4. Generating tailored STAR resume bullets and custom cover letters via LLM with anti-hallucination guardrails.
+5. Staging structured application packages with verified employer portal links and HITL confirmation gate.
+6. Mock interview conversational loop with dual scoring (Technical & STAR) and model answers.
+7. Authentication gate on entry with save enforcement and MongoDB persistence.
 
 #### Out-of-Scope (Excluded to Avoid Over-Complexity)
-* Fully autonomous CAPTCHA-bypassing engines (counterproductive and violates ethics).
-* Scraping 10,000+ live portals on the fly (a targeted dataset or static cache of 20–50 real postings prevents rate-limit roadblocks).
+* Autonomous CAPTCHA-bypassing bots on third-party portals (violates platform terms and ethics).
+* Scraping 10,000+ live portals on the fly (curated live cache prevents rate-limit roadblocks).
 * Paid enterprise integrations (Workday private APIs, Greenhouse internal endpoints).
 * Video/speech emotion recognition (audio/speech analysis adds unnecessary complexity; text-based Q&A is academically robust).
 
@@ -230,11 +213,8 @@ To ensure smooth execution without prohibitive infrastructure or API costs:
 
 ### 9. Academic Evaluation & Viva Defense Highlights
 
-When presenting to evaluators, CareerPilot demonstrates mastery across 5 distinct domains of computer science:
-
 1. **Natural Language Processing (NLP)**: Entity extraction, section segmentation, and semantic normalization on resumes.
-2. **Information Retrieval & Vector Embeddings**: Cosine similarity matching between candidate skill vectors and multi-document job descriptions.
-3. **Multi-Agent Orchestration**: Stateful pipeline with shared context, conditional routing, and deterministic graph transitions using LangGraph.
-4. **Browser & Process Automation**: Resilient DOM querying, asynchronous wait strategies, and session management via Playwright.
-5. **Responsible AI Design (HITL)**: Ethical engineering addressing Terms of Service constraints, preventing automated spam, and establishing human supervisory control.
-
+2. **Information Retrieval & Similarity Matching**: Cosine similarity matching between candidate skill vectors and multi-document job descriptions.
+3. **Multi-Agent Orchestration**: Stateful pipeline with shared context, conditional routing, and deterministic state transitions.
+4. **Responsible AI Design (HITL)**: Ethical engineering addressing Terms of Service constraints, preventing automated spam, and establishing human supervisory control.
+5. **Full-Stack Resilient Architecture**: Dual-layer database design (MongoDB with embedded fallback) and secure authentication.
