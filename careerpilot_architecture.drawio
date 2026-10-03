@@ -1,0 +1,169 @@
+<mxfile host="app.diagrams.net" modified="2026-10-03T09:00:00.000Z" agent="Mozilla/5.0" version="24.0.0" type="device">
+  <diagram id="careerpilot-architecture-diagram" name="CareerPilot Architecture">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1200" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title Banner -->
+        <mxCell id="titleBanner" value="&lt;b style='font-size:18px;color:#0F172A;'&gt;CareerPilot: Multi-Agent Architecture &amp;amp; Workflow&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:11px;color:#64748B;'&gt;Stateful 5-Agent Copilot with Human-in-the-Loop (HITL) Safety Gate | Powered by LangGraph, Playwright, &amp;amp; Vector Benchmarking&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="30" width="1380" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- User Node -->
+        <mxCell id="user" value="&lt;b style='font-size:13px;color:#1E1B4B;'&gt;Graduating Student&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#4F46E5;'&gt;[Candidate / Job Seeker]&lt;/span&gt;&lt;br&gt;&lt;span style='font-size:9.5px;color:#475569;'&gt;Resume PDF + GitHub &amp;amp; LeetCode Handles&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#EEF2FF;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="160" width="240" height="85" as="geometry" />
+        </mxCell>
+
+        <!-- Data Layer Container -->
+        <mxCell id="dataLayerBox" value="&lt;b style='font-size:12px;color:#334155;'&gt;Data Layer (Knowledge &amp;amp; Corpus)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=1.5;dashed=1;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="930" y="140" width="510" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- Database 1: JDs -->
+        <mxCell id="jdsDb" value="&lt;b style='font-size:11.5px;color:#78350F;'&gt;Target Job Postings DB&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:9.5px;color:#92400E;'&gt;Curated / Scraped Tech JDs&lt;br&gt;Vector Embeddings (ChromaDB)&lt;br&gt;Role Skill Frequency Index&lt;/span&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#FEF3C7;strokeColor=#D97706;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="960" y="185" width="210" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Database 2: Free Resources -->
+        <mxCell id="freeResDb" value="&lt;b style='font-size:11.5px;color:#78350F;'&gt;Curated Free Resources&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:9.5px;color:#92400E;'&gt;100% Free Learning Materials:&lt;br&gt;&amp;bull; NPTEL / SWAYAM (Core CS)&lt;br&gt;&amp;bull; YouTube Playlists (Practical)&lt;br&gt;&amp;bull; Official Docs &amp;amp; Guides&lt;/span&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#FEF3C7;strokeColor=#D97706;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="185" width="210" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Agent 1: Assessment Agent -->
+        <mxCell id="agent1" value="&lt;b style='font-size:13px;color:#0C4A6E;'&gt;Agent 1: Assessment Agent&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#0369A1;'&gt;&amp;bull; PDF Resume Layout Parser &amp;amp; Entity Extractor&lt;br&gt;&amp;bull; GitHub API + LeetCode Public Scraper&lt;br&gt;&amp;bull; Cosine Similarity vs. Live Market JDs&lt;br&gt;&amp;bull; Baseline Readiness Score (0-100%)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#F0F9FF;strokeColor=#0284C7;strokeWidth=2;align=left;verticalAlign=middle;spacingLeft=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="510" y="155" width="320" height="95" as="geometry" />
+        </mxCell>
+
+        <!-- Agent 2: Gap & Learning Agent -->
+        <mxCell id="agent2" value="&lt;b style='font-size:13px;color:#0C4A6E;'&gt;Agent 2: Gap &amp;amp; Learning Agent&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#0369A1;'&gt;&amp;bull; Set-Difference: Market Demands &amp;minus; Verified Skills&lt;br&gt;&amp;bull; Empirical Demand-Frequency Gap Ranking&lt;br&gt;&amp;bull; Curated 7-14 Day Free Upskilling Plan Generator&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#F0F9FF;strokeColor=#0284C7;strokeWidth=2;align=left;verticalAlign=middle;spacingLeft=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="510" y="315" width="320" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- User Dashboard -->
+        <mxCell id="dashboard" value="&lt;b style='font-size:13px;color:#4C1D95;'&gt;User Dashboard (Interactive UI)&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#6D28D9;'&gt;&amp;bull; Live Readiness Scorecard &amp;amp; Gap Matrix View&lt;br&gt;&amp;bull; 14-Day Micro-Learning Roadmap with Free Links&lt;br&gt;&amp;bull; Candidate Selects Specific Target Job / Opening&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#F5F3FF;strokeColor=#7C3AED;strokeWidth=2;align=left;verticalAlign=middle;spacingLeft=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="510" y="470" width="320" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Agent 3: Tailoring Agent -->
+        <mxCell id="agent3" value="&lt;b style='font-size:13px;color:#0C4A6E;'&gt;Agent 3: Tailoring Agent&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#0369A1;'&gt;&amp;bull; Target JD Keyword &amp;amp; Intent Extraction&lt;br&gt;&amp;bull; STAR Bullet Rewriter (Situation, Task, Action, Result)&lt;br&gt;&amp;bull; Anti-Hallucination Guardrail (No Fabrications)&lt;br&gt;&amp;bull; Role-Specific Custom Cover Letter Generator&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#F0F9FF;strokeColor=#0284C7;strokeWidth=2;align=left;verticalAlign=middle;spacingLeft=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="510" y="625" width="320" height="95" as="geometry" />
+        </mxCell>
+
+        <!-- Tailored Application Payload -->
+        <mxCell id="stagingPayload" value="&lt;b style='font-size:13px;color:#064E3B;'&gt;Tailored Application Payload&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#047857;'&gt;&amp;bull; Tailored Resume (STAR Bullets PDF/TXT)&lt;br&gt;&amp;bull; Matched Cover Letter Text&lt;br&gt;&amp;bull; Master Candidate Metadata &amp;amp; Profile Links&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#ECFDF5;strokeColor=#059669;strokeWidth=2;align=left;verticalAlign=middle;spacingLeft=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="510" y="780" width="320" height="85" as="geometry" />
+        </mxCell>
+
+        <!-- Agent 4: Application Staging Agent -->
+        <mxCell id="agent4" value="&lt;b style='font-size:13px;color:#0C4A6E;'&gt;Agent 4: Application Staging Agent&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#0369A1;'&gt;&amp;bull; Playwright Browser Automation Controller&lt;br&gt;&amp;bull; Form Field Auto-Population (Experience, CTC, Notice)&lt;br&gt;&amp;bull; Document Attachment (Tailored Resume &amp;amp; Cover Letter)&lt;br&gt;&amp;bull; Wizard Traversal up to Final Review Screen&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#F0F9FF;strokeColor=#0284C7;strokeWidth=2;align=left;verticalAlign=middle;spacingLeft=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="110" y="910" width="320" height="95" as="geometry" />
+        </mxCell>
+
+        <!-- Job Portal -->
+        <mxCell id="portal" value="&lt;b style='font-size:12.5px;color:#1E3A8A;'&gt;Job Portal Careers Platform&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#2563EB;'&gt;Employer Portal / LinkedIn Easy Apply / Naukri&lt;br&gt;&lt;b style='color:#B45309;'&gt;[Browser Session Staged: Form Filled, Paused at Final Step]&lt;/b&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=2;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1055" width="320" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- HITL Gate -->
+        <mxCell id="hitlGate" value="&lt;b style='font-size:11.5px;color:#991B1B;'&gt;Human-in-the-Loop&lt;br&gt;(HITL) Gate&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:9px;color:#B91C1C;'&gt;Human Reviews Staged Fields&lt;br&gt;&amp;amp; Verifies Uploads&lt;br&gt;&lt;b&gt;Strict ToS Safe&lt;/b&gt;&lt;/span&gt;" style="shape=rhombus;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#DC2626;strokeWidth=2.5;align=center;verticalAlign=middle;fontColor=#991B1B;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="525" y="1030" width="220" height="125" as="geometry" />
+        </mxCell>
+
+        <!-- Submitted Application Node -->
+        <mxCell id="submitted" value="&lt;b style='font-size:12.5px;color:#14532D;'&gt;Application Submitted Safely&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#15803D;'&gt;&amp;bull; User Manually Clicks Final &quot;Submit&quot;&lt;br&gt;&amp;bull; Zero Bot Account Ban Risk&lt;br&gt;&amp;bull; Submission Logged in User Tracker&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#DCFCE7;strokeColor=#16A34A;strokeWidth=2.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="1060" width="260" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- Agent 5: Interview Prep Agent -->
+        <mxCell id="agent5" value="&lt;b style='font-size:13px;color:#0C4A6E;'&gt;Agent 5: Interview Prep Agent&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#0369A1;'&gt;&amp;bull; Role &amp;amp; Project-Specific Question Bank Synthesis&lt;br&gt;&amp;bull; Interactive Mock Q&amp;amp;A Simulation Loop&lt;br&gt;&amp;bull; Dual Scoring: Technical Depth + STAR Structure&lt;br&gt;&amp;bull; Model Answer &amp;amp; Critique Recommendations&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#F0F9FF;strokeColor=#0284C7;strokeWidth=2;align=left;verticalAlign=middle;spacingLeft=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="930" y="780" width="320" height="95" as="geometry" />
+        </mxCell>
+
+        <!-- Architecture Highlights Card -->
+        <mxCell id="legendCard" value="&lt;b style='font-size:12px;color:#1E293B;'&gt;Key Architecture Highlights (PRD Alignment)&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#475569;'&gt;&lt;b style='color:#0284C7;'&gt;1. 5-Agent Stateful Pipeline:&lt;/b&gt; Assessment &amp;rarr; Gap &amp;rarr; Tailor &amp;rarr; Stage &amp;rarr; Interview&lt;br&gt;&lt;b style='color:#7C3AED;'&gt;2. LangGraph State Machine:&lt;/b&gt; Central typed dictionary context with checkpoints&lt;br&gt;&lt;b style='color:#DC2626;'&gt;3. HITL Guardrail Gate:&lt;/b&gt; Strict pause before submit; zero platform bot ban liability&lt;br&gt;&lt;b style='color:#059669;'&gt;4. Zero Hallucination:&lt;/b&gt; Only candidate&apos;s authentic verified projects rephrased in STAR&lt;br&gt;&lt;b style='color:#D97706;'&gt;5. 100% Free / Zero-Cost Stack:&lt;/b&gt; Local embeddings, Gemini Flash / Groq, SQLite&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#F1F5F9;strokeColor=#CBD5E1;strokeWidth=1.5;align=left;verticalAlign=middle;spacingLeft=12;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="930" y="910" width="510" height="120" as="geometry" />
+        </mxCell>
+
+
+        <!-- CONNECTORS / EDGES -->
+
+        <!-- User to Agent 1 -->
+        <mxCell id="edge_user_agent1" value="Upload Resume +&lt;br&gt;GitHub / LeetCode IDs" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=2;fontColor=#334155;fontSize=10;labelBackgroundColor=#FFFFFF;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" edge="1" parent="1" source="user" target="agent1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- JDs DB to Agent 1 -->
+        <mxCell id="edge_jds_agent1" value="Target Job Postings&lt;br&gt;&amp;amp; Skill Requirements" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;fontColor=#92400E;fontSize=10;labelBackgroundColor=#FFFFFF;entryX=1;entryY=0.5;exitX=0;exitY=0.5;" edge="1" parent="1" source="jdsDb" target="agent1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Agent 1 to Agent 2 -->
+        <mxCell id="edge_agent1_agent2" value="Skill Vector &amp;amp; Baseline Readiness Scores" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontColor=#0369A1;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="agent1" target="agent2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Free Resources DB to Agent 2 -->
+        <mxCell id="edge_res_agent2" value="Free Course Index&lt;br&gt;(NPTEL, YouTube, Docs)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;fontColor=#92400E;fontSize=10;labelBackgroundColor=#FFFFFF;entryX=1;entryY=0.5;exitX=0;exitY=0.5;" edge="1" parent="1" source="freeResDb" target="agent2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Agent 2 to Dashboard -->
+        <mxCell id="edge_agent2_dashboard" value="Ranked Missing Skills &amp;amp; 14-Day Study Plan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontColor=#0369A1;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="agent2" target="dashboard">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Dashboard to Agent 3 -->
+        <mxCell id="edge_dashboard_agent3" value="Candidate Selects Target Role / Opening" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#7C3AED;strokeWidth=2;fontColor=#5B21B6;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="dashboard" target="agent3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Agent 3 to Staging Payload -->
+        <mxCell id="edge_agent3_payload" value="Tailored STAR Resume Bullets + Cover Letter" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontColor=#0369A1;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="agent3" target="stagingPayload">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Staging Payload to Agent 4 -->
+        <mxCell id="edge_payload_agent4" value="Staging Payload &amp;amp;&lt;br&gt;Target Portal URL" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;fontColor=#064E3B;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="stagingPayload" target="agent4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="270" y="822" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Agent 4 to Portal -->
+        <mxCell id="edge_agent4_portal" value="Playwright Form Pre-fill &amp;amp;&lt;br&gt;Document Upload Automation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontColor=#0369A1;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="agent4" target="portal">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Portal to HITL Gate -->
+        <mxCell id="edge_portal_hitl" value="Execution Paused Prior to Submit&lt;br&gt;(State: AWAITING_USER_APPROVAL)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=2;fontColor=#1E3A8A;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="portal" target="hitlGate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- HITL Gate to Submitted -->
+        <mxCell id="edge_hitl_submitted" value="User Reviews, Approves, &amp;amp;&lt;br&gt;Manually Clicks Submit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=2;fontColor=#991B1B;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="hitlGate" target="submitted">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Staging Payload to Agent 5 -->
+        <mxCell id="edge_payload_agent5" value="JD Context &amp;amp;&lt;br&gt;Tailored Resume" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;fontColor=#064E3B;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="stagingPayload" target="agent5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Agent 5 to User (Bidirectional Loop) -->
+        <mxCell id="edge_agent5_user" value="Mock Interview Q&amp;amp;A Loop + Real-Time STAR Feedback" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4F46E5;strokeWidth=2;fontColor=#3730A3;fontSize=10.5;labelBackgroundColor=#FFFFFF;startArrow=classic;endArrow=classic;exitX=1;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="agent5" target="user">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1465" y="828" />
+              <mxPoint x="1465" y="115" />
+              <mxPoint x="180" y="115" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
