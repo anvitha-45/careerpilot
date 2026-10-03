@@ -69,7 +69,7 @@ flowchart TD
      * GitHub API: Repositories, top programming languages, commit activity, project complexity.
      * LeetCode API / Scraper: Solved count by difficulty (Easy/Medium/Hard).
   3. **Skill Matrix Normalization**: Merges extracted resume skills with languages verified from GitHub.
-  4. **JD Benchmarking**: Calculates TF-IDF term frequency and cosine similarity against live target job descriptions; computes matched vs. missing skills.
+  4. **JD Benchmarking**: Calculates TF-IDF term frequency and cosine similarity against the curated tech JD benchmark corpus; computes matched vs. missing skills.
 * **Output**:
   * Baseline Overall Readiness Score (0–100%).
   * Current Verified Skill Matrix.
@@ -78,10 +78,10 @@ flowchart TD
 ---
 
 #### 4.2. Agent 2: Gap & Learning Agent
-* **Objective**: Identify critical capability deficits based on live market demand and generate a targeted learning roadmap.
+* **Objective**: Identify critical capability deficits based on benchmark market demand and generate a targeted learning roadmap.
 * **Inputs**:
   * Verified Skill Matrix (from Agent 1).
-  * Target Domain & Live JDs Corpus.
+  * Target Domain & Curated Benchmark JDs Corpus.
 * **Execution Logic**:
   1. **Market Frequency Extraction**: Tokenizes and clusters required technical skills across the target JD dataset; ranks skills by empirical appearance frequency.
   2. **Set-Difference & Gap Detection**: Computes `Target_Market_Skills − Candidate_Verified_Skills`.
@@ -205,7 +205,7 @@ flowchart TD
 
 #### Out-of-Scope (Excluded to Avoid Over-Complexity)
 * Autonomous CAPTCHA-bypassing bots on third-party portals (violates platform terms and ethics).
-* Scraping 10,000+ live portals on the fly (curated live cache prevents rate-limit roadblocks).
+* Real-time scraping of third-party job boards (avoids IP blocks, Cloudflare traps, and fragile DOM scrapers; replaced by a robust curated benchmark corpus + verified direct portal links and dynamic LinkedIn search).
 * Paid enterprise integrations (Workday private APIs, Greenhouse internal endpoints).
 * Video/speech emotion recognition (audio/speech analysis adds unnecessary complexity; text-based Q&A is academically robust).
 
