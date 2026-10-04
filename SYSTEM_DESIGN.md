@@ -5,7 +5,7 @@
 ## 1. Executive Summary & Vision
 
 **CareerPilot** is an orchestrated, stateful multi-agent AI copilot designed for graduating engineers. Rather than a superficial form-filler or an ungrounded resume generator, CareerPilot operationalizes an end-to-end pipeline:
-1. **Self-Assessment**: Resume layout parsing + GitHub/LeetCode public signal extraction, benchmarked against a curated corpus of real industry Job Descriptions (JDs).
+1. **Self-Assessment**: Resume layout parsing + GitHub/LeetCode public signal extraction, benchmarked against a curated corpus of real industry Job Descriptions (JDs) or candidate-provided custom job postings.
 2. **Targeted Upskilling**: Frequency-ranked skill gaps mapped to free, verified educational resources (NPTEL, high-yield YouTube series, official documentation).
 3. **Application Tailoring**: Context-aware STAR-format resume bullet points & custom cover letters with strict anti-hallucination prompt guardrails.
 4. **Staged Application Packaging**: Pre-filled structured application cards, verified career portal links, and a strict **Human-in-the-Loop (HITL)** verification gate.
@@ -105,10 +105,10 @@ class CareerPilotState(TypedDict):
   4. **Skill Vector Generator & Similarity Benchmarker (`server/utils/similarity.py`)**:
      * Uses TF-IDF term frequency and cosine similarity to match the candidate against the curated benchmark JD corpus.
      * Evaluates skill overlap and calculates an objective baseline Readiness Score (0–100%).
-  5. **Custom Job Posting Link Ingestor (`server/utils/job_extractor.py`)**:
-     * Allows candidates to input direct URLs to any live job posting (LinkedIn, Greenhouse, Lever, company career portals) or paste raw JD text.
-     * Fetches HTML content, extracts technical requirements and metadata via LLM/heuristics, and computes real-time readiness.
-* **Output**: Verified technical skill inventory, benchmark matches, custom job analysis, and baseline Readiness Score.
+  5. **Custom JD Ingestion & Analysis**:
+     * Enables candidates to paste real job postings from LinkedIn, Naukri, or corporate portals.
+     * Automatically parses required technical skills via canonical taxonomy matching, persists the custom job, and triggers immediate benchmarking and resume tailoring.
+* **Output**: Verified technical skill inventory, benchmark matches (including custom JDs), and baseline Readiness Score.
 
 ---
 

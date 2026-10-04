@@ -63,18 +63,18 @@ flowchart TD
   * Resume file (`.pdf` or raw text).
   * Public Profile Handles: GitHub username, LeetCode username, LinkedIn URL.
   * Target Role / Domain (e.g., "Backend", "Full Stack", "Frontend", "DevOps / Cloud", "Data / AI", "All").
-  * Optional: Direct Job Posting URL or custom JD text for instant on-demand analysis.
 * **Execution Logic**:
   1. **Resume Parser**: Extracts structured entities (candidate name, email, phone, skills, projects, links) using layout-aware regex and text segmentation.
   2. **Profile Signals Extractor**:
      * GitHub API: Repositories, top programming languages, commit activity, project complexity.
      * LeetCode API / Scraper: Solved count by difficulty (Easy/Medium/Hard).
   3. **Skill Matrix Normalization**: Merges extracted resume skills with languages verified from GitHub.
-  4. **JD Benchmarking & Custom Link Ingestion**: Benchmarks against the curated tech JD corpus, or ingests candidate-provided job posting links (LinkedIn, company career portals), extracts required tech skills, and computes real-time readiness.
+  4. **JD Benchmarking**: Calculates TF-IDF term frequency and cosine similarity against the curated tech JD benchmark corpus; computes matched vs. missing skills.
+  5. **Custom JD Ingestion & Analysis**: Allows candidates to provide/paste custom Job Descriptions directly from LinkedIn, Naukri, or career sites. Automatically extracts required technologies, adds the posting to active targets, and evaluates match readiness.
 * **Output**:
   * Baseline Overall Readiness Score (0–100%).
   * Current Verified Skill Matrix.
-  * Role Benchmark Match List.
+  * Role Benchmark Match List (including custom user-provided postings).
 
 ---
 
@@ -197,13 +197,12 @@ flowchart TD
 
 #### In-Scope (Implemented & Verified Deliverables)
 1. Parsing candidate resume + fetching public GitHub/LeetCode statistics.
-2. Benchmarking against real tech JDs across Backend, Full Stack, Frontend, Cloud/DevOps, and Data/AI.
+2. Benchmarking against real tech JDs across Backend, Full Stack, Frontend, Cloud/DevOps, and Data/AI, plus instant analysis for candidate-pasted custom Job Descriptions.
 3. Calculating frequency-based skill gaps and surfacing verified free courses (NPTEL, YouTube, Docs).
 4. Generating tailored STAR resume bullets and custom cover letters via LLM with anti-hallucination guardrails.
 5. Staging structured application packages with verified employer portal links and HITL confirmation gate.
 6. Mock interview conversational loop with dual scoring (Technical & STAR) and model answers.
 7. Authentication gate on entry with save enforcement and MongoDB persistence.
-8. User-provided job link / custom posting ingestion with automated requirement extraction and profile match analysis.
 
 #### Out-of-Scope (Excluded to Avoid Over-Complexity)
 * Autonomous CAPTCHA-bypassing bots on third-party portals (violates platform terms and ethics).

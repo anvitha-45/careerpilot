@@ -1,3 +1,4 @@
+import uuid
 import json
 import hashlib
 from datetime import datetime
@@ -7,8 +8,7 @@ from pydantic import BaseModel
 from server.database import db
 from server.agents.orchestrator import orchestrator
 from server.agents.application_agent import application_agent
-from server.agents.interview_agent import interview_agent
-from server.utils.resume_parser import parse_full_resume
+from server.utils.resume_parser import parse_full_resume, extract_skills_from_text
 from server.utils.job_extractor import process_job_input
 from server.utils.similarity import calculate_comprehensive_readiness
 
@@ -52,6 +52,16 @@ class InterviewEvalRequest(BaseModel):
     role: str
     skills: List[str] = []
 
+class CustomJobRequest(BaseModel):
+    title: str
+    company: Optional[str] = "Target Company"
+    description: str
+    domain: Optional[str] = "Full Stack"
+    location: Optional[str] = "India (Hybrid / Remote)"
+    salary: Optional[str] = "Competitive"
+    portal_url: Optional[str] = ""
+    required_skills: Optional[List[str]] = []
+
 class AnalyzeCustomJobRequest(BaseModel):
     url: Optional[str] = ""
     raw_text: Optional[str] = ""
@@ -71,6 +81,63 @@ async def get_jobs():
     """Retrieve all available job descriptions for benchmarking."""
     jobs = await db.find("jobs")
     return {"jobs": jobs}
+
+@router.post("/jobs/custom")
+async def create_custom_job(req: CustomJobRequest):
+    """
+    Allows candidate to provide or paste a custom Job Description from any job portal.
+    Extracts required technical skills and saves the custom JD to the database for instant benchmarking and tailoring.
+    """
+    title = (req.title or "").strip() or "Software Engineer"
+    company = (req.company or "").strip() or "Target Company"
+    description = (req.description or "").strip()
+    if not description:
+        raise HTTPException(status_code=400, detail="Job description text is required.")
+
+    # Automatically extract recognized tech skills from the pasted JD
+    extracted_skills = extract_skills_from_text(description)
+    user_skills = [s.strip() for s in (req.required_skills or []) if s.strip()]
+
+    # Combine unique skills
+    combined = []
+    seen = set()
+    for s in (user_skills + extracted_skills):
+        s_low = s.lower()
+        if s_low not in seen:
+            seen.add(s_low)
+            combined.append(s)
+
+    if not combined:
+        combined = ["Problem Solving", "Software Engineering", "Communication"]
+
+    job_id = f"jd-custom-{uuid.uuid4().hex[:8]}"
+    portal_url = req.portal_url.strip() if req.portal_url and req.portal_url.strip() else ""
+    if not portal_url:
+        portal_url = f"https://www.google.com/search?q={company.replace(' ', '+')}+careers+{title.replace(' ', '+')}"
+
+    job_doc = {
+        "id": job_id,
+        "title": title,
+        "company": company,
+        "location": req.location.strip() if req.location and req.location.strip() else "India (Hybrid / Remote)",
+        "domain": req.domain.strip() if req.domain and req.domain.strip() else "Full Stack",
+        "experience": "0-2 Years",
+        "salary": req.salary.strip() if req.salary and req.salary.strip() else "Competitive",
+        "description": description,
+        "required_skills": combined[:8],
+        "preferred_skills": combined[8:14] if len(combined) > 8 else [],
+        "portal_url": portal_url,
+        "apply_search_url": f"https://www.linkedin.com/jobs/search/?keywords={company.replace(' ', '+')}+{title.replace(' ', '+')}",
+        "is_custom": True,
+        "created_at": datetime.utcnow().isoformat()
+    }
+
+    await db.insert("jobs", job_doc)
+    return {
+        "success": True,
+        "message": f"Custom job '{title}' at {company} created successfully.",
+        "job": job_doc
+    }
 
 @router.post("/jobs/analyze-custom")
 async def analyze_custom_job(req: AnalyzeCustomJobRequest):
