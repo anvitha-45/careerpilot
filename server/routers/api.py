@@ -9,7 +9,8 @@ from server.agents.orchestrator import orchestrator
 from server.agents.application_agent import application_agent
 from server.agents.interview_agent import interview_agent
 from server.utils.resume_parser import parse_full_resume
-from server.utils.job_fetcher import fetch_all_live_jobs
+from server.utils.job_extractor import process_job_input
+from server.utils.similarity import calculate_comprehensive_readiness
 
 router = APIRouter(prefix="/api", tags=["Pipeline API"])
 
@@ -51,6 +52,11 @@ class InterviewEvalRequest(BaseModel):
     role: str
     skills: List[str] = []
 
+class AnalyzeCustomJobRequest(BaseModel):
+    url: Optional[str] = ""
+    raw_text: Optional[str] = ""
+    email: Optional[str] = ""
+
 @router.get("/health")
 async def health_check():
     return {
@@ -66,37 +72,63 @@ async def get_jobs():
     jobs = await db.find("jobs")
     return {"jobs": jobs}
 
-@router.post("/jobs/sync-live")
-async def sync_live_jobs_endpoint():
-    """Fetches real live developer job postings from free public APIs and saves them into the database."""
+@router.post("/jobs/analyze-custom")
+async def analyze_custom_job(req: AnalyzeCustomJobRequest):
+    """
+    Ingests an external job posting URL or pasted text, extracts structured requirements,
+    saves it to the database, and computes candidate readiness match.
+    """
     try:
-        live_jobs = await fetch_all_live_jobs(limit_per_source=6)
-        synced = 0
-        for job in live_jobs:
-            existing = await db.find_one("jobs", {"id": job["id"]})
-            if not existing:
-                await db.insert("jobs", job)
-                synced += 1
-            else:
-                await db.update_one("jobs", {"id": job["id"]}, job)
-        
-        all_jobs = await db.find("jobs")
+        url = (req.url or "").strip()
+        raw_text = (req.raw_text or "").strip()
+        if not url and not raw_text:
+            raise HTTPException(status_code=400, detail="Please provide a job posting URL or job description text.")
+
+        job_doc = await process_job_input(url=url, raw_text=raw_text)
+
+        # Upsert into database so it becomes immediately available across all agents and tabs
+        await db.update_one("jobs", {"id": job_doc["id"]}, job_doc, upsert=True)
+
+        # Look up candidate profile for instant match scoring
+        profile = None
+        if req.email:
+            profile = await db.find_one("profiles", {"email": req.email.strip().lower()})
+        if not profile:
+            all_profiles = await db.find("profiles")
+            if all_profiles:
+                profile = all_profiles[-1]
+
+        if not profile:
+            profile = {
+                "raw_resume_text": "Python FastAPI PostgreSQL Docker Git React",
+                "skills": ["Python", "FastAPI", "PostgreSQL", "Docker", "Git", "REST APIs"],
+                "leetcode_stats": {"total_solved": 120},
+                "github_stats": {"public_repos": 8, "total_stars": 3}
+            }
+
+        eval_res = calculate_comprehensive_readiness(
+            resume_text=profile.get("raw_resume_text", ""),
+            candidate_skills=profile.get("skills", []),
+            jd=job_doc,
+            leetcode_stats=profile.get("leetcode_stats", {}),
+            github_stats=profile.get("github_stats", {})
+        )
+
         return {
             "success": True,
-            "synced_count": synced,
-            "total_jobs": len(all_jobs),
-            "message": f"Successfully synced {synced} new live job postings." if synced > 0 else "All live jobs are already up to date.",
-            "jobs": all_jobs
+            "message": f"Successfully analyzed job posting: {job_doc['company']} - {job_doc['title']}",
+            "job": job_doc,
+            "readiness": {
+                "readiness_score": eval_res["readiness_score"],
+                "matched_skills": eval_res["matched_skills"],
+                "missing_skills": eval_res["missing_skills"]
+            }
         }
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
-        print(f"[API] Error syncing live jobs: {e}")
-        all_jobs = await db.find("jobs")
-        return {
-            "success": False,
-            "error": str(e),
-            "total_jobs": len(all_jobs),
-            "jobs": all_jobs
-        }
+        print(f"[API] Error analyzing custom job: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to analyze job posting: {str(e)}")
 
 @router.post("/resume/parse")
 async def parse_resume_endpoint(

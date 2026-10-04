@@ -111,6 +111,13 @@
           <span class="sm:hidden">Demo</span>
         </button>
 
+        <!-- Analyze Custom Job Link Button -->
+        <button onclick="openJobLinkModal()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 transition flex items-center space-x-1.5 shadow-sm">
+          <i class="fa-solid fa-link"></i>
+          <span class="hidden sm:inline">Analyze Job Link</span>
+          <span class="sm:hidden">Job Link</span>
+        </button>
+
         <!-- User Authentication Status & Modal Trigger -->
         <div class="flex items-center space-x-1.5 flex-shrink-0" id="headerAuthContainer">
           <div id="userStatusTag" class="text-xs font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 max-w-[200px]">
@@ -340,15 +347,24 @@
           <!-- Target Postings Benchmark List -->
           <div class="bg-dark-800 border border-dark-700 rounded-2xl p-5 shadow-xl space-y-3">
             <div class="flex items-center justify-between">
-              <div>
-                <h4 class="text-xs font-bold text-white uppercase tracking-wider">How You Match Real Jobs Right Now</h4>
-                <p class="text-[11px] text-slate-400">Live & Benchmark Tech Openings</p>
-              </div>
-              <button id="syncLiveJobsBtn" onclick="syncLiveJobs()" class="bg-brand-600/20 hover:bg-brand-600/30 text-brand-300 border border-brand-500/40 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition flex items-center space-x-1.5 shadow">
-                <i class="fa-solid fa-arrows-rotate text-[10px]" id="syncLiveJobsIcon"></i>
-                <span id="syncLiveJobsText">Fetch Live Jobs</span>
+              <h4 class="text-xs font-bold text-white uppercase tracking-wider">How You Match Real Jobs Right Now</h4>
+              <button onclick="openJobLinkModal()" class="text-[11px] text-brand-400 hover:text-brand-300 font-semibold flex items-center space-x-1 transition">
+                <i class="fa-solid fa-plus-circle text-xs"></i>
+                <span>Add Job Link</span>
               </button>
             </div>
+
+            <!-- Custom Job Quick Action Banner -->
+            <div class="p-2.5 rounded-xl bg-indigo-950/40 border border-indigo-500/20 flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-link text-indigo-400 text-xs"></i>
+                <span class="text-[11px] text-slate-300">Have a specific job posting?</span>
+              </div>
+              <button onclick="openJobLinkModal()" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center space-x-1 shadow">
+                <span>Analyze Link</span>
+              </button>
+            </div>
+
             <div id="benchmarkJobsList" class="space-y-2">
               <!-- Rendered dynamically -->
             </div>
@@ -419,6 +435,10 @@
               <select id="tailoringJobSelect" onchange="onJobSelectChange()" class="bg-dark-900 text-slate-200 border border-dark-600 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500">
                 <!-- Rendered dynamically -->
               </select>
+              <button onclick="openJobLinkModal()" class="bg-dark-700 hover:bg-dark-600 text-brand-400 font-semibold px-2 py-1.5 rounded-lg text-xs border border-dark-600 transition flex items-center space-x-1" title="Paste any job posting link to analyze and tailor">
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                <span>Job Link</span>
+              </button>
             </div>
 
             <button onclick="downloadResumePDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3.5 py-1.5 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
@@ -506,6 +526,10 @@
               <select id="stagingJobSelect" onchange="onStagingJobSelectChange()" class="bg-dark-900 text-slate-200 border border-dark-600 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500">
                 <!-- Rendered dynamically -->
               </select>
+              <button onclick="openJobLinkModal()" class="bg-dark-700 hover:bg-dark-600 text-brand-400 font-semibold px-2 py-1.5 rounded-lg text-xs border border-dark-600 transition flex items-center space-x-1" title="Analyze custom job link for staging">
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                <span>Job Link</span>
+              </button>
             </div>
             <button onclick="stageActiveApplication()" class="bg-dark-700 hover:bg-dark-600 text-slate-200 font-semibold px-3 py-1.5 rounded-lg text-xs transition border border-dark-600 flex items-center space-x-1.5">
               <i class="fa-solid fa-arrows-rotate"></i>
@@ -759,6 +783,10 @@
             <select id="interviewJobSelect" onchange="onInterviewJobSelectChange()" class="bg-dark-900 text-slate-200 border border-dark-600 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500">
               <!-- Rendered dynamically -->
             </select>
+            <button onclick="openJobLinkModal()" class="bg-dark-700 hover:bg-dark-600 text-brand-400 font-semibold px-2 py-1.5 rounded-lg text-xs border border-dark-600 transition flex items-center space-x-1" title="Analyze custom job link for interview prep">
+              <i class="fa-solid fa-plus text-[10px]"></i>
+              <span>Job Link</span>
+            </button>
           </div>
         </div>
 
@@ -967,6 +995,91 @@
         <p class="text-[11px] text-slate-500 leading-normal">
           <span class="text-amber-400 font-medium">To save your info,</span> you must log in or create an account.
         </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: ANALYZE JOB LINK / CUSTOM POSTING -->
+  <div id="jobLinkModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-dark-800 border border-dark-700 w-full max-w-lg rounded-2xl p-6 shadow-2xl space-y-4 relative animate-fade-in max-h-[90vh] overflow-y-auto">
+      
+      <!-- Close Button -->
+      <button onclick="closeJobLinkModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition text-sm">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="space-y-1">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20">
+            <i class="fa-solid fa-link text-sm"></i>
+          </div>
+          <h3 class="text-base font-bold text-white">Analyze Any Job Posting</h3>
+        </div>
+        <p class="text-xs text-slate-400">
+          Provide a link to any job posting (LinkedIn, Greenhouse, Lever, or company career portal) or paste the job description text. CareerPilot will extract requirements and benchmark your profile.
+        </p>
+      </div>
+
+      <!-- Input Form -->
+      <form id="jobLinkForm" onsubmit="submitAnalyzeJobLink(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">
+            <i class="fa-solid fa-globe text-brand-400 mr-1"></i>Job Posting URL (Recommended)
+          </label>
+          <input type="url" id="jobLinkUrlInput" placeholder="https://careers.company.com/job/12345 or LinkedIn link" class="w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none transition">
+          <p class="text-[11px] text-slate-500 mt-1">Works with company career pages, Greenhouse, Lever, or LinkedIn.</p>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs font-semibold text-slate-300">
+              <i class="fa-solid fa-file-lines text-indigo-400 mr-1"></i>Or Paste Job Description Text
+            </label>
+            <span class="text-[10px] text-slate-500">Optional if URL provided</span>
+          </div>
+          <textarea id="jobLinkTextInput" rows="4" placeholder="Paste the job responsibilities, requirements, or qualifications here if the link is behind a login wall..." class="w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition resize-none"></textarea>
+        </div>
+
+        <div id="jobLinkErrorMsg" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-lg flex items-center space-x-1.5">
+          <i class="fa-solid fa-circle-exclamation shrink-0"></i>
+          <span id="jobLinkErrorText">Failed to analyze job posting.</span>
+        </div>
+
+        <button type="submit" id="btnSubmitJobLink" class="w-full bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-lg shadow-brand-500/25 flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Extract & Benchmark This Job</span>
+        </button>
+      </form>
+
+      <!-- Success Result Card (Initially hidden) -->
+      <div id="jobLinkResultCard" class="hidden pt-3 border-t border-dark-700 space-y-3">
+        <div class="bg-dark-900/80 border border-dark-600/60 rounded-xl p-3.5 space-y-2">
+          <div class="flex items-center justify-between">
+            <div>
+              <div id="jobResultTitle" class="text-xs font-bold text-white">Software Engineer</div>
+              <div id="jobResultCompany" class="text-[11px] text-slate-400">Target Company • Remote</div>
+            </div>
+            <div id="jobResultScoreBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              82% Match
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-300">
+            <span class="font-semibold text-slate-400">Detected Skills: </span>
+            <span id="jobResultSkills">Python, FastAPI, SQL, Docker</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="applyWithCustomJob()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 rounded-xl text-xs transition flex items-center justify-center space-x-1 shadow">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Tailor Resume Now</span>
+          </button>
+          <button type="button" onclick="closeJobLinkModal()" class="w-full bg-dark-700 hover:bg-dark-600 text-slate-300 font-semibold py-2 rounded-xl text-xs transition flex items-center justify-center space-x-1 border border-dark-600">
+            <span>Done</span>
+          </button>
+        </div>
       </div>
 
     </div>
@@ -1289,6 +1402,122 @@
       openAuthModal('login', msg);
     }
 
+    // Modal & Handlers for User-Provided Job Link / Custom Posting
+    function openJobLinkModal() {
+      const modal = document.getElementById('jobLinkModal');
+      if (!modal) return;
+      document.getElementById('jobLinkUrlInput').value = '';
+      document.getElementById('jobLinkTextInput').value = '';
+      document.getElementById('jobLinkErrorMsg').classList.add('hidden');
+      document.getElementById('jobLinkResultCard').classList.add('hidden');
+      const btn = document.getElementById('btnSubmitJobLink');
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i><span>Extract & Benchmark This Job</span>`;
+      modal.classList.remove('hidden');
+    }
+
+    function closeJobLinkModal() {
+      const modal = document.getElementById('jobLinkModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    let lastAnalyzedCustomJob = null;
+
+    async function submitAnalyzeJobLink(e) {
+      if (e) e.preventDefault();
+      const url = document.getElementById('jobLinkUrlInput').value.trim();
+      const raw_text = document.getElementById('jobLinkTextInput').value.trim();
+      const errBox = document.getElementById('jobLinkErrorMsg');
+      const errText = document.getElementById('jobLinkErrorText');
+      const submitBtn = document.getElementById('btnSubmitJobLink');
+      const resultCard = document.getElementById('jobLinkResultCard');
+
+      if (!url && !raw_text) {
+        errBox.classList.remove('hidden');
+        errText.textContent = "Please provide either a Job Posting URL or paste the job description text.";
+        return;
+      }
+
+      errBox.classList.add('hidden');
+      resultCard.classList.add('hidden');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Extracting Requirements & Benchmarking...</span>`;
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/jobs/analyze-custom`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: url,
+            raw_text: raw_text,
+            email: appState.userEmail || ''
+          })
+        });
+        const res = await resp.json();
+
+        if (!resp.ok || !res.success) {
+          throw new Error(res.detail || res.message || "Failed to analyze job posting.");
+        }
+
+        const job = res.job;
+        const readiness = res.readiness || {};
+        lastAnalyzedCustomJob = job;
+
+        // Add to appState.jobs (insert at beginning so it's top of list)
+        const existingIdx = appState.jobs.findIndex(j => j.id === job.id);
+        if (existingIdx >= 0) {
+          appState.jobs[existingIdx] = job;
+        } else {
+          appState.jobs.unshift(job);
+        }
+
+        // Populate dropdowns and select this custom job
+        populateJobSelects();
+        await switchActiveJob(job.id);
+
+        // If profile is loaded, add to benchmark list in Tab 1
+        if (appState.profile) {
+          if (!appState.profile.benchmarks) appState.profile.benchmarks = [];
+          appState.profile.benchmarks.unshift({
+            job_id: job.id,
+            title: job.title,
+            company: job.company,
+            location: job.location,
+            readiness_score: readiness.readiness_score || 75.0,
+            matched_skills: readiness.matched_skills || [],
+            missing_skills: readiness.missing_skills || [],
+            is_custom: true
+          });
+          renderProfileUI();
+        }
+
+        // Populate result card in modal
+        document.getElementById('jobResultTitle').textContent = job.title;
+        document.getElementById('jobResultCompany').textContent = `${job.company} • ${job.location} (${job.domain})`;
+        document.getElementById('jobResultScoreBadge').textContent = `${readiness.readiness_score || 75}% Match`;
+        document.getElementById('jobResultSkills').textContent = (job.required_skills || []).join(', ');
+        
+        resultCard.classList.remove('hidden');
+        submitBtn.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i><span>Job Analyzed Successfully!</span>`;
+        showBanner(`Analyzed "${job.company} - ${job.title}". Match: ${readiness.readiness_score || 75}%. Ready to tailor!`, 'success');
+      } catch (err) {
+        console.error("Job analysis error:", err);
+        errBox.classList.remove('hidden');
+        errText.textContent = err.message || "Failed to analyze job posting.";
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i><span>Extract & Benchmark This Job</span>`;
+      }
+    }
+
+    async function applyWithCustomJob() {
+      closeJobLinkModal();
+      if (lastAnalyzedCustomJob) {
+        await switchActiveJob(lastAnalyzedCustomJob.id);
+        switchTab('tailoring');
+        showBanner(`Selected custom job: ${lastAnalyzedCustomJob.company} - ${lastAnalyzedCustomJob.title}. Tailoring resume now!`, 'info');
+      }
+    }
+
     async function saveCandidateInfo() {
       if (!appState.isLoggedIn) {
         promptLoginToSave('profile');
@@ -1509,46 +1738,12 @@
         appState.jobs.forEach(j => {
           const opt = document.createElement('option');
           opt.value = j.id;
-          opt.textContent = `${j.is_live ? '🔴 [LIVE] ' : ''}${j.company} - ${j.title}`;
+          opt.textContent = j.is_custom ? `📌 [Custom Link] ${j.company} - ${j.title}` : `${j.company} - ${j.title}`;
           select.appendChild(opt);
         });
       });
       if (appState.jobs.length > 0 && !appState.activeJob) {
         appState.activeJob = appState.jobs[0];
-      }
-    }
-
-    async function syncLiveJobs() {
-      const btn = document.getElementById('syncLiveJobsBtn');
-      const icon = document.getElementById('syncLiveJobsIcon');
-      const text = document.getElementById('syncLiveJobsText');
-      if (btn) btn.disabled = true;
-      if (icon) icon.className = "fa-solid fa-arrows-rotate fa-spin text-[10px]";
-      if (text) text.textContent = "Syncing...";
-      showBanner("Connecting to public developer APIs to fetch live job postings...", "info");
-
-      try {
-        const resp = await fetch(`${API_BASE}/api/jobs/sync-live`, { method: 'POST' });
-        const data = await resp.json();
-        if (data.jobs && data.jobs.length > 0) {
-          appState.jobs = data.jobs;
-          populateJobSelects();
-          showBanner(data.message || `Successfully synced ${data.total_jobs} total job openings!`, "success");
-          
-          // If profile assessment is active, re-benchmark against newly added live jobs
-          if (appState.profile && (appState.profile.skills || []).length > 0) {
-            await runAssessmentPipeline();
-          }
-        } else {
-          showBanner("Sync complete. Job postings are up to date.", "info");
-        }
-      } catch (err) {
-        console.error("Error syncing live jobs:", err);
-        showBanner("Could not reach live job API. Retaining existing postings.", "error");
-      } finally {
-        if (btn) btn.disabled = false;
-        if (icon) icon.className = "fa-solid fa-arrows-rotate text-[10px]";
-        if (text) text.textContent = "Fetch Live Jobs";
       }
     }
 
@@ -1820,11 +2015,12 @@
           switchTab('tailoring');
           showBanner(`Selected ${b.company} - ${b.title}. Tailoring resume now!`, 'info');
         };
+        const customTag = b.is_custom ? `<span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[9px] px-1.5 py-0.5 rounded font-semibold ml-1.5 shrink-0">Custom Link</span>` : '';
         item.innerHTML = `
           <div>
-            <div class="flex items-center space-x-1.5">
-              <span class="text-xs font-bold text-white group-hover:text-brand-400 transition">${b.title}</span>
-              ${b.is_live ? '<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wider flex items-center space-x-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span><span>LIVE</span></span>' : ''}
+            <div class="text-xs font-bold text-white group-hover:text-brand-400 transition flex items-center">
+              <span class="truncate">${b.title}</span>
+              ${customTag}
             </div>
             <div class="text-[11px] text-slate-400">${b.company} • ${b.location}</div>
           </div>

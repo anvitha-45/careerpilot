@@ -36,8 +36,8 @@
         </mxCell>
 
         <!-- Agent 1: Assessment Agent -->
-        <mxCell id="agent1" value="&lt;b style='font-size:13px;color:#0C4A6E;'&gt;Agent 1: Assessment Agent&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#0369A1;'&gt;&amp;bull; PDF Resume Layout Parser &amp;amp; Contact Extractor&lt;br&gt;&amp;bull; GitHub API (Repos, Commits) + LeetCode Scraper&lt;br&gt;&amp;bull; TF-IDF Vector Cosine Similarity vs. Benchmark JDs Corpus&lt;br&gt;&amp;bull; Baseline Market Readiness Score (0–100%)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#F0F9FF;strokeColor=#0284C7;strokeWidth=2;align=left;verticalAlign=middle;spacingLeft=15;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="500" y="155" width="350" height="95" as="geometry" />
+        <mxCell id="agent1" value="&lt;b style='font-size:13px;color:#0C4A6E;'&gt;Agent 1: Assessment Agent&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;color:#0369A1;'&gt;&amp;bull; PDF Resume Layout Parser &amp;amp; Contact Extractor&lt;br&gt;&amp;bull; GitHub API (Repos, Commits) + LeetCode Scraper&lt;br&gt;&amp;bull; TF-IDF Vector Cosine Similarity vs. Benchmark JDs&lt;br&gt;&amp;bull; Dynamic Job Link Ingestor &amp;amp; Custom Posting Scorer&lt;br&gt;&amp;bull; Baseline Market Readiness Score (0–100%)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#F0F9FF;strokeColor=#0284C7;strokeWidth=2;align=left;verticalAlign=middle;spacingLeft=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="150" width="350" height="105" as="geometry" />
         </mxCell>
 
         <!-- Agent 2: Gap & Learning Agent -->

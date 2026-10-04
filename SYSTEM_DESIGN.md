@@ -105,7 +105,10 @@ class CareerPilotState(TypedDict):
   4. **Skill Vector Generator & Similarity Benchmarker (`server/utils/similarity.py`)**:
      * Uses TF-IDF term frequency and cosine similarity to match the candidate against the curated benchmark JD corpus.
      * Evaluates skill overlap and calculates an objective baseline Readiness Score (0–100%).
-* **Output**: Verified technical skill inventory, benchmark matches, and baseline Readiness Score.
+  5. **Custom Job Posting Link Ingestor (`server/utils/job_extractor.py`)**:
+     * Allows candidates to input direct URLs to any live job posting (LinkedIn, Greenhouse, Lever, company career portals) or paste raw JD text.
+     * Fetches HTML content, extracts technical requirements and metadata via LLM/heuristics, and computes real-time readiness.
+* **Output**: Verified technical skill inventory, benchmark matches, custom job analysis, and baseline Readiness Score.
 
 ---
 
@@ -247,7 +250,6 @@ Careerpilot/
 │       ├── resume_parser.py       # Layout-aware resume text and entity extractor
 │       ├── github_client.py       # Public GitHub API client
 │       ├── leetcode_client.py     # Public LeetCode GraphQL client
-│       ├── job_fetcher.py         # Asynchronous live job fetcher via free public APIs
 │       └── similarity.py          # TF-IDF cosine similarity & scoring engine
 ```
 

@@ -63,25 +63,26 @@ flowchart TD
   * Resume file (`.pdf` or raw text).
   * Public Profile Handles: GitHub username, LeetCode username, LinkedIn URL.
   * Target Role / Domain (e.g., "Backend", "Full Stack", "Frontend", "DevOps / Cloud", "Data / AI", "All").
+  * Optional: Direct Job Posting URL or custom JD text for instant on-demand analysis.
 * **Execution Logic**:
   1. **Resume Parser**: Extracts structured entities (candidate name, email, phone, skills, projects, links) using layout-aware regex and text segmentation.
   2. **Profile Signals Extractor**:
      * GitHub API: Repositories, top programming languages, commit activity, project complexity.
      * LeetCode API / Scraper: Solved count by difficulty (Easy/Medium/Hard).
   3. **Skill Matrix Normalization**: Merges extracted resume skills with languages verified from GitHub.
-  4. **JD Benchmarking**: Calculates TF-IDF term frequency and cosine similarity against both curated tech benchmark JDs and live-synced developer job postings (fetched on-demand via public APIs); computes matched vs. missing skills.
+  4. **JD Benchmarking & Custom Link Ingestion**: Benchmarks against the curated tech JD corpus, or ingests candidate-provided job posting links (LinkedIn, company career portals), extracts required tech skills, and computes real-time readiness.
 * **Output**:
   * Baseline Overall Readiness Score (0–100%).
   * Current Verified Skill Matrix.
-  * Role Benchmark Match List (with visual LIVE indicators for real-time postings).
+  * Role Benchmark Match List.
 
 ---
 
 #### 4.2. Agent 2: Gap & Learning Agent
-* **Objective**: Identify critical capability deficits based on benchmark and live market demand, and generate a targeted learning roadmap.
+* **Objective**: Identify critical capability deficits based on benchmark market demand and generate a targeted learning roadmap.
 * **Inputs**:
   * Verified Skill Matrix (from Agent 1).
-  * Target Domain, Curated Benchmark JDs & Live-Synced Postings.
+  * Target Domain & Curated Benchmark JDs Corpus.
 * **Execution Logic**:
   1. **Market Frequency Extraction**: Tokenizes and clusters required technical skills across the target JD dataset; ranks skills by empirical appearance frequency.
   2. **Set-Difference & Gap Detection**: Computes `Target_Market_Skills − Candidate_Verified_Skills`.
@@ -202,6 +203,7 @@ flowchart TD
 5. Staging structured application packages with verified employer portal links and HITL confirmation gate.
 6. Mock interview conversational loop with dual scoring (Technical & STAR) and model answers.
 7. Authentication gate on entry with save enforcement and MongoDB persistence.
+8. User-provided job link / custom posting ingestion with automated requirement extraction and profile match analysis.
 
 #### Out-of-Scope (Excluded to Avoid Over-Complexity)
 * Autonomous CAPTCHA-bypassing bots on third-party portals (violates platform terms and ethics).
