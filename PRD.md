@@ -69,20 +69,19 @@ flowchart TD
      * GitHub API: Repositories, top programming languages, commit activity, project complexity.
      * LeetCode API / Scraper: Solved count by difficulty (Easy/Medium/Hard).
   3. **Skill Matrix Normalization**: Merges extracted resume skills with languages verified from GitHub.
-  4. **JD Benchmarking**: Calculates TF-IDF term frequency and cosine similarity against the curated tech JD benchmark corpus; computes matched vs. missing skills.
-  5. **Custom JD Ingestion & Analysis**: Allows candidates to provide/paste custom Job Descriptions directly from LinkedIn, Naukri, or career sites. Automatically extracts required technologies, adds the posting to active targets, and evaluates match readiness.
+  4. **JD Benchmarking**: Calculates TF-IDF term frequency and cosine similarity against live target job descriptions; computes matched vs. missing skills.
 * **Output**:
   * Baseline Overall Readiness Score (0–100%).
   * Current Verified Skill Matrix.
-  * Role Benchmark Match List (including custom user-provided postings).
+  * Role Benchmark Match List.
 
 ---
 
 #### 4.2. Agent 2: Gap & Learning Agent
-* **Objective**: Identify critical capability deficits based on benchmark market demand and generate a targeted learning roadmap.
+* **Objective**: Identify critical capability deficits based on live market demand and generate a targeted learning roadmap.
 * **Inputs**:
   * Verified Skill Matrix (from Agent 1).
-  * Target Domain & Curated Benchmark JDs Corpus.
+  * Target Domain & Live JDs Corpus.
 * **Execution Logic**:
   1. **Market Frequency Extraction**: Tokenizes and clusters required technical skills across the target JD dataset; ranks skills by empirical appearance frequency.
   2. **Set-Difference & Gap Detection**: Computes `Target_Market_Skills − Candidate_Verified_Skills`.
@@ -197,7 +196,7 @@ flowchart TD
 
 #### In-Scope (Implemented & Verified Deliverables)
 1. Parsing candidate resume + fetching public GitHub/LeetCode statistics.
-2. Benchmarking against real tech JDs across Backend, Full Stack, Frontend, Cloud/DevOps, and Data/AI, plus instant analysis for candidate-pasted custom Job Descriptions.
+2. Benchmarking against real tech JDs across Backend, Full Stack, Frontend, Cloud/DevOps, and Data/AI.
 3. Calculating frequency-based skill gaps and surfacing verified free courses (NPTEL, YouTube, Docs).
 4. Generating tailored STAR resume bullets and custom cover letters via LLM with anti-hallucination guardrails.
 5. Staging structured application packages with verified employer portal links and HITL confirmation gate.
@@ -206,7 +205,7 @@ flowchart TD
 
 #### Out-of-Scope (Excluded to Avoid Over-Complexity)
 * Autonomous CAPTCHA-bypassing bots on third-party portals (violates platform terms and ethics).
-* Real-time scraping of third-party job boards (avoids IP blocks, Cloudflare traps, and fragile DOM scrapers; replaced by a robust curated benchmark corpus + verified direct portal links and dynamic LinkedIn search).
+* Scraping 10,000+ live portals on the fly (curated live cache prevents rate-limit roadblocks).
 * Paid enterprise integrations (Workday private APIs, Greenhouse internal endpoints).
 * Video/speech emotion recognition (audio/speech analysis adds unnecessary complexity; text-based Q&A is academically robust).
 

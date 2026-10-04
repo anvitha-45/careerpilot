@@ -75,8 +75,7 @@ class AssessmentAgent:
                 "location": jd.get("location"),
                 "readiness_score": eval_res["readiness_score"],
                 "matched_skills": eval_res["matched_skills"],
-                "missing_skills": eval_res["missing_skills"],
-                "is_custom": bool(jd.get("is_custom", False))
+                "missing_skills": eval_res["missing_skills"]
             })
 
         overall_readiness = round(sum(scores) / len(scores), 1) if scores else 65.0

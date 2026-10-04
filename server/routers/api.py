@@ -1,4 +1,3 @@
-import uuid
 import json
 import hashlib
 from datetime import datetime
@@ -8,9 +7,8 @@ from pydantic import BaseModel
 from server.database import db
 from server.agents.orchestrator import orchestrator
 from server.agents.application_agent import application_agent
-from server.utils.resume_parser import parse_full_resume, extract_skills_from_text
-from server.utils.job_extractor import process_job_input
-from server.utils.similarity import calculate_comprehensive_readiness
+from server.agents.interview_agent import interview_agent
+from server.utils.resume_parser import parse_full_resume
 
 router = APIRouter(prefix="/api", tags=["Pipeline API"])
 
@@ -52,21 +50,6 @@ class InterviewEvalRequest(BaseModel):
     role: str
     skills: List[str] = []
 
-class CustomJobRequest(BaseModel):
-    title: str
-    company: Optional[str] = "Target Company"
-    description: str
-    domain: Optional[str] = "Full Stack"
-    location: Optional[str] = "India (Hybrid / Remote)"
-    salary: Optional[str] = "Competitive"
-    portal_url: Optional[str] = ""
-    required_skills: Optional[List[str]] = []
-
-class AnalyzeCustomJobRequest(BaseModel):
-    url: Optional[str] = ""
-    raw_text: Optional[str] = ""
-    email: Optional[str] = ""
-
 @router.get("/health")
 async def health_check():
     return {
@@ -81,121 +64,6 @@ async def get_jobs():
     """Retrieve all available job descriptions for benchmarking."""
     jobs = await db.find("jobs")
     return {"jobs": jobs}
-
-@router.post("/jobs/custom")
-async def create_custom_job(req: CustomJobRequest):
-    """
-    Allows candidate to provide or paste a custom Job Description from any job portal.
-    Extracts required technical skills and saves the custom JD to the database for instant benchmarking and tailoring.
-    """
-    title = (req.title or "").strip() or "Software Engineer"
-    company = (req.company or "").strip() or "Target Company"
-    description = (req.description or "").strip()
-    if not description:
-        raise HTTPException(status_code=400, detail="Job description text is required.")
-
-    # Automatically extract recognized tech skills from the pasted JD
-    extracted_skills = extract_skills_from_text(description)
-    user_skills = [s.strip() for s in (req.required_skills or []) if s.strip()]
-
-    # Combine unique skills
-    combined = []
-    seen = set()
-    for s in (user_skills + extracted_skills):
-        s_low = s.lower()
-        if s_low not in seen:
-            seen.add(s_low)
-            combined.append(s)
-
-    if not combined:
-        combined = ["Problem Solving", "Software Engineering", "Communication"]
-
-    job_id = f"jd-custom-{uuid.uuid4().hex[:8]}"
-    portal_url = req.portal_url.strip() if req.portal_url and req.portal_url.strip() else ""
-    if not portal_url:
-        portal_url = f"https://www.google.com/search?q={company.replace(' ', '+')}+careers+{title.replace(' ', '+')}"
-
-    job_doc = {
-        "id": job_id,
-        "title": title,
-        "company": company,
-        "location": req.location.strip() if req.location and req.location.strip() else "India (Hybrid / Remote)",
-        "domain": req.domain.strip() if req.domain and req.domain.strip() else "Full Stack",
-        "experience": "0-2 Years",
-        "salary": req.salary.strip() if req.salary and req.salary.strip() else "Competitive",
-        "description": description,
-        "required_skills": combined[:8],
-        "preferred_skills": combined[8:14] if len(combined) > 8 else [],
-        "portal_url": portal_url,
-        "apply_search_url": f"https://www.linkedin.com/jobs/search/?keywords={company.replace(' ', '+')}+{title.replace(' ', '+')}",
-        "is_custom": True,
-        "created_at": datetime.utcnow().isoformat()
-    }
-
-    await db.insert("jobs", job_doc)
-    return {
-        "success": True,
-        "message": f"Custom job '{title}' at {company} created successfully.",
-        "job": job_doc
-    }
-
-@router.post("/jobs/analyze-custom")
-async def analyze_custom_job(req: AnalyzeCustomJobRequest):
-    """
-    Ingests an external job posting URL or pasted text, extracts structured requirements,
-    saves it to the database, and computes candidate readiness match.
-    """
-    try:
-        url = (req.url or "").strip()
-        raw_text = (req.raw_text or "").strip()
-        if not url and not raw_text:
-            raise HTTPException(status_code=400, detail="Please provide a job posting URL or job description text.")
-
-        job_doc = await process_job_input(url=url, raw_text=raw_text)
-
-        # Upsert into database so it becomes immediately available across all agents and tabs
-        await db.update_one("jobs", {"id": job_doc["id"]}, job_doc, upsert=True)
-
-        # Look up candidate profile for instant match scoring
-        profile = None
-        if req.email:
-            profile = await db.find_one("profiles", {"email": req.email.strip().lower()})
-        if not profile:
-            all_profiles = await db.find("profiles")
-            if all_profiles:
-                profile = all_profiles[-1]
-
-        if not profile:
-            profile = {
-                "raw_resume_text": "Python FastAPI PostgreSQL Docker Git React",
-                "skills": ["Python", "FastAPI", "PostgreSQL", "Docker", "Git", "REST APIs"],
-                "leetcode_stats": {"total_solved": 120},
-                "github_stats": {"public_repos": 8, "total_stars": 3}
-            }
-
-        eval_res = calculate_comprehensive_readiness(
-            resume_text=profile.get("raw_resume_text", ""),
-            candidate_skills=profile.get("skills", []),
-            jd=job_doc,
-            leetcode_stats=profile.get("leetcode_stats", {}),
-            github_stats=profile.get("github_stats", {})
-        )
-
-        return {
-            "success": True,
-            "message": f"Successfully analyzed job posting: {job_doc['company']} - {job_doc['title']}",
-            "job": job_doc,
-            "readiness": {
-                "readiness_score": eval_res["readiness_score"],
-                "matched_skills": eval_res["matched_skills"],
-                "missing_skills": eval_res["missing_skills"]
-            }
-        }
-    except ValueError as ve:
-        raise HTTPException(status_code=400, detail=str(ve))
-    except Exception as e:
-        print(f"[API] Error analyzing custom job: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to analyze job posting: {str(e)}")
 
 @router.post("/resume/parse")
 async def parse_resume_endpoint(
