@@ -9,6 +9,13 @@ from server.agents.orchestrator import orchestrator
 from server.agents.application_agent import application_agent
 from server.agents.interview_agent import interview_agent
 from server.utils.resume_parser import parse_full_resume
+from server.utils.ai_config import (
+    ai_vault,
+    verify_ai_connection,
+    validate_api_key_format,
+    infer_provider_from_key,
+    sanitize_log_message
+)
 
 router = APIRouter(prefix="/api", tags=["Pipeline API"])
 
@@ -50,13 +57,82 @@ class InterviewEvalRequest(BaseModel):
     role: str
     skills: List[str] = []
 
+class AIConfigSaveRequest(BaseModel):
+    provider: Optional[str] = "auto"
+    api_key: Optional[str] = ""
+    model: Optional[str] = ""
+    temperature: Optional[float] = 0.3
+
+class AIConfigTestRequest(BaseModel):
+    provider: Optional[str] = "auto"
+    api_key: Optional[str] = ""
+    model: Optional[str] = ""
+
 @router.get("/health")
 async def health_check():
+    ai_status = ai_vault.get_public_status()
     return {
         "status": "healthy",
         "service": "CareerPilot",
         "version": "2.0.0",
-        "database": "MongoDB" if db.is_connected else "Embedded Local Document Store"
+        "database": "MongoDB" if db.is_connected else "Embedded Local Document Store",
+        "ai_provider": ai_status["active_provider"],
+        "ai_has_key": ai_status["has_active_key"]
+    }
+
+@router.get("/ai/config")
+async def get_ai_config():
+    """Returns current AI configuration and masked key status. Never exposes raw API keys."""
+    return {
+        "success": True,
+        "config": ai_vault.get_public_status()
+    }
+
+@router.post("/ai/config")
+async def save_ai_config(req: AIConfigSaveRequest):
+    """Validates and stores the user's AI API key in the encrypted runtime vault."""
+    prov = (req.provider or "auto").lower().strip()
+    clean_key = (req.api_key or "").strip()
+
+    if clean_key:
+        target_prov = prov if prov in ("gemini", "groq", "openai") else infer_provider_from_key(clean_key)
+        valid_fmt, fmt_msg = validate_api_key_format(target_prov, clean_key)
+        if not valid_fmt:
+            raise HTTPException(status_code=400, detail=fmt_msg)
+        prov = target_prov
+
+    status = ai_vault.set_user_key(
+        provider=prov,
+        api_key=clean_key,
+        model=req.model or "",
+        temperature=req.temperature
+    )
+    return {
+        "success": True,
+        "message": "AI configuration updated securely.",
+        "config": status
+    }
+
+@router.post("/ai/test")
+async def test_ai_config(req: AIConfigTestRequest):
+    """Tests connectivity and validity of the provided or active AI API key."""
+    result = await verify_ai_connection(
+        provider=req.provider,
+        api_key=req.api_key,
+        model=req.model
+    )
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("message", "AI verification failed."))
+    return result
+
+@router.delete("/ai/config")
+async def clear_ai_config(provider: Optional[str] = None):
+    """Revokes and clears stored user API key(s) from the encrypted runtime vault."""
+    status = ai_vault.clear_keys(provider=provider)
+    return {
+        "success": True,
+        "message": "API key cleared from runtime vault.",
+        "config": status
     }
 
 @router.get("/jobs")

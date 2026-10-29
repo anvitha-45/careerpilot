@@ -111,6 +111,13 @@
           <span class="sm:hidden">Demo</span>
         </button>
 
+        <!-- AI Config & API Key Modal Trigger -->
+        <button id="aiConfigBtn" onclick="openAiConfigModal()" title="Configure AI Provider & API Key" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 transition flex items-center space-x-1.5 shadow-sm">
+          <i id="aiHeaderIcon" class="fa-solid fa-key text-indigo-400"></i>
+          <span id="aiHeaderLabel">AI Config</span>
+          <span id="aiHeaderDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+        </button>
+
         <!-- User Authentication Status & Modal Trigger -->
         <div class="flex items-center space-x-1.5 flex-shrink-0" id="headerAuthContainer">
           <div id="userStatusTag" class="text-xs font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 max-w-[200px]">
@@ -425,6 +432,18 @@
               <span>Download TXT</span>
             </button>
           </div>
+        </div>
+
+        <!-- Contextual AI Engine Banner in Tailoring Tab -->
+        <div id="tailoringAiNotice" class="bg-indigo-500/10 border border-indigo-500/25 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+          <div class="flex items-center space-x-2.5 text-indigo-200">
+            <i id="tailoringAiIcon" class="fa-solid fa-shield-halved text-indigo-400 text-sm"></i>
+            <span id="tailoringAiText">Running in <strong>Built-in Heuristic Mode</strong>. Add your Gemini, Groq, or OpenAI API key to generate live LLM-tailored STAR bullets & cover letters.</span>
+          </div>
+          <button onclick="openAiConfigModal()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition shrink-0 flex items-center space-x-1.5 self-start sm:self-auto">
+            <i class="fa-solid fa-key text-[10px]"></i>
+            <span id="tailoringAiBtnText">Configure API Key</span>
+          </button>
         </div>
 
         <!-- 2-Column Responsive Layout: Left = Impactful Tailored Resume, Right = Personalized Cover Letter -->
@@ -753,6 +772,10 @@
             <select id="interviewJobSelect" onchange="onInterviewJobSelectChange()" class="bg-dark-900 text-slate-200 border border-dark-600 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500">
               <!-- Rendered dynamically -->
             </select>
+            <button onclick="openAiConfigModal()" class="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 transition flex items-center space-x-1">
+              <i class="fa-solid fa-key text-[10px]"></i>
+              <span>AI Key</span>
+            </button>
           </div>
         </div>
 
@@ -966,6 +989,140 @@
     </div>
   </div>
 
+  <!-- SECURE AI CONFIGURATION & API KEY MODAL -->
+  <div id="aiConfigModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+    <div class="bg-dark-800 border border-dark-700 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-brand-500 flex items-center justify-center text-white text-base font-bold shadow-lg shadow-indigo-500/20">
+            <i class="fa-solid fa-key"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white tracking-tight flex items-center space-x-2">
+              <span>AI Provider & API Key Configuration</span>
+            </h3>
+            <p class="text-xs text-slate-400">Configure your LLM key for STAR resume tailoring, roadmap goals & mock interviews.</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAiConfigModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-dark-700 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Live Active AI Status Card -->
+      <div id="aiActiveStatusCard" class="p-3 rounded-xl bg-dark-900 border border-dark-700 flex items-center justify-between text-xs">
+        <div class="flex items-center space-x-2.5">
+          <span id="aiModalStatusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
+          <div>
+            <div id="aiModalStatusTitle" class="font-bold text-white">Mode: Built-in Deterministic Heuristics</div>
+            <div id="aiModalStatusSub" class="text-[11px] text-slate-400">No external API key active. Add a key below for live LLM generation.</div>
+          </div>
+        </div>
+        <span id="aiModalMaskedBadge" class="hidden font-mono text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"></span>
+      </div>
+
+      <!-- Provider & Model Selection -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-300">AI Provider</label>
+          <select id="aiProviderSelect" onchange="onAiProviderChange()" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white focus:outline-none">
+            <option value="gemini">Google Gemini (Recommended)</option>
+            <option value="groq">Groq Cloud (Llama 3.3)</option>
+            <option value="openai">OpenAI (GPT-4o)</option>
+            <option value="heuristic">Heuristic Fallback (No Key)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-300">Model</label>
+          <select id="aiModelSelect" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white focus:outline-none">
+            <option value="gemini-2.0-flash">Gemini 2.0 Flash (Fast & Recommended)</option>
+            <option value="gemini-1.5-flash">Gemini 1.5 Flash (Balanced)</option>
+            <option value="gemini-1.5-pro">Gemini 1.5 Pro (Deep Reasoning)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Secure API Key Input -->
+      <div id="aiKeyInputContainer" class="space-y-1.5">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-semibold text-slate-300 flex items-center space-x-1.5">
+            <i class="fa-solid fa-lock text-emerald-400 text-[10px]"></i>
+            <span>API Key</span>
+          </label>
+          <a id="aiKeyDocsLink" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-[11px] text-brand-400 hover:text-brand-300 underline flex items-center space-x-1">
+            <span>Get a free Gemini API key</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+          </a>
+        </div>
+        <div class="relative flex items-center">
+          <input
+            type="password"
+            id="aiApiKeyInput"
+            autocomplete="off"
+            spellcheck="false"
+            data-lpignore="true"
+            placeholder="Paste your API key (e.g. AIza...)"
+            class="w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg pl-3 pr-16 py-2 text-xs text-white font-mono placeholder-slate-500 focus:outline-none transition"
+          >
+          <button
+            type="button"
+            onclick="toggleAiKeyVisibility()"
+            title="Show / Hide API Key"
+            class="absolute right-2 px-2 py-1 text-[11px] text-slate-400 hover:text-white rounded bg-dark-800 border border-dark-600 transition"
+          >
+            <i id="aiKeyToggleIcon" class="fa-regular fa-eye"></i>
+          </button>
+        </div>
+        <div class="flex items-center justify-between pt-1">
+          <label class="flex items-center space-x-2 text-[11px] text-slate-300 cursor-pointer select-none">
+            <input type="checkbox" id="aiRememberSessionOnly" checked class="rounded bg-dark-900 border-dark-600 text-brand-600 focus:ring-0">
+            <span>Session-only storage <span class="text-slate-500">(Clears automatically when tab closes)</span></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Security & Key Protection Assurance -->
+      <div class="p-3 rounded-xl bg-emerald-950/25 border border-emerald-500/25 text-[11px] text-slate-300 space-y-1">
+        <div class="font-bold text-emerald-400 flex items-center space-x-1.5">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>How Your API Key is Protected</span>
+        </div>
+        <ul class="list-disc list-inside text-slate-400 space-y-0.5 text-[10.5px]">
+          <li>Transmitted strictly via HTTP headers (<code class="text-slate-300">x-goog-api-key</code> / <code class="text-slate-300">Authorization</code>), never exposed in URLs.</li>
+          <li>Encrypted in server runtime memory (<code class="text-slate-300">HMAC-SHA256</code>) and never saved in plaintext on disk or DB.</li>
+          <li>Automatically masked on screen and scrubbed from all error/diagnostic logs.</li>
+        </ul>
+      </div>
+
+      <!-- Test / Save Feedback Alert -->
+      <div id="aiConfigFeedback" class="hidden p-2.5 rounded-xl border text-xs flex items-center space-x-2">
+        <i id="aiConfigFeedbackIcon" class="fa-solid fa-circle-info shrink-0"></i>
+        <span id="aiConfigFeedbackText"></span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="pt-2 border-t border-dark-700 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center space-x-2">
+          <button type="button" id="aiTestBtn" onclick="testAiKeyConnection()" class="px-3 py-2 rounded-xl bg-dark-700 hover:bg-dark-600 text-slate-200 border border-dark-600 text-xs font-semibold transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-plug-circle-check text-brand-400"></i>
+            <span>Test Key</span>
+          </button>
+          <button type="button" id="aiClearKeyBtn" onclick="clearAiKeyConfig()" class="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-trash-can text-[10px]"></i>
+            <span>Revoke Key</span>
+          </button>
+        </div>
+        <button type="button" id="aiSaveBtn" onclick="saveAiConfiguration()" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition shadow-lg shadow-brand-500/25 flex items-center space-x-1.5">
+          <i class="fa-solid fa-shield-check"></i>
+          <span>Save & Activate AI</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
 
   <!-- FRONTEND SCRIPT -->
   <script>
@@ -1006,8 +1163,421 @@
       staged: null,
       questions: [],
       activeQuestion: null,
-      userAnswers: {}
+      userAnswers: {},
+      aiConfig: {
+        provider: 'gemini',
+        model: 'gemini-2.0-flash',
+        hasKey: false,
+        maskedKey: '',
+        source: 'heuristic'
+      }
     };
+
+    const AI_MODELS_CATALOG = {
+      gemini: {
+        name: "Google Gemini",
+        placeholder: "Paste your Gemini API key (AIza...)",
+        docsUrl: "https://aistudio.google.com/app/apikey",
+        docsText: "Get a free Gemini API key",
+        models: [
+          { id: "gemini-2.0-flash", label: "Gemini 2.0 Flash (Fast & Recommended)" },
+          { id: "gemini-1.5-flash", label: "Gemini 1.5 Flash (Balanced)" },
+          { id: "gemini-1.5-pro", label: "Gemini 1.5 Pro (Deep Reasoning)" }
+        ]
+      },
+      groq: {
+        name: "Groq Cloud",
+        placeholder: "Paste your Groq API key (gsk_...)",
+        docsUrl: "https://console.groq.com/keys",
+        docsText: "Get a free Groq API key",
+        models: [
+          { id: "llama-3.3-70b-versatile", label: "Llama 3.3 70B Versatile (Recommended)" },
+          { id: "llama-3.1-70b-versatile", label: "Llama 3.1 70B Versatile" },
+          { id: "llama-3.1-8b-instant", label: "Llama 3.1 8B Instant (Ultra-Fast)" },
+          { id: "mixtral-8x7b-32768", label: "Mixtral 8x7B" }
+        ]
+      },
+      openai: {
+        name: "OpenAI",
+        placeholder: "Paste your OpenAI API key (sk-...)",
+        docsUrl: "https://platform.openai.com/api-keys",
+        docsText: "Get an OpenAI API key",
+        models: [
+          { id: "gpt-4o-mini", label: "GPT-4o Mini (Fast & Cost-Effective)" },
+          { id: "gpt-4o", label: "GPT-4o (Flagship Reasoning)" }
+        ]
+      },
+      heuristic: {
+        name: "Built-in Heuristic Engine",
+        placeholder: "No API key needed in Heuristic Mode",
+        docsUrl: "#",
+        docsText: "",
+        models: [
+          { id: "deterministic-heuristics", label: "Deterministic Engineering Heuristics" }
+        ]
+      }
+    };
+
+    // Obfuscate key in browser sessionStorage so plaintext is not sitting in raw strings
+    function _encodeClientSecret(str) {
+      if (!str) return '';
+      try {
+        return btoa(encodeURIComponent(str).split('').reverse().join(''));
+      } catch (e) { return ''; }
+    }
+
+    function _decodeClientSecret(encoded) {
+      if (!encoded) return '';
+      try {
+        return decodeURIComponent(atob(encoded).split('').reverse().join(''));
+      } catch (e) { return ''; }
+    }
+
+    function getStoredClientAiHeaders() {
+      const rawSession = sessionStorage.getItem('careerpilot_ai_session');
+      const rawLocal = localStorage.getItem('careerpilot_ai_device');
+      const raw = rawSession || rawLocal;
+      if (!raw) return {};
+      try {
+        const parsed = JSON.parse(raw);
+        const headers = {};
+        if (parsed.provider) headers['X-AI-Provider'] = parsed.provider;
+        if (parsed.model) headers['X-AI-Model'] = parsed.model;
+        if (parsed.k) {
+          const dec = _decodeClientSecret(parsed.k);
+          if (dec) headers['X-AI-Key'] = dec;
+        }
+        return headers;
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function getAiHeaders(extraHeaders = {}) {
+      return Object.assign({}, getStoredClientAiHeaders(), extraHeaders);
+    }
+
+    async function loadAiConfigStatus() {
+      try {
+        const resp = await fetch(`${API_BASE}/api/ai/config`, {
+          headers: getAiHeaders()
+        });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        if (data.success && data.config) {
+          updateAiStatusUI(data.config);
+        }
+      } catch (e) {
+        console.error("Failed to fetch AI config status:", e);
+      }
+    }
+
+    function updateAiStatusUI(cfg) {
+      if (!cfg) return;
+      appState.aiConfig = {
+        provider: cfg.active_provider || 'heuristic',
+        model: cfg.active_model || '',
+        hasKey: Boolean(cfg.has_active_key),
+        maskedKey: cfg.masked_active_key || '',
+        source: cfg.key_source || 'heuristic'
+      };
+
+      const headerBtn = document.getElementById('aiConfigBtn');
+      const headerIcon = document.getElementById('aiHeaderIcon');
+      const headerLabel = document.getElementById('aiHeaderLabel');
+      const headerDot = document.getElementById('aiHeaderDot');
+
+      const provMeta = AI_MODELS_CATALOG[cfg.active_provider] || AI_MODELS_CATALOG.gemini;
+      const provShort = cfg.active_provider === 'gemini' ? 'Gemini' : (cfg.active_provider === 'groq' ? 'Groq' : (cfg.active_provider === 'openai' ? 'OpenAI' : 'Heuristics'));
+
+      if (cfg.has_active_key && cfg.active_provider !== 'heuristic') {
+        if (headerBtn) {
+          headerBtn.className = "text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 transition flex items-center space-x-1.5 shadow-sm";
+        }
+        if (headerIcon) headerIcon.className = "fa-solid fa-microchip text-emerald-400";
+        if (headerLabel) headerLabel.textContent = `AI: ${provShort}`;
+        if (headerDot) headerDot.className = "w-2 h-2 rounded-full bg-emerald-400";
+      } else {
+        if (headerBtn) {
+          headerBtn.className = "text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 transition flex items-center space-x-1.5 shadow-sm";
+        }
+        if (headerIcon) headerIcon.className = "fa-solid fa-key text-indigo-400";
+        if (headerLabel) headerLabel.textContent = "AI Config";
+        if (headerDot) headerDot.className = "w-2 h-2 rounded-full bg-amber-400";
+      }
+
+      // Update Modal Status Card
+      const dot = document.getElementById('aiModalStatusDot');
+      const title = document.getElementById('aiModalStatusTitle');
+      const sub = document.getElementById('aiModalStatusSub');
+      const badge = document.getElementById('aiModalMaskedBadge');
+
+      if (cfg.has_active_key && cfg.active_provider !== 'heuristic') {
+        if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0";
+        if (title) title.textContent = `Active: ${provMeta.name} (${cfg.active_model})`;
+        if (sub) sub.textContent = "Secured API key active for Resume Tailoring, Roadmaps & Mock Interviews.";
+        if (badge) {
+          badge.textContent = cfg.masked_active_key;
+          badge.classList.remove('hidden');
+        }
+      } else {
+        if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0";
+        if (title) title.textContent = "Mode: Built-in Deterministic Heuristics";
+        if (sub) sub.textContent = "No external API key active. Add a key below for live LLM generation.";
+        if (badge) badge.classList.add('hidden');
+      }
+
+      // Update Contextual Tailoring Notice
+      const tNotice = document.getElementById('tailoringAiNotice');
+      const tIcon = document.getElementById('tailoringAiIcon');
+      const tText = document.getElementById('tailoringAiText');
+      const tBtnText = document.getElementById('tailoringAiBtnText');
+      if (tNotice && tText) {
+        if (cfg.has_active_key && cfg.active_provider !== 'heuristic') {
+          tNotice.className = "bg-emerald-500/10 border border-emerald-500/25 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs";
+          if (tIcon) tIcon.className = "fa-solid fa-microchip text-emerald-400 text-sm";
+          tText.innerHTML = `Powered by <strong>${provMeta.name} (${cfg.active_model})</strong> • Key: <code class="text-emerald-300 font-mono">${cfg.masked_active_key}</code>`;
+          if (tBtnText) tBtnText.textContent = "AI Settings";
+        } else {
+          tNotice.className = "bg-indigo-500/10 border border-indigo-500/25 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs";
+          if (tIcon) tIcon.className = "fa-solid fa-shield-halved text-indigo-400 text-sm";
+          tText.innerHTML = `Running in <strong>Built-in Heuristic Mode</strong>. Add your Gemini, Groq, or OpenAI API key to generate live LLM-tailored STAR bullets & cover letters.`;
+          if (tBtnText) tBtnText.textContent = "Configure API Key";
+        }
+      }
+    }
+
+    function openAiConfigModal() {
+      const modal = document.getElementById('aiConfigModal');
+      const fb = document.getElementById('aiConfigFeedback');
+      if (fb) fb.classList.add('hidden');
+
+      // Reset password input to hidden mode on open
+      const keyInput = document.getElementById('aiApiKeyInput');
+      const toggleIcon = document.getElementById('aiKeyToggleIcon');
+      if (keyInput) keyInput.type = 'password';
+      if (toggleIcon) toggleIcon.className = 'fa-regular fa-eye';
+
+      const selProv = (appState.aiConfig && appState.aiConfig.provider && appState.aiConfig.provider !== 'heuristic')
+        ? appState.aiConfig.provider
+        : 'gemini';
+      const provSelect = document.getElementById('aiProviderSelect');
+      if (provSelect) provSelect.value = selProv;
+      onAiProviderChange(appState.aiConfig?.model);
+
+      modal.classList.remove('hidden');
+      loadAiConfigStatus();
+    }
+
+    function closeAiConfigModal() {
+      const modal = document.getElementById('aiConfigModal');
+      const keyInput = document.getElementById('aiApiKeyInput');
+      if (keyInput) keyInput.type = 'password';
+      modal.classList.add('hidden');
+    }
+
+    function onAiProviderChange(preferredModel = '') {
+      const prov = document.getElementById('aiProviderSelect').value;
+      const modelSelect = document.getElementById('aiModelSelect');
+      const keyContainer = document.getElementById('aiKeyInputContainer');
+      const keyInput = document.getElementById('aiApiKeyInput');
+      const docsLink = document.getElementById('aiKeyDocsLink');
+
+      const meta = AI_MODELS_CATALOG[prov] || AI_MODELS_CATALOG.gemini;
+      if (modelSelect) {
+        modelSelect.innerHTML = '';
+        meta.models.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m.id;
+          opt.textContent = m.label;
+          modelSelect.appendChild(opt);
+        });
+        if (preferredModel && meta.models.some(m => m.id === preferredModel)) {
+          modelSelect.value = preferredModel;
+        }
+      }
+
+      if (prov === 'heuristic') {
+        if (keyContainer) keyContainer.classList.add('opacity-50', 'pointer-events-none');
+      } else {
+        if (keyContainer) keyContainer.classList.remove('opacity-50', 'pointer-events-none');
+        if (keyInput) keyInput.placeholder = meta.placeholder;
+        if (docsLink && meta.docsUrl) {
+          docsLink.href = meta.docsUrl;
+          docsLink.querySelector('span').textContent = meta.docsText;
+        }
+      }
+    }
+
+    function toggleAiKeyVisibility() {
+      const input = document.getElementById('aiApiKeyInput');
+      const icon = document.getElementById('aiKeyToggleIcon');
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) icon.className = 'fa-regular fa-eye-slash text-brand-400';
+      } else {
+        input.type = 'password';
+        if (icon) icon.className = 'fa-regular fa-eye';
+      }
+    }
+
+    function showAiModalFeedback(msg, type = 'info') {
+      const box = document.getElementById('aiConfigFeedback');
+      const icon = document.getElementById('aiConfigFeedbackIcon');
+      const text = document.getElementById('aiConfigFeedbackText');
+      if (!box || !text) return;
+
+      box.classList.remove(
+        'hidden',
+        'bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300',
+        'bg-rose-500/10', 'border-rose-500/30', 'text-rose-300',
+        'bg-blue-500/10', 'border-blue-500/30', 'text-blue-300'
+      );
+      text.textContent = msg;
+
+      if (type === 'success') {
+        box.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300');
+        if (icon) icon.className = 'fa-solid fa-circle-check text-emerald-400 shrink-0';
+      } else if (type === 'error') {
+        box.classList.add('bg-rose-500/10', 'border-rose-500/30', 'text-rose-300');
+        if (icon) icon.className = 'fa-solid fa-circle-exclamation text-rose-400 shrink-0';
+      } else {
+        box.classList.add('bg-blue-500/10', 'border-blue-500/30', 'text-blue-300');
+        if (icon) icon.className = 'fa-solid fa-circle-info text-blue-400 shrink-0';
+      }
+    }
+
+    async function testAiKeyConnection() {
+      const prov = document.getElementById('aiProviderSelect').value;
+      const model = document.getElementById('aiModelSelect').value;
+      const rawKey = document.getElementById('aiApiKeyInput').value.trim();
+
+      if (prov === 'heuristic') {
+        showAiModalFeedback("Heuristic mode runs locally and does not require an API key.", "info");
+        return;
+      }
+
+      const btn = document.getElementById('aiTestBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-brand-400"></i><span>Testing...</span>`;
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/ai/test`, {
+          method: 'POST',
+          headers: getAiHeaders({'Content-Type': 'application/json'}),
+          body: JSON.stringify({
+            provider: prov,
+            api_key: rawKey,
+            model: model
+          })
+        });
+        const res = await resp.json();
+        if (resp.ok && res.success) {
+          showAiModalFeedback(res.message || "API key verified!", "success");
+        } else {
+          showAiModalFeedback(res.detail || res.message || "Key verification failed.", "error");
+        }
+      } catch (err) {
+        showAiModalFeedback("Network error while testing connection.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-plug-circle-check text-brand-400"></i><span>Test Key</span>`;
+      }
+    }
+
+    async function saveAiConfiguration() {
+      const prov = document.getElementById('aiProviderSelect').value;
+      const model = document.getElementById('aiModelSelect').value;
+      const rawKey = document.getElementById('aiApiKeyInput').value.trim();
+      const sessionOnly = document.getElementById('aiRememberSessionOnly')?.checked !== false;
+
+      if (prov !== 'heuristic' && !rawKey && !appState.aiConfig.hasKey) {
+        showAiModalFeedback("Please enter your API key or select 'Heuristic Fallback'.", "error");
+        return;
+      }
+
+      const btn = document.getElementById('aiSaveBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Saving...</span>`;
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/ai/config`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            provider: prov,
+            api_key: rawKey,
+            model: model
+          })
+        });
+        const res = await resp.json();
+        if (resp.ok && res.success) {
+          // Store obfuscated key in sessionStorage (or localStorage if user unchecked session-only)
+          const existingStored = getStoredClientAiHeaders();
+          const effectiveKey = rawKey || existingStored['X-AI-Key'] || '';
+          const payload = JSON.stringify({
+            provider: prov,
+            model: model,
+            k: prov === 'heuristic' ? '' : _encodeClientSecret(effectiveKey)
+          });
+
+          sessionStorage.removeItem('careerpilot_ai_session');
+          localStorage.removeItem('careerpilot_ai_device');
+          if (prov !== 'heuristic' && effectiveKey) {
+            if (sessionOnly) {
+              sessionStorage.setItem('careerpilot_ai_session', payload);
+            } else {
+              localStorage.setItem('careerpilot_ai_device', payload);
+            }
+          }
+
+          // Clear raw input box immediately after saving so key never lingers in DOM
+          document.getElementById('aiApiKeyInput').value = '';
+          document.getElementById('aiApiKeyInput').type = 'password';
+
+          updateAiStatusUI(res.config);
+          showAiModalFeedback("API key encrypted and activated!", "success");
+          showBanner(`AI configuration updated: ${prov === 'heuristic' ? 'Built-in Heuristics' : (res.config.active_provider.toUpperCase() + ' (' + res.config.masked_active_key + ')')}`, "success");
+
+          // Re-run tailoring if profile is loaded so the user immediately sees LLM-generated output
+          if (appState.profile && appState.jobs.length > 0) {
+            await runTailoringPipeline();
+          }
+          setTimeout(() => closeAiConfigModal(), 700);
+        } else {
+          showAiModalFeedback(res.detail || "Unable to save AI configuration.", "error");
+        }
+      } catch (err) {
+        showAiModalFeedback("Error saving AI configuration: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-shield-check"></i><span>Save & Activate AI</span>`;
+      }
+    }
+
+    async function clearAiKeyConfig() {
+      sessionStorage.removeItem('careerpilot_ai_session');
+      localStorage.removeItem('careerpilot_ai_device');
+      const keyInput = document.getElementById('aiApiKeyInput');
+      if (keyInput) {
+        keyInput.value = '';
+        keyInput.type = 'password';
+      }
+      try {
+        const resp = await fetch(`${API_BASE}/api/ai/config`, {
+          method: 'DELETE'
+        });
+        const res = await resp.json();
+        if (res.config) {
+          updateAiStatusUI(res.config);
+        }
+        showAiModalFeedback("API key revoked and wiped from browser & server memory.", "info");
+        showBanner("API key revoked and cleared from memory.", "info");
+      } catch (e) {
+        showAiModalFeedback("Cleared local key.", "info");
+      }
+    }
 
     function updateAuthUI() {
       const statusTag = document.getElementById('userStatusTag');
@@ -1410,6 +1980,7 @@
     // Initialize Initial Data & Event Listeners
     window.addEventListener('DOMContentLoaded', async () => {
       updateAuthUI();
+      loadAiConfigStatus();
 
       // File upload & Dropzone listeners with automatic extraction
       const fileInput = document.getElementById('resumeFileInput');
@@ -1557,6 +2128,7 @@
         formData.append('resume_file', file);
         const resp = await fetch(`${API_BASE}/api/resume/parse`, {
           method: 'POST',
+          headers: getAiHeaders(),
           body: formData
         });
         const res = await resp.json();
@@ -1698,6 +2270,7 @@
       try {
         const resp = await fetch(`${API_BASE}/api/assess`, {
           method: 'POST',
+          headers: getAiHeaders(),
           body: formData
         });
         const res = await resp.json();
@@ -1876,7 +2449,7 @@
       try {
         const resp = await fetch(`${API_BASE}/api/tailor`, {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
+          headers: getAiHeaders({'Content-Type': 'application/json'}),
           body: JSON.stringify({
             email: appState.profile.email,
             job_id: selJobId
@@ -2429,7 +3002,7 @@ ${coverLetter.trim()}
       try {
         const resp = await fetch(`${API_BASE}/api/interview/evaluate`, {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
+          headers: getAiHeaders({'Content-Type': 'application/json'}),
           body: JSON.stringify({
             question: appState.activeQuestion.question,
             user_answer: answer,

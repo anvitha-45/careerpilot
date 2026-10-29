@@ -2,6 +2,7 @@ import os
 import json
 from typing import Dict, Any, List
 from server.database import db
+from server.utils.ai_config import call_llm
 
 class GapLearningAgent:
     """Agent 2: Identifies missing skills ranked by frequency in real job postings and maps to free resources."""
@@ -80,13 +81,40 @@ class GapLearningAgent:
         # 4. Construct a structured 14-Day Micro-Learning Roadmap
         roadmap_days = []
         top_skills = ranked_gaps[:4]
+        llm_outcomes: Dict[str, str] = {}
+        if top_skills:
+            skills_list_str = ", ".join(g["skill"] for g in top_skills)
+            llm_resp = await call_llm(
+                prompt=(
+                    f"Target Domain: {target_domain}\n"
+                    f"Candidate Existing Skills: {', '.join(candidate_profile.get('skills', [])[:8])}\n"
+                    f"Missing High-Demand Skills: {skills_list_str}\n\n"
+                    f"Return a JSON object mapping each missing skill name to a concise 1-sentence practical micro-project goal "
+                    f"(under 18 words) that a student can build in 3 days. Return ONLY valid JSON."
+                ),
+                system_prompt="You are an engineering mentor creating practical 3-day micro-project goals for graduating software engineers.",
+                temperature=0.3,
+                max_tokens=300,
+                caller_name=self.name
+            )
+            if llm_resp:
+                try:
+                    clean_json = llm_resp.strip().replace("```json", "").replace("```", "").strip()
+                    parsed_outcomes = json.loads(clean_json)
+                    if isinstance(parsed_outcomes, dict):
+                        llm_outcomes = parsed_outcomes
+                except Exception:
+                    pass
+
         for i, gap in enumerate(top_skills):
             day_start = (i * 3) + 1
             day_end = (i * 3) + 3
+            sk_name = gap["skill"]
+            custom_outcome = llm_outcomes.get(sk_name) or f"Build a practical micro-project demonstrating {sk_name} integration"
             roadmap_days.append({
                 "period": f"Days {day_start}–{day_end}",
-                "focus_skill": gap["skill"],
-                "target_outcome": f"Build a practical micro-project demonstrating {gap['skill']} integration",
+                "focus_skill": sk_name,
+                "target_outcome": custom_outcome,
                 "recommended_resource": gap["resources"][0] if gap["resources"] else None
             })
 

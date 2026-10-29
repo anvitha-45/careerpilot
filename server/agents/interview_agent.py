@@ -1,8 +1,7 @@
 import json
-import httpx
 from typing import Dict, Any, List
-from server.config import settings
 from server.database import db
+from server.utils.ai_config import call_llm
 
 class InterviewPrepAgent:
     """
@@ -15,41 +14,13 @@ class InterviewPrepAgent:
         self.name = "Interview Prep Agent"
 
     async def _call_llm(self, prompt: str, system_prompt: str) -> str:
-        if settings.GEMINI_API_KEY:
-            try:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={settings.GEMINI_API_KEY}"
-                payload = {
-                    "contents": [{"parts": [{"text": f"{system_prompt}\n\nTask:\n{prompt}"}]}],
-                    "generationConfig": {"temperature": 0.4, "maxOutputTokens": 1200}
-                }
-                async with httpx.AsyncClient(timeout=15.0) as client:
-                    resp = await client.post(url, json=payload)
-                    if resp.status_code == 200:
-                        candidates = resp.json().get("candidates", [])
-                        if candidates:
-                            return candidates[0]["content"]["parts"][0]["text"]
-            except Exception as e:
-                print(f"[{self.name}] Gemini call failed: {e}")
-
-        if settings.GROQ_API_KEY:
-            try:
-                headers = {"Authorization": f"Bearer {settings.GROQ_API_KEY}", "Content-Type": "application/json"}
-                payload = {
-                    "model": "llama-3.1-70b-versatile",
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": prompt}
-                    ],
-                    "temperature": 0.4
-                }
-                async with httpx.AsyncClient(timeout=15.0) as client:
-                    resp = await client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
-                    if resp.status_code == 200:
-                        return resp.json()["choices"][0]["message"]["content"]
-            except Exception as e:
-                print(f"[{self.name}] Groq call failed: {e}")
-
-        return ""
+        return await call_llm(
+            prompt=prompt,
+            system_prompt=system_prompt,
+            temperature=0.4,
+            max_tokens=1200,
+            caller_name=self.name
+        )
 
     async def generate_questions(self, target_jd: Dict[str, Any], candidate_profile: Dict[str, Any]) -> List[Dict[str, Any]]:
         role = target_jd.get("title", "Software Engineer")

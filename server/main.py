@@ -6,7 +6,7 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -15,6 +15,7 @@ from server.config import settings
 from server.database import db
 from server.seeds.seed_data import seed_initial_jobs
 from server.routers.api import router as api_router
+from server.utils.ai_config import set_request_ai_context, reset_request_ai_context
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -42,6 +43,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def ai_context_security_middleware(request: Request, call_next):
+    """
+    Binds optional per-request AI configuration headers (X-AI-Provider, X-AI-Key, X-AI-Model)
+    into an isolated async ContextVar so user API keys are never leaked across requests
+    or exposed in URLs/logs.
+    """
+    req_provider = request.headers.get("X-AI-Provider")
+    req_key = request.headers.get("X-AI-Key")
+    req_model = request.headers.get("X-AI-Model")
+    tokens = set_request_ai_context(req_provider, req_key, req_model)
+    try:
+        response = await call_next(request)
+        if request.url.path.startswith("/api/ai"):
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+            response.headers["Pragma"] = "no-cache"
+        return response
+    finally:
+        reset_request_ai_context(tokens)
 
 # Register API Router
 app.include_router(api_router)

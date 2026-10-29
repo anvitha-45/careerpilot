@@ -5,7 +5,7 @@ import urllib.parse
 from html.parser import HTMLParser
 from typing import Dict, Any, List, Optional
 import httpx
-from server.config import settings
+from server.utils.ai_config import call_llm, sanitize_log_message
 
 class HTMLTextExtractor(HTMLParser):
     """Clean HTML text extractor that removes scripts, styles, and tags."""
@@ -115,7 +115,7 @@ async def fetch_job_page(url: str) -> Dict[str, Any]:
             }
 
 async def call_llm_for_job_extraction(content: str, source_url: str = "") -> Optional[Dict[str, Any]]:
-    """Use Gemini or Groq to parse job text into structured JSON."""
+    """Use configured AI provider (Gemini, Groq, OpenAI) to parse job text into structured JSON."""
     system_prompt = (
         "You are an expert Technical Recruiter and Job Parser. "
         "Extract structured JSON describing the job posting from the provided text. "
@@ -127,45 +127,19 @@ async def call_llm_for_job_extraction(content: str, source_url: str = "") -> Opt
 
     prompt = f"Source URL: {source_url}\n\nJob Posting Content:\n{content[:4000]}"
 
-    # 1. Try Gemini Flash
-    if settings.GEMINI_API_KEY:
+    raw_ans = await call_llm(
+        prompt=prompt,
+        system_prompt=system_prompt,
+        temperature=0.2,
+        max_tokens=800,
+        caller_name="JobExtractor"
+    )
+    if raw_ans:
         try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={settings.GEMINI_API_KEY}"
-            payload = {
-                "contents": [{"parts": [{"text": f"{system_prompt}\n\n{prompt}"}]}],
-                "generationConfig": {"temperature": 0.2, "maxOutputTokens": 800}
-            }
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                resp = await client.post(url, json=payload)
-                if resp.status_code == 200:
-                    candidates = resp.json().get("candidates", [])
-                    if candidates:
-                        raw_ans = candidates[0]["content"]["parts"][0]["text"].strip()
-                        clean_json = raw_ans.replace("```json", "").replace("```", "").strip()
-                        return json.loads(clean_json)
+            clean_json = raw_ans.strip().replace("```json", "").replace("```", "").strip()
+            return json.loads(clean_json)
         except Exception as e:
-            print(f"[JobExtractor] Gemini extraction failed: {e}")
-
-    # 2. Try Groq
-    if settings.GROQ_API_KEY:
-        try:
-            headers = {"Authorization": f"Bearer {settings.GROQ_API_KEY}", "Content-Type": "application/json"}
-            payload = {
-                "model": "llama-3.1-70b-versatile",
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": prompt}
-                ],
-                "temperature": 0.2
-            }
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                resp = await client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
-                if resp.status_code == 200:
-                    raw_ans = resp.json()["choices"][0]["message"]["content"].strip()
-                    clean_json = raw_ans.replace("```json", "").replace("```", "").strip()
-                    return json.loads(clean_json)
-        except Exception as e:
-            print(f"[JobExtractor] Groq extraction failed: {e}")
+            print(f"[JobExtractor] Failed to parse LLM job JSON: {sanitize_log_message(str(e))}")
 
     return None
 
