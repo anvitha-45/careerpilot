@@ -6,6 +6,9 @@
 [![MongoDB](https://img.shields.io/badge/MongoDB-Motor%20%7C%20Local%20Fallback-47A248.svg)](https://www.mongodb.com/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v3.4-38B2AC.svg)](https://tailwindcss.com/)
 [![Responsible AI](https://img.shields.io/badge/Architecture-Human--in--the--Loop%20(HITL)-6366F1.svg)](./SYSTEM_DESIGN.md)
+[![Live Demo](https://img.shields.io/badge/Live%20Deployment-careerpilot--ai-10B981.svg)](https://careerpilot-ai-dqfw.onrender.com)
+
+> **🌐 Official Live Deployment:** [https://careerpilot-ai-dqfw.onrender.com](https://careerpilot-ai-dqfw.onrender.com)
 
 ---
 
@@ -114,8 +117,8 @@ python tests/test_resume_extraction.py
 
 ## ☁️ Deployment on Render
 
-CareerPilot is pre-configured for zero-config deployment on **Render**:
-1. Connect your GitHub repository to [Render](https://render.com).
+CareerPilot is deployed on **Render** under the **`careerpilot-ai`** service at **[https://careerpilot-ai-dqfw.onrender.com](https://careerpilot-ai-dqfw.onrender.com)**:
+1. Connect your GitHub repository to [Render](https://render.com) (`careerpilot-ai` service).
 2. Create a new **Web Service**.
 3. Render automatically reads `render.yaml` or `Procfile`:
    * **Build Command**: `pip install -r requirements.txt`
