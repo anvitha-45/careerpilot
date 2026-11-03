@@ -21,7 +21,7 @@ SUPPORTED_PROVIDERS: Dict[str, Dict[str, Any]] = {
             {"id": "gemini-2.5-pro", "label": "Gemini 2.5 Pro (Advanced Reasoning)"},
             {"id": "gemini-2.0-flash", "label": "Gemini 2.0 Flash (Fast)"}
         ],
-        "key_prefix_hint": "AIza...",
+        "key_prefix_hint": "AIza... or AQ....",
         "docs_url": "https://aistudio.google.com/app/apikey"
     },
     "groq": {
@@ -152,6 +152,7 @@ def sanitize_log_message(message: str) -> str:
     sanitized = str(message)
     sanitized = re.sub(r"([?&]key=)[^&\s\"']+", r"\1[REDACTED]", sanitized, flags=re.IGNORECASE)
     sanitized = re.sub(r"\b(AIza[0-9A-Za-z\-_]{10,})\b", "AIza[REDACTED]", sanitized)
+    sanitized = re.sub(r"\b(AQ\.[0-9A-Za-z\-_.]{10,})\b", "AQ.[REDACTED]", sanitized)
     sanitized = re.sub(r"\b(gsk_[0-9A-Za-z\-_]{10,})\b", "gsk_[REDACTED]", sanitized)
     sanitized = re.sub(r"\b(sk-[0-9A-Za-z\-_]{10,})\b", "sk-[REDACTED]", sanitized)
     sanitized = re.sub(r"(Bearer\s+)[^\s\"']+", r"\1[REDACTED]", sanitized, flags=re.IGNORECASE)
@@ -161,7 +162,7 @@ def sanitize_log_message(message: str) -> str:
 def infer_provider_from_key(api_key: str) -> str:
     """Automatically detect provider from key prefix if provider is 'auto'."""
     k = (api_key or "").strip()
-    if k.startswith("AIza"):
+    if k.startswith(("AIza", "AQ.")):
         return "gemini"
     if k.startswith("gsk_"):
         return "groq"
@@ -181,8 +182,8 @@ def validate_api_key_format(provider: str, api_key: str) -> Tuple[bool, str]:
         return False, "API key must not contain spaces or line breaks."
 
     prov = (provider or "auto").lower()
-    if prov == "gemini" and not clean.startswith("AIza"):
-        return False, "Google Gemini API keys typically start with 'AIza'."
+    if prov == "gemini" and not clean.startswith(("AIza", "AQ.")):
+        return False, "Google Gemini API keys typically start with 'AIza' (AI Studio) or 'AQ.' (Vertex AI Express)."
     if prov == "groq" and not clean.startswith("gsk_"):
         return False, "Groq API keys typically start with 'gsk_'."
     if prov == "openai" and not clean.startswith("sk-"):
@@ -455,42 +456,48 @@ async def _call_gemini(
     }
 
     last_err = ""
+    is_vertex_express = api_key.startswith("AQ.")
     async with httpx.AsyncClient(timeout=20.0) as client:
         for m in models_to_try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent"
-            try:
-                resp = await client.post(url, headers=headers, json=payload)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    candidates = data.get("candidates") or []
-                    if candidates:
-                        content_obj = candidates[0].get("content") or {}
-                        parts = content_obj.get("parts") or []
-                        # Filter out internal thought parts if present, keeping output text parts
-                        text_chunks = [
-                            p.get("text", "")
-                            for p in parts
-                            if isinstance(p, dict) and p.get("text") and not p.get("thought", False)
-                        ]
-                        if not text_chunks:
+            endpoints = (
+                [
+                    f"https://aiplatform.googleapis.com/v1/publishers/google/models/{m}:generateContent",
+                    f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent",
+                ]
+                if is_vertex_express
+                else [f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent"]
+            )
+            for url in endpoints:
+                try:
+                    resp = await client.post(url, headers=headers, json=payload)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        candidates = data.get("candidates") or []
+                        if candidates:
+                            content_obj = candidates[0].get("content") or {}
+                            parts = content_obj.get("parts") or []
+                            # Filter out internal thought parts if present, keeping output text parts
                             text_chunks = [
                                 p.get("text", "")
                                 for p in parts
-                                if isinstance(p, dict) and p.get("text")
+                                if isinstance(p, dict) and p.get("text") and not p.get("thought", False)
                             ]
-                        combined = "\n".join(text_chunks).strip()
-                        if combined:
-                            return True, combined, ""
-                    last_err = "Gemini returned an empty response."
-                else:
-                    err_body = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
-                    err_msg = err_body.get("error", {}).get("message") or f"HTTP {resp.status_code}"
-                    last_err = sanitize_log_message(err_msg)
-                    # Stop retrying fallback models only on authentication/permission errors
-                    if resp.status_code in (401, 403):
-                        break
-            except Exception as e:
-                last_err = sanitize_log_message(str(e))
+                            if not text_chunks:
+                                text_chunks = [
+                                    p.get("text", "")
+                                    for p in parts
+                                    if isinstance(p, dict) and p.get("text")
+                                ]
+                            combined = "\n".join(text_chunks).strip()
+                            if combined:
+                                return True, combined, ""
+                        last_err = "Gemini returned an empty response."
+                    else:
+                        err_body = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
+                        err_msg = err_body.get("error", {}).get("message") or f"HTTP {resp.status_code}"
+                        last_err = sanitize_log_message(err_msg)
+                except Exception as e:
+                    last_err = sanitize_log_message(str(e))
     return False, "", last_err or "Gemini request failed."
 
 
