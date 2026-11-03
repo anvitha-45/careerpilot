@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: careerpilot
+    name: careerpilot-ai
     env: python
     region: oregon
     plan: free
