@@ -5,7 +5,7 @@ import urllib.parse
 from html.parser import HTMLParser
 from typing import Dict, Any, List, Optional
 import httpx
-from server.utils.ai_config import call_llm, sanitize_log_message
+from server.utils.ai_config import call_llm, extract_json_from_llm, sanitize_log_message
 
 class HTMLTextExtractor(HTMLParser):
     """Clean HTML text extractor that removes scripts, styles, and tags."""
@@ -135,11 +135,9 @@ async def call_llm_for_job_extraction(content: str, source_url: str = "") -> Opt
         caller_name="JobExtractor"
     )
     if raw_ans:
-        try:
-            clean_json = raw_ans.strip().replace("```json", "").replace("```", "").strip()
-            return json.loads(clean_json)
-        except Exception as e:
-            print(f"[JobExtractor] Failed to parse LLM job JSON: {sanitize_log_message(str(e))}")
+        parsed_job = extract_json_from_llm(raw_ans)
+        if isinstance(parsed_job, dict) and parsed_job.get("title"):
+            return parsed_job
 
     return None
 
@@ -216,31 +214,33 @@ def heuristic_extract_job(content: str, html_title: str = "", source_url: str = 
         "preferred_skills": pref_skills
     }
 
-async def process_job_input(url: str = "", raw_text: str = "") -> Dict[str, Any]:
+async def process_job_input(url: str = "", raw_text: str = "", strict_url_check: bool = False) -> Dict[str, Any]:
     """
     Main ingestion function:
     1. Fetches webpage text if URL provided.
-    2. Fallbacks to provided raw_text if fetch is blocked or failed.
+    2. Fallbacks to provided raw_text if fetch is blocked or failed (or signals fallback_to_paste when strict_url_check=True).
     3. Runs LLM extraction, falling back to heuristics.
     4. Returns fully structured Job dictionary ready for insertion & benchmarking.
     """
     content = ""
     html_title = ""
     effective_url = (url or "").strip()
+    link_accessible = True
 
     if effective_url:
         if not effective_url.startswith("http://") and not effective_url.startswith("https://"):
             effective_url = "https://" + effective_url
         page_res = await fetch_job_page(effective_url)
-        if page_res.get("success"):
+        if page_res.get("success") and len(page_res.get("text", "").strip()) >= 80:
             content = page_res.get("text", "")
             html_title = page_res.get("title", "")
         else:
-            # If fetch failed (e.g. login wall / Cloudflare) but raw text was provided, use raw text
+            link_accessible = False
             if raw_text and raw_text.strip():
                 content = raw_text.strip()
+            elif strict_url_check:
+                raise ValueError("LINK_INACCESSIBLE: Unable to retrieve job details directly from this URL (the site may require login or block automated access). Please paste the job description text instead.")
             else:
-                # Still try to extract company and make a functional entry based on URL
                 content = f"Job listing from {effective_url}. Role and requirements at {extract_company_from_url(effective_url)}."
 
     elif raw_text and raw_text.strip():
@@ -275,5 +275,81 @@ async def process_job_input(url: str = "", raw_text: str = "") -> Dict[str, Any]
         "preferred_skills": structured.get("preferred_skills", ["Docker", "Redis", "AWS"]),
         "portal_url": effective_url or apply_search,
         "apply_search_url": apply_search,
+        "link_accessible": link_accessible,
         "is_custom": True
     }
+
+
+async def find_jobs_from_public_sources(
+    query: str = "",
+    domain: str = "All",
+    candidate_skills: Optional[List[str]] = None,
+    saved_jobs: Optional[List[Dict[str, Any]]] = None
+) -> List[Dict[str, Any]]:
+    """
+    Step 4 (Find jobs with AI):
+    Queries approved public developer job APIs (Remotive) and filters/ranks jobs
+    using candidate skills and query keywords, falling back cleanly to saved jobs.
+    """
+    q_low = (query or "").strip().lower()
+    dom_low = (domain or "All").strip().lower()
+    cand_skills_set = {s.lower() for s in (candidate_skills or [])}
+    discovered_jobs: List[Dict[str, Any]] = []
+
+    # 1. Try approved public job source (Remotive public API)
+    try:
+        search_param = urllib.parse.quote_plus(query.strip()) if query.strip() else "software engineer"
+        api_url = f"https://remotive.com/api/remote-jobs?category=software-dev&search={search_param}&limit=8"
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            resp = await client.get(api_url)
+            if resp.status_code == 200:
+                raw_jobs = (resp.json().get("jobs") or [])[:6]
+                for rj in raw_jobs:
+                    raw_desc = clean_html_to_text(rj.get("description", "")).get("text", "")
+                    heur = heuristic_extract_job(raw_desc, rj.get("title", ""), rj.get("url", ""))
+                    comp_name = rj.get("company_name") or heur["company"]
+                    job_title = rj.get("title") or heur["title"]
+                    s_query = urllib.parse.quote_plus(f"{comp_name} {job_title}")
+                    discovered_jobs.append({
+                        "id": f"live-{rj.get('id', uuid.uuid4().hex[:6])}",
+                        "title": job_title,
+                        "company": comp_name,
+                        "location": rj.get("candidate_required_location") or "Remote / Global",
+                        "domain": heur["domain"],
+                        "experience": "0-2 Years",
+                        "salary": rj.get("salary") or heur["salary"],
+                        "description": heur["description"],
+                        "required_skills": heur["required_skills"],
+                        "preferred_skills": heur["preferred_skills"],
+                        "portal_url": rj.get("url") or f"https://www.linkedin.com/jobs/search/?keywords={s_query}",
+                        "apply_search_url": f"https://www.linkedin.com/jobs/search/?keywords={s_query}",
+                        "source": "Live Public Job API",
+                        "is_custom": True
+                    })
+    except Exception as e:
+        print(f"[JobExtractor] Public job API lookup skipped: {sanitize_log_message(str(e))}")
+
+    # 2. Also filter & rank saved jobs from CareerPilot DB matching query/domain/skills
+    pool = list(saved_jobs or [])
+    matched_saved = []
+    for sj in pool:
+        sj_text = f"{sj.get('title', '')} {sj.get('company', '')} {sj.get('domain', '')} {' '.join(sj.get('required_skills', []))}".lower()
+        if q_low and q_low not in sj_text:
+            # Check token match
+            q_tokens = [t for t in q_low.split() if len(t) > 1]
+            if q_tokens and not any(t in sj_text for t in q_tokens):
+                continue
+        if dom_low != "all" and dom_low not in sj.get("domain", "").lower() and not q_low:
+            continue
+        overlap_cnt = sum(1 for s in sj.get("required_skills", []) if s.lower() in cand_skills_set)
+        sj_copy = dict(sj)
+        sj_copy["source"] = sj.get("source", "CareerPilot Verified JD Corpus")
+        sj_copy["_rank_score"] = overlap_cnt
+        matched_saved.append(sj_copy)
+
+    matched_saved.sort(key=lambda x: x.get("_rank_score", 0), reverse=True)
+    combined = discovered_jobs + matched_saved
+    if not combined and pool:
+        combined = pool[:6]
+
+    return combined[:10]

@@ -3,7 +3,10 @@ import json
 import asyncio
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-from motor.motor_asyncio import AsyncIOMotorClient
+try:
+    from motor.motor_asyncio import AsyncIOMotorClient
+except ImportError:
+    AsyncIOMotorClient = None
 from server.config import settings
 
 class DatabaseManager:
@@ -25,6 +28,8 @@ class DatabaseManager:
     async def initialize(self):
         """Initialize MongoDB connection with automatic fallback."""
         try:
+            if AsyncIOMotorClient is None:
+                raise RuntimeError("motor driver not installed")
             print(f"[Database] Connecting to MongoDB at {settings.MONGODB_URI}...")
             self.client = AsyncIOMotorClient(
                 settings.MONGODB_URI,

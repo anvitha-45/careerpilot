@@ -21,7 +21,9 @@ class PipelineOrchestrator:
         phone: str = "",
         github_handle: str = "",
         leetcode_handle: str = "",
-        target_domain: str = "Backend"
+        target_domain: str = "Backend",
+        filename: str = "",
+        selected_job_id: str = ""
     ) -> Dict[str, Any]:
         """Runs Agent 1 (Assessment) and Agent 2 (Gap & Learning) in sequence."""
         # 1. Agent 1: Assessment
@@ -32,7 +34,9 @@ class PipelineOrchestrator:
             phone=phone,
             github_handle=github_handle,
             leetcode_handle=leetcode_handle,
-            target_domain=target_domain
+            target_domain=target_domain,
+            filename=filename,
+            selected_job_id=selected_job_id
         )
 
         # 2. Agent 2: Gap & Learning

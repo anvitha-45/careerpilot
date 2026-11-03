@@ -4,7 +4,55 @@ import sys
 # Ensure root is on sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from server.utils.resume_parser import parse_contact_info, parse_full_resume
+from server.utils.resume_parser import (
+    parse_contact_info,
+    parse_full_resume,
+    extract_raw_text_from_file,
+    structure_resume_with_gemini,
+)
+from server.agents.orchestrator import orchestrator
+import asyncio
+import io
+import zipfile
+
+
+def test_docx_and_5step_assessment():
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        zf.writestr(
+            "word/document.xml",
+            '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+            "<w:body><w:p><w:r><w:t>"
+            "Priya Sundaram | priya.sundaram@vit.ac.in | github.com/priya-codes | "
+            "B.Tech Computer Science 2026 | Skills: Python, FastAPI, Docker, React, SQL | "
+            "Project: Cloud Task Queue built with Python and FastAPI"
+            "</w:t></w:r></w:p></w:body></w:document>",
+        )
+    docx_bytes = buf.getvalue()
+    raw_text = extract_raw_text_from_file(docx_bytes, "Priya_Resume.docx")
+    assert "Priya Sundaram" in raw_text
+
+    structured = asyncio.run(
+        structure_resume_with_gemini(docx_bytes, filename="Priya_Resume.docx")
+    )
+    assert "skills" in structured and "education" in structured and "experience" in structured
+    assert "projects" in structured and "links" in structured
+
+    result = asyncio.run(
+        orchestrator.run_assessment_pipeline(
+            resume_bytes_or_text=docx_bytes,
+            filename="Priya_Resume.docx",
+        )
+    )
+    profile = result["profile"]
+    match = profile["selected_job_match"]
+    assert "matching_evidence" in match
+    assert "missing_skills" in match
+    assert "unverified_skills" in match
+    assert "readiness_score" in match
+    assert "next_steps" in match
+    print("5-STEP ASSESSMENT & DOCX TESTS PASSED!")
+
 
 def test_auto_extraction():
     sample_text = """
@@ -42,3 +90,4 @@ def test_auto_extraction():
 
 if __name__ == "__main__":
     test_auto_extraction()
+    test_docx_and_5step_assessment()

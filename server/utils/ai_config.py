@@ -1,5 +1,6 @@
 import os
 import re
+import json
 import hmac
 import time
 import base64
@@ -10,15 +11,15 @@ from typing import Dict, Any, Optional, List, Tuple
 import httpx
 from server.config import settings
 
-# Supported AI Providers & Models Catalog
+# Supported AI Providers & Current Production Models Catalog
 SUPPORTED_PROVIDERS: Dict[str, Dict[str, Any]] = {
     "gemini": {
         "name": "Google Gemini",
-        "default_model": "gemini-2.0-flash",
+        "default_model": "gemini-2.5-flash",
         "models": [
-            {"id": "gemini-2.0-flash", "label": "Gemini 2.0 Flash (Fast & Recommended)"},
-            {"id": "gemini-1.5-flash", "label": "Gemini 1.5 Flash (Balanced)"},
-            {"id": "gemini-1.5-pro", "label": "Gemini 1.5 Pro (Deep Reasoning)"}
+            {"id": "gemini-2.5-flash", "label": "Gemini 2.5 Flash (Recommended)"},
+            {"id": "gemini-2.5-pro", "label": "Gemini 2.5 Pro (Advanced Reasoning)"},
+            {"id": "gemini-2.0-flash", "label": "Gemini 2.0 Flash (Fast)"}
         ],
         "key_prefix_hint": "AIza...",
         "docs_url": "https://aistudio.google.com/app/apikey"
@@ -28,9 +29,8 @@ SUPPORTED_PROVIDERS: Dict[str, Dict[str, Any]] = {
         "default_model": "llama-3.3-70b-versatile",
         "models": [
             {"id": "llama-3.3-70b-versatile", "label": "Llama 3.3 70B Versatile (Recommended)"},
-            {"id": "llama-3.1-70b-versatile", "label": "Llama 3.1 70B Versatile"},
             {"id": "llama-3.1-8b-instant", "label": "Llama 3.1 8B Instant (Ultra-Fast)"},
-            {"id": "mixtral-8x7b-32768", "label": "Mixtral 8x7B"}
+            {"id": "gemma2-9b-it", "label": "Gemma 2 9B IT"}
         ],
         "key_prefix_hint": "gsk_...",
         "docs_url": "https://console.groq.com/keys"
@@ -39,12 +39,24 @@ SUPPORTED_PROVIDERS: Dict[str, Dict[str, Any]] = {
         "name": "OpenAI",
         "default_model": "gpt-4o-mini",
         "models": [
-            {"id": "gpt-4o-mini", "label": "GPT-4o Mini (Fast & Cost-Effective)"},
-            {"id": "gpt-4o", "label": "GPT-4o (Flagship Reasoning)"}
+            {"id": "gpt-4o-mini", "label": "GPT-4o Mini (Fast & Recommended)"},
+            {"id": "gpt-4o", "label": "GPT-4o (Flagship Reasoning)"},
+            {"id": "gpt-4.1-mini", "label": "GPT-4.1 Mini"}
         ],
         "key_prefix_hint": "sk-...",
         "docs_url": "https://platform.openai.com/api-keys"
     }
+}
+
+# Retired/decommissioned model mappings to automatically upgrade legacy model IDs
+LEGACY_MODEL_UPGRADES: Dict[str, str] = {
+    "gemini-1.5-flash": "gemini-2.5-flash",
+    "gemini-1.5-pro": "gemini-2.5-pro",
+    "gemini-pro": "gemini-2.5-flash",
+    "llama-3.1-70b-versatile": "llama-3.3-70b-versatile",
+    "llama3-70b-8192": "llama-3.3-70b-versatile",
+    "llama3-8b-8192": "llama-3.1-8b-instant",
+    "mixtral-8x7b-32768": "llama-3.3-70b-versatile",
 }
 
 # Per-request async context variables so user keys passed via HTTP headers
@@ -52,6 +64,75 @@ SUPPORTED_PROVIDERS: Dict[str, Dict[str, Any]] = {
 _req_provider_ctx: ContextVar[Optional[str]] = ContextVar("ai_req_provider", default=None)
 _req_api_key_ctx: ContextVar[Optional[str]] = ContextVar("ai_req_api_key", default=None)
 _req_model_ctx: ContextVar[Optional[str]] = ContextVar("ai_req_model", default=None)
+
+
+def normalize_model_for_provider(provider: str, model: Optional[str] = None) -> str:
+    """
+    Ensures the selected model ID is compatible with the target provider and
+    automatically upgrades any retired/decommissioned model IDs.
+    """
+    prov = (provider or "").lower().strip()
+    if prov not in SUPPORTED_PROVIDERS:
+        return "deterministic-heuristics"
+
+    default_model = SUPPORTED_PROVIDERS[prov]["default_model"]
+    raw_model = (model or "").strip()
+    if not raw_model:
+        return default_model
+
+    # Upgrade retired model names automatically
+    if raw_model in LEGACY_MODEL_UPGRADES:
+        raw_model = LEGACY_MODEL_UPGRADES[raw_model]
+
+    # Validate provider compatibility so a Gemini model is never sent to Groq/OpenAI or vice versa
+    if prov == "gemini":
+        return raw_model if raw_model.startswith("gemini-") else default_model
+    if prov == "openai":
+        return raw_model if raw_model.startswith(("gpt-", "o1", "o3", "o4")) else default_model
+    if prov == "groq":
+        if raw_model.startswith(("gemini-", "gpt-", "o1", "o3")):
+            return default_model
+        return raw_model
+
+    return default_model
+
+
+def extract_json_from_llm(raw_text: str) -> Any:
+    """
+    Robustly extract and parse JSON (object or array) from LLM responses,
+    handling markdown code fences or leading/trailing prose.
+    """
+    if not raw_text or not raw_text.strip():
+        return None
+    text = raw_text.strip()
+
+    # 1. Try fenced ```json ... ``` block first
+    fence_match = re.search(r"```(?:json)?\s*([\s\S]*?)```", text, re.IGNORECASE)
+    if fence_match:
+        candidate = fence_match.group(1).strip()
+        try:
+            return json.loads(candidate)
+        except Exception:
+            pass
+
+    # 2. Try direct parse
+    try:
+        return json.loads(text)
+    except Exception:
+        pass
+
+    # 3. Try locating the outermost JSON array or object
+    for start_char, end_char in [("[", "]"), ("{", "}")]:
+        start_idx = text.find(start_char)
+        end_idx = text.rfind(end_char)
+        if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+            snippet = text[start_idx : end_idx + 1]
+            try:
+                return json.loads(snippet)
+            except Exception:
+                continue
+
+    return None
 
 
 def mask_api_key(key: str) -> str:
@@ -69,9 +150,7 @@ def sanitize_log_message(message: str) -> str:
     if not message:
         return ""
     sanitized = str(message)
-    # Scrub URL query parameters like ?key=... or &key=...
     sanitized = re.sub(r"([?&]key=)[^&\s\"']+", r"\1[REDACTED]", sanitized, flags=re.IGNORECASE)
-    # Scrub common API key prefixes (Google AIza, Groq gsk_, OpenAI sk-)
     sanitized = re.sub(r"\b(AIza[0-9A-Za-z\-_]{10,})\b", "AIza[REDACTED]", sanitized)
     sanitized = re.sub(r"\b(gsk_[0-9A-Za-z\-_]{10,})\b", "gsk_[REDACTED]", sanitized)
     sanitized = re.sub(r"\b(sk-[0-9A-Za-z\-_]{10,})\b", "sk-[REDACTED]", sanitized)
@@ -181,7 +260,7 @@ class EncryptedKeyVault:
         if prov not in SUPPORTED_PROVIDERS and prov not in ("auto", "heuristic"):
             prov = "gemini"
 
-        if clean_key:
+        if clean_key and prov in SUPPORTED_PROVIDERS:
             self._store[prov] = {
                 "ciphertext": self._encrypt(clean_key),
                 "masked": mask_api_key(clean_key),
@@ -189,10 +268,10 @@ class EncryptedKeyVault:
             }
 
         self._active_provider = prov
-        if model is not None and model.strip():
-            self._active_model = model.strip()
-        elif prov in SUPPORTED_PROVIDERS and not self._active_model:
-            self._active_model = SUPPORTED_PROVIDERS[prov]["default_model"]
+        if prov in SUPPORTED_PROVIDERS:
+            self._active_model = normalize_model_for_provider(prov, model or self._active_model)
+        else:
+            self._active_model = ""
 
         if temperature is not None:
             self._temperature = max(0.0, min(1.0, float(temperature)))
@@ -231,7 +310,7 @@ class EncryptedKeyVault:
         1. Per-request HTTP headers (X-AI-Key / X-AI-Provider / X-AI-Model)
         2. User-configured runtime encrypted vault
         3. Server .env keys (GEMINI_API_KEY, GROQ_API_KEY, OPENAI_API_KEY)
-        4. Heuristic fallback ('heuristic', '', '', 'heuristic')
+        4. Heuristic fallback ('heuristic', '', 'deterministic-heuristics', 'heuristic')
         """
         req_key = (_req_api_key_ctx.get() or "").strip()
         req_prov = (_req_provider_ctx.get() or "").lower().strip()
@@ -242,8 +321,8 @@ class EncryptedKeyVault:
 
         if req_key:
             prov = req_prov if req_prov in SUPPORTED_PROVIDERS else infer_provider_from_key(req_key)
-            default_mod = SUPPORTED_PROVIDERS[prov]["default_model"]
-            return (prov, req_key, req_model or self._active_model or default_mod, "user_request")
+            mod = normalize_model_for_provider(prov, req_model or self._active_model)
+            return (prov, req_key, mod, "user_request")
 
         # Check active provider in vault
         target_prov = req_prov if req_prov in SUPPORTED_PROVIDERS else self._active_provider
@@ -255,11 +334,11 @@ class EncryptedKeyVault:
             if vault_entry and vault_entry.get("ciphertext"):
                 dec = self._decrypt(vault_entry["ciphertext"])
                 if dec:
-                    mod = req_model or self._active_model or SUPPORTED_PROVIDERS[target_prov]["default_model"]
+                    mod = normalize_model_for_provider(target_prov, req_model or self._active_model)
                     return (target_prov, dec, mod, "user_vault")
             env_key = self.get_decrypted_key(target_prov)
             if env_key:
-                mod = req_model or self._active_model or SUPPORTED_PROVIDERS[target_prov]["default_model"]
+                mod = normalize_model_for_provider(target_prov, req_model or self._active_model)
                 return (target_prov, env_key, mod, "env")
 
         # Auto-detect across any user-configured vault keys first, then .env keys
@@ -267,13 +346,13 @@ class EncryptedKeyVault:
             if p in self._store:
                 dec = self._decrypt(self._store[p]["ciphertext"])
                 if dec:
-                    mod = req_model or self._active_model or SUPPORTED_PROVIDERS[p]["default_model"]
+                    mod = normalize_model_for_provider(p, req_model or self._active_model)
                     return (p, dec, mod, "user_vault")
 
         for p in ("gemini", "groq", "openai"):
             env_key = self.get_decrypted_key(p)
             if env_key:
-                mod = req_model or self._active_model or SUPPORTED_PROVIDERS[p]["default_model"]
+                mod = normalize_model_for_provider(p, req_model or self._active_model)
                 return (p, env_key, mod, "env")
 
         return ("heuristic", "", "deterministic-heuristics", "heuristic")
@@ -343,40 +422,72 @@ async def _call_gemini(
     temperature: float,
     max_tokens: int
 ) -> Tuple[bool, str, str]:
-    """Call Google Gemini API passing the API key securely via x-goog-api-key header (never in URL)."""
-    models_to_try = [model] if model else ["gemini-2.0-flash", "gemini-1.5-flash"]
-    if "gemini-1.5-flash" not in models_to_try:
-        models_to_try.append("gemini-1.5-flash")
+    """
+    Call Google Gemini REST API passing the API key securely via x-goog-api-key header.
+    Uses systemInstruction properly and handles Gemini 2.5 thinking/multi-part responses safely.
+    """
+    primary_model = normalize_model_for_provider("gemini", model)
+    models_to_try = [primary_model]
+    for fallback_m in ("gemini-2.5-flash", "gemini-2.0-flash"):
+        if fallback_m not in models_to_try:
+            models_to_try.append(fallback_m)
 
     headers = {
         "Content-Type": "application/json",
         "x-goog-api-key": api_key
     }
+    # Ensure sufficient token budget so Gemini 2.5 thinking tokens never truncate text output
+    effective_max_tokens = max(max_tokens, 512)
     payload = {
-        "contents": [{"parts": [{"text": f"{system_prompt}\n\nTask:\n{prompt}"}]}],
+        "systemInstruction": {
+            "parts": [{"text": system_prompt}]
+        },
+        "contents": [
+            {
+                "role": "user",
+                "parts": [{"text": prompt}]
+            }
+        ],
         "generationConfig": {
             "temperature": temperature,
-            "maxOutputTokens": max_tokens
+            "maxOutputTokens": effective_max_tokens
         }
     }
 
     last_err = ""
-    async with httpx.AsyncClient(timeout=18.0) as client:
+    async with httpx.AsyncClient(timeout=20.0) as client:
         for m in models_to_try:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent"
             try:
                 resp = await client.post(url, headers=headers, json=payload)
                 if resp.status_code == 200:
-                    candidates = resp.json().get("candidates", [])
+                    data = resp.json()
+                    candidates = data.get("candidates") or []
                     if candidates:
-                        text = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
-                        if text:
-                            return True, text, ""
+                        content_obj = candidates[0].get("content") or {}
+                        parts = content_obj.get("parts") or []
+                        # Filter out internal thought parts if present, keeping output text parts
+                        text_chunks = [
+                            p.get("text", "")
+                            for p in parts
+                            if isinstance(p, dict) and p.get("text") and not p.get("thought", False)
+                        ]
+                        if not text_chunks:
+                            text_chunks = [
+                                p.get("text", "")
+                                for p in parts
+                                if isinstance(p, dict) and p.get("text")
+                            ]
+                        combined = "\n".join(text_chunks).strip()
+                        if combined:
+                            return True, combined, ""
+                    last_err = "Gemini returned an empty response."
                 else:
                     err_body = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
                     err_msg = err_body.get("error", {}).get("message") or f"HTTP {resp.status_code}"
                     last_err = sanitize_log_message(err_msg)
-                    if resp.status_code in (400, 401, 403):
+                    # Stop retrying fallback models only on authentication/permission errors
+                    if resp.status_code in (401, 403):
                         break
             except Exception as e:
                 last_err = sanitize_log_message(str(e))
@@ -391,11 +502,12 @@ async def _call_groq(
     temperature: float,
     max_tokens: int
 ) -> Tuple[bool, str, str]:
-    """Call Groq OpenAI-compatible Chat Completions endpoint."""
-    target_model = model if model and not model.startswith("gemini") and not model.startswith("gpt") else "llama-3.3-70b-versatile"
+    """Call Groq OpenAI-compatible Chat Completions endpoint with active production models."""
+    target_model = normalize_model_for_provider("groq", model)
     models_to_try = [target_model]
-    if "llama-3.1-8b-instant" not in models_to_try:
-        models_to_try.append("llama-3.1-8b-instant")
+    for fallback_m in ("llama-3.3-70b-versatile", "llama-3.1-8b-instant"):
+        if fallback_m not in models_to_try:
+            models_to_try.append(fallback_m)
 
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -403,7 +515,7 @@ async def _call_groq(
     }
 
     last_err = ""
-    async with httpx.AsyncClient(timeout=18.0) as client:
+    async with httpx.AsyncClient(timeout=20.0) as client:
         for m in models_to_try:
             payload = {
                 "model": m,
@@ -412,14 +524,16 @@ async def _call_groq(
                     {"role": "user", "content": prompt}
                 ],
                 "temperature": temperature,
-                "max_tokens": max_tokens
+                "max_tokens": max(max_tokens, 256)
             }
             try:
                 resp = await client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
                 if resp.status_code == 200:
-                    choices = resp.json().get("choices", [])
+                    choices = resp.json().get("choices") or []
                     if choices:
-                        return True, choices[0]["message"]["content"], ""
+                        content = choices[0].get("message", {}).get("content", "")
+                        if content:
+                            return True, content, ""
                 else:
                     err_body = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
                     err_msg = err_body.get("error", {}).get("message") or f"HTTP {resp.status_code}"
@@ -440,32 +554,43 @@ async def _call_openai(
     max_tokens: int
 ) -> Tuple[bool, str, str]:
     """Call OpenAI Chat Completions endpoint."""
-    target_model = model if model and model.startswith("gpt") else "gpt-4o-mini"
+    target_model = normalize_model_for_provider("openai", model)
+    models_to_try = [target_model]
+    if "gpt-4o-mini" not in models_to_try:
+        models_to_try.append("gpt-4o-mini")
+
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
-    payload = {
-        "model": target_model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": prompt}
-        ],
-        "temperature": temperature,
-        "max_tokens": max_tokens
-    }
-    try:
-        async with httpx.AsyncClient(timeout=18.0) as client:
-            resp = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-            if resp.status_code == 200:
-                choices = resp.json().get("choices", [])
-                if choices:
-                    return True, choices[0]["message"]["content"], ""
-            err_body = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
-            err_msg = err_body.get("error", {}).get("message") or f"HTTP {resp.status_code}"
-            return False, "", sanitize_log_message(err_msg)
-    except Exception as e:
-        return False, "", sanitize_log_message(str(e))
+    last_err = ""
+    async with httpx.AsyncClient(timeout=20.0) as client:
+        for m in models_to_try:
+            payload = {
+                "model": m,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": temperature,
+                "max_tokens": max(max_tokens, 256)
+            }
+            try:
+                resp = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+                if resp.status_code == 200:
+                    choices = resp.json().get("choices") or []
+                    if choices:
+                        content = choices[0].get("message", {}).get("content", "")
+                        if content:
+                            return True, content, ""
+                err_body = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
+                err_msg = err_body.get("error", {}).get("message") or f"HTTP {resp.status_code}"
+                last_err = sanitize_log_message(err_msg)
+                if resp.status_code in (401, 403):
+                    break
+            except Exception as e:
+                last_err = sanitize_log_message(str(e))
+    return False, "", last_err or "OpenAI request failed."
 
 
 async def call_llm(
@@ -547,18 +672,18 @@ async def verify_ai_connection(
             "message": fmt_msg
         }
 
-    target_model = (model or "").strip() or SUPPORTED_PROVIDERS[prov]["default_model"]
+    target_model = normalize_model_for_provider(prov, model)
     start_ts = time.perf_counter()
 
-    test_sys = "Respond with the single word READY."
-    test_prompt = "Reply READY."
+    test_sys = "You are a connectivity check assistant."
+    test_prompt = "Reply with the single word READY."
 
     if prov == "gemini":
-        ok, text, err = await _call_gemini(clean_key, target_model, test_prompt, test_sys, 0.1, 20)
+        ok, text, err = await _call_gemini(clean_key, target_model, test_prompt, test_sys, 0.1, 256)
     elif prov == "groq":
-        ok, text, err = await _call_groq(clean_key, target_model, test_prompt, test_sys, 0.1, 20)
+        ok, text, err = await _call_groq(clean_key, target_model, test_prompt, test_sys, 0.1, 64)
     else:
-        ok, text, err = await _call_openai(clean_key, target_model, test_prompt, test_sys, 0.1, 20)
+        ok, text, err = await _call_openai(clean_key, target_model, test_prompt, test_sys, 0.1, 64)
 
     latency_ms = round((time.perf_counter() - start_ts) * 1000)
 

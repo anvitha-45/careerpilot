@@ -2,7 +2,7 @@ import os
 import json
 from typing import Dict, Any, List
 from server.database import db
-from server.utils.ai_config import call_llm, sanitize_log_message
+from server.utils.ai_config import call_llm, extract_json_from_llm, sanitize_log_message
 
 class TailoringAgent:
     """Agent 3: Rewrites resume bullets in STAR format & drafts custom cover letters for a specific JD."""
@@ -54,12 +54,11 @@ class TailoringAgent:
         tailored_bullets = []
 
         if llm_response:
-            try:
-                # Strip markdown code fences if present
-                clean_json = llm_response.strip().replace("```json", "").replace("```", "").strip()
-                tailored_bullets = json.loads(clean_json)
-            except Exception as e:
-                print(f"[{self.name}] Failed to parse LLM bullets JSON: {e}")
+            parsed_bullets = extract_json_from_llm(llm_response)
+            if isinstance(parsed_bullets, list) and len(parsed_bullets) > 0:
+                tailored_bullets = parsed_bullets
+            else:
+                print(f"[{self.name}] LLM bullets JSON not a valid list, using fallback.")
 
         # If LLM didn't return valid JSON, use high-quality STAR rephrasing based on domain
         if not tailored_bullets:

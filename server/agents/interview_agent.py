@@ -1,7 +1,7 @@
 import json
 from typing import Dict, Any, List
 from server.database import db
-from server.utils.ai_config import call_llm
+from server.utils.ai_config import call_llm, extract_json_from_llm
 
 class InterviewPrepAgent:
     """
@@ -54,11 +54,11 @@ class InterviewPrepAgent:
         llm_out = await self._call_llm(prompt, system_prompt)
         questions = []
         if llm_out:
-            try:
-                clean_json = llm_out.strip().replace("```json", "").replace("```", "").strip()
-                questions = json.loads(clean_json)
-            except Exception as e:
-                print(f"[{self.name}] Failed to parse questions JSON: {e}")
+            parsed_q = extract_json_from_llm(llm_out)
+            if isinstance(parsed_q, list) and len(parsed_q) > 0:
+                questions = parsed_q
+            else:
+                print(f"[{self.name}] Failed to parse questions JSON list, using curated fallback.")
 
         # High-signal curated questions per domain if LLM not connected
         if not questions:
@@ -352,17 +352,17 @@ class InterviewPrepAgent:
 
         llm_out = await self._call_llm(prompt, system_prompt)
         if llm_out:
-            try:
-                clean_json = llm_out.strip().replace("```json", "").replace("```", "").strip()
-                eval_data = json.loads(clean_json)
-                tech = max(1, min(10, int(eval_data.get("technical_score", 7))))
-                comm = max(1, min(10, int(eval_data.get("communication_score", 8))))
-                eval_data["overall_score"] = round((tech + comm) / 2.0, 1)
-                eval_data["technical_score"] = tech
-                eval_data["communication_score"] = comm
-                return eval_data
-            except Exception as e:
-                print(f"[{self.name}] Failed to parse evaluation JSON: {e}")
+            eval_data = extract_json_from_llm(llm_out)
+            if isinstance(eval_data, dict) and ("technical_score" in eval_data or "feedback" in eval_data):
+                try:
+                    tech = max(1, min(10, int(eval_data.get("technical_score", 7))))
+                    comm = max(1, min(10, int(eval_data.get("communication_score", 8))))
+                    eval_data["overall_score"] = round((tech + comm) / 2.0, 1)
+                    eval_data["technical_score"] = tech
+                    eval_data["communication_score"] = comm
+                    return eval_data
+                except Exception as e:
+                    print(f"[{self.name}] Failed to normalize evaluation JSON: {e}")
 
         # High-precision heuristic scoring based on technical depth and structure
         has_metrics = any(char.isdigit() for char in clean_ans) or "%" in clean_ans or "ms" in clean_ans or "fps" in clean_ans or "sec" in clean_ans

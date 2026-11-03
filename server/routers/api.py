@@ -8,7 +8,9 @@ from server.database import db
 from server.agents.orchestrator import orchestrator
 from server.agents.application_agent import application_agent
 from server.agents.interview_agent import interview_agent
-from server.utils.resume_parser import parse_full_resume
+from server.utils.resume_parser import parse_full_resume, structure_resume_with_gemini
+from server.utils.job_extractor import process_job_input, find_jobs_from_public_sources
+from server.utils.similarity import calculate_comprehensive_readiness
 from server.utils.ai_config import (
     ai_vault,
     verify_ai_connection,
@@ -67,6 +69,22 @@ class AIConfigTestRequest(BaseModel):
     provider: Optional[str] = "auto"
     api_key: Optional[str] = ""
     model: Optional[str] = ""
+
+class CustomJobRequest(BaseModel):
+    url: Optional[str] = ""
+    raw_text: Optional[str] = ""
+    strict_url_check: Optional[bool] = False
+
+class FindJobsAIRequest(BaseModel):
+    query: Optional[str] = ""
+    domain: Optional[str] = "All"
+    skills: Optional[List[str]] = []
+
+class MatchJobRequest(BaseModel):
+    email: Optional[str] = ""
+    job_id: str
+    job: Optional[Dict[str, Any]] = None
+    profile: Optional[Dict[str, Any]] = None
 
 @router.get("/health")
 async def health_check():
@@ -136,10 +154,128 @@ async def clear_ai_config(provider: Optional[str] = None):
     }
 
 @router.get("/jobs")
-async def get_jobs():
-    """Retrieve all available job descriptions for benchmarking."""
+async def get_jobs(q: Optional[str] = None, domain: Optional[str] = None):
+    """Retrieve and search saved job descriptions in CareerPilot's database."""
     jobs = await db.find("jobs")
+    if domain and domain.lower() != "all":
+        dom_low = domain.lower()
+        jobs = [j for j in jobs if dom_low in j.get("domain", "").lower()]
+    if q and q.strip():
+        q_low = q.strip().lower()
+        jobs = [
+            j for j in jobs
+            if q_low in f"{j.get('title', '')} {j.get('company', '')} {j.get('domain', '')} {' '.join(j.get('required_skills', []))}".lower()
+        ]
     return {"jobs": jobs}
+
+@router.post("/jobs/search-ai")
+async def search_jobs_with_ai_endpoint(req: FindJobsAIRequest):
+    """Step 4 (Option 1 - Find jobs with AI): Uses approved public job source + AI skill matching."""
+    try:
+        saved_jobs = await db.find("jobs")
+        found = await find_jobs_from_public_sources(
+            query=req.query or "",
+            domain=req.domain or "All",
+            candidate_skills=req.skills or [],
+            saved_jobs=saved_jobs
+        )
+        # Persist any newly discovered live jobs into the jobs collection so they can be selected & tailored
+        for job in found:
+            if job.get("id", "").startswith("live-"):
+                await db.update_one("jobs", {"id": job["id"]}, job, upsert=True)
+        return {
+            "success": True,
+            "jobs": found
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=sanitize_log_message(str(e)))
+
+@router.post("/jobs/custom")
+async def ingest_custom_job_endpoint(req: CustomJobRequest):
+    """
+    Step 4 (Option 2 - Use a job link & Option 4 - Paste job description):
+    Extracts structured job details from a URL or pasted JD text and saves to DB.
+    If a URL cannot be accessed, returns fallback_to_paste=True so the UI prompts pasting JD text.
+    """
+    try:
+        job = await process_job_input(
+            url=req.url or "",
+            raw_text=req.raw_text or "",
+            strict_url_check=bool(req.strict_url_check)
+        )
+        await db.update_one("jobs", {"id": job["id"]}, job, upsert=True)
+        return {
+            "success": True,
+            "job": job
+        }
+    except ValueError as ve:
+        msg = str(ve)
+        if "LINK_INACCESSIBLE:" in msg:
+            return {
+                "success": False,
+                "fallback_to_paste": True,
+                "message": msg.replace("LINK_INACCESSIBLE:", "").strip()
+            }
+        raise HTTPException(status_code=400, detail=msg)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=sanitize_log_message(str(e)))
+
+@router.post("/jobs/match")
+async def match_resume_to_selected_job(req: MatchJobRequest):
+    """
+    Step 5: Match candidate resume to a specific selected job.
+    Identifies matching evidence, missing or unverified skills, readiness score, and next steps.
+    """
+    job = await db.find_one("jobs", {"id": req.job_id})
+    if not job:
+        all_jobs = await db.find("jobs")
+        job = next((j for j in all_jobs if j.get("id") == req.job_id), None)
+    if not job and req.job:
+        job = req.job
+    if not job:
+        raise HTTPException(status_code=404, detail="Selected job not found.")
+
+    profile = None
+    if req.email:
+        profile = await db.find_one("profiles", {"email": req.email.strip().lower()})
+    if not profile and req.profile and (req.profile.get("skills") or req.profile.get("raw_resume_text")):
+        profile = req.profile
+    if not profile:
+        all_profiles = await db.find("profiles")
+        if all_profiles:
+            profile = all_profiles[-1]
+
+    if not profile:
+        raise HTTPException(status_code=400, detail="Please upload or assess your resume first.")
+
+    eval_res = calculate_comprehensive_readiness(
+        resume_text=profile.get("raw_resume_text", ""),
+        candidate_skills=profile.get("skills", []),
+        jd=job,
+        leetcode_stats=profile.get("leetcode_stats", {}),
+        github_stats=profile.get("github_stats", {}),
+        projects=profile.get("projects", []),
+        experience=profile.get("experience", [])
+    )
+
+    match_report = {
+        "job_id": job.get("id"),
+        "title": job.get("title"),
+        "company": job.get("company"),
+        "domain": job.get("domain", "Backend"),
+        "location": job.get("location"),
+        "readiness_score": eval_res["readiness_score"],
+        "matched_skills": eval_res["matched_skills"],
+        "missing_skills": eval_res["missing_skills"],
+        "unverified_skills": eval_res["unverified_skills"],
+        "matching_evidence": eval_res["matching_evidence"],
+        "next_steps": eval_res["next_steps"]
+    }
+    return {
+        "success": True,
+        "match": match_report,
+        "job": job
+    }
 
 @router.post("/resume/parse")
 async def parse_resume_endpoint(
@@ -147,23 +283,23 @@ async def parse_resume_endpoint(
     resume_text: Optional[str] = Form(None)
 ):
     """
-    Instantly extracts candidate name, contact info, GitHub, LeetCode, LinkedIn,
-    and skills from uploaded resume file or text.
+    Step 1, 2 & 3:
+    Accepts PDF, DOCX, or text resume, extracts raw text using Python libraries,
+    and uses Gemini (with deterministic fallback) to structure skills, education,
+    experience, projects, and links into structured JSON.
     """
     try:
-        content = ""
+        content: Any = ""
+        filename = ""
         if resume_file:
-            file_bytes = await resume_file.read()
-            if resume_file.filename.lower().endswith(".pdf"):
-                content = file_bytes
-            else:
-                content = file_bytes.decode("utf-8", errors="ignore")
+            filename = resume_file.filename or ""
+            content = await resume_file.read()
         elif resume_text and resume_text.strip():
             content = resume_text.strip()
         else:
-            raise HTTPException(status_code=400, detail="No resume file or text provided")
+            raise HTTPException(status_code=400, detail="No resume file (PDF/DOCX) or text provided")
 
-        parsed = parse_full_resume(content)
+        parsed = await structure_resume_with_gemini(content, filename=filename)
         return {
             "success": True,
             "data": {
@@ -173,13 +309,18 @@ async def parse_resume_endpoint(
                 "github_handle": parsed.get("github_handle", ""),
                 "leetcode_handle": parsed.get("leetcode_handle", ""),
                 "linkedin_handle": parsed.get("linkedin_handle", ""),
+                "links": parsed.get("links", {}),
                 "skills": parsed.get("skills", []),
-                "projects_count": len(parsed.get("projects", []))
+                "education": parsed.get("education", []),
+                "experience": parsed.get("experience", []),
+                "projects": parsed.get("projects", []),
+                "projects_count": len(parsed.get("projects", [])),
+                "structured_by": parsed.get("structured_by", "deterministic_parser")
             }
         }
     except Exception as e:
-        print(f"[API] Error parsing resume: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"[API] Error parsing resume: {sanitize_log_message(str(e))}")
+        raise HTTPException(status_code=500, detail=sanitize_log_message(str(e)))
 
 @router.post("/assess")
 async def run_assessment(
@@ -190,16 +331,15 @@ async def run_assessment(
     phone: Optional[str] = Form(""),
     github_handle: Optional[str] = Form(""),
     leetcode_handle: Optional[str] = Form(""),
-    target_domain: Optional[str] = Form("All")
+    target_domain: Optional[str] = Form("All"),
+    selected_job_id: Optional[str] = Form("")
 ):
-    """Agent 1 + Agent 2: Ingests resume, scrapes GitHub/LeetCode, and computes market readiness and gaps."""
-    content = ""
+    """Agent 1 + Agent 2: Ingests PDF/DOCX resume, structures candidate info with Gemini, and matches to selected job."""
+    content: Any = ""
+    filename = ""
     if resume_file:
-        file_bytes = await resume_file.read()
-        if resume_file.filename.lower().endswith(".pdf"):
-            content = file_bytes
-        else:
-            content = file_bytes.decode("utf-8", errors="ignore")
+        filename = resume_file.filename or ""
+        content = await resume_file.read()
     elif resume_text and resume_text.strip():
         content = resume_text.strip()
     else:
@@ -245,15 +385,17 @@ async def run_assessment(
             phone=phone or "",
             github_handle=github_handle or "",
             leetcode_handle=leetcode_handle or "",
-            target_domain=target_domain or "All"
+            target_domain=target_domain or "All",
+            filename=filename,
+            selected_job_id=selected_job_id or ""
         )
         return {
             "success": True,
             "data": pipeline_output
         }
     except Exception as e:
-        print(f"[API] Error in assessment pipeline: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"[API] Error in assessment pipeline: {sanitize_log_message(str(e))}")
+        raise HTTPException(status_code=500, detail=sanitize_log_message(str(e)))
 
 @router.post("/tailor")
 async def run_tailoring_and_staging(req: TailorRequest):

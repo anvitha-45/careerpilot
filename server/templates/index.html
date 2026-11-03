@@ -112,9 +112,9 @@
         </button>
 
         <!-- AI Config & API Key Modal Trigger -->
-        <button id="aiConfigBtn" onclick="openAiConfigModal()" title="Configure AI Provider & API Key" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 transition flex items-center space-x-1.5 shadow-sm">
+        <button id="aiConfigBtn" onclick="openAiConfigModal()" title="Set up AI API Key or Continue without API" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 transition flex items-center space-x-1.5 shadow-sm">
           <i id="aiHeaderIcon" class="fa-solid fa-key text-indigo-400"></i>
-          <span id="aiHeaderLabel">AI Config</span>
+          <span id="aiHeaderLabel">Set Up AI Key</span>
           <span id="aiHeaderDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
         </button>
 
@@ -173,33 +173,60 @@
 
     <!-- TAB 1: PROFILE & SKILLS -->
     <section id="tab-assessment" class="tab-content space-y-6">
+      <!-- PROMINENT AI SETUP CALLOUT SO USERS IMMEDIATELY KNOW ABOUT AI CONFIG -->
+      <div id="assessmentAiNotice" class="bg-gradient-to-r from-indigo-950/60 via-dark-800 to-dark-800 border border-indigo-500/30 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+        <div class="flex items-start sm:items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0">
+            <i id="assessmentAiIcon" class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span id="assessmentAiTitle" class="text-xs font-bold text-white">Enable AI (Gemini / Groq / OpenAI) or Continue Without API</span>
+              <span id="assessmentAiStatusPill" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">No API Key Set</span>
+            </div>
+            <p id="assessmentAiSub" class="text-[11px] text-slate-300 mt-0.5">
+              Connect your free Gemini API key for AI resume structuring, job matching &amp; custom cover letters, or <strong>continue without API</strong> anytime.
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2 shrink-0 self-start sm:self-center">
+          <button type="button" onclick="openAiConfigModal()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition flex items-center space-x-1.5 shadow-md shadow-indigo-500/20">
+            <i class="fa-solid fa-key text-[10px]"></i>
+            <span id="assessmentAiBtnText">Set Up AI API Key</span>
+          </button>
+          <button type="button" id="assessmentContinueNoApiBtn" onclick="continueWithoutApiKey()" class="px-3 py-2 rounded-xl bg-dark-700 hover:bg-dark-600 text-slate-200 border border-dark-600 text-xs font-medium transition">
+            Continue without API
+          </button>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Left Column: Input Form (5 cols) -->
+        <!-- Left Column: Step 1-4 Input & Job Selection Workflow (5 cols) -->
         <div class="lg:col-span-5 bg-dark-800 border border-dark-700 rounded-2xl p-5 sm:p-6 shadow-xl space-y-5">
           <div>
             <h2 class="text-lg font-bold text-white flex items-center space-x-2">
               <i class="fa-solid fa-id-card-clip text-brand-500"></i>
-              <span>Your Profile & Resume</span>
+              <span>Resume Assessment & Job Selection</span>
             </h2>
-            <p class="text-xs text-slate-400 mt-1">Upload your resume and enter your coding profiles to check how ready you are for real tech jobs.</p>
+            <p class="text-xs text-slate-400 mt-1">1. Upload PDF/DOCX &rarr; 2. Parse Text &rarr; 3. Structure with Gemini &rarr; 4. Choose Job &rarr; 5. Match Evidence</p>
           </div>
 
-          <!-- Resume Upload Zone -->
+          <!-- Step 1 & 2: Resume Upload Zone (PDF or DOCX) -->
           <div class="space-y-2">
             <div class="flex items-center justify-between">
-              <label class="text-xs font-semibold text-slate-300">Your Resume (PDF or Text)</label>
+              <label class="text-xs font-semibold text-slate-300">1. Upload Your Resume (PDF or DOCX)</label>
               <span class="text-[11px] text-emerald-400 font-medium flex items-center space-x-1">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span>Auto-fills name & links</span>
+                <span>Gemini JSON Structuring</span>
               </span>
             </div>
             <div id="dropzone" class="border-2 border-dashed border-dark-600 hover:border-brand-500 rounded-xl p-4 text-center cursor-pointer transition bg-dark-900/40 relative">
-              <input type="file" id="resumeFileInput" accept=".pdf,.txt,.docx" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+              <input type="file" id="resumeFileInput" accept=".pdf,.docx,.txt" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
               <div class="space-y-1">
                 <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400"></i>
-                <p id="fileLabel" class="text-xs text-slate-300 font-medium">Click to upload or drag & drop your Resume (.PDF)</p>
-                <p class="text-[10px] text-slate-500">Upload to automatically extract your Name, Email, GitHub & LeetCode</p>
+                <p id="fileLabel" class="text-xs text-slate-300 font-medium">Click to upload or drag & drop your Resume (.PDF or .DOCX)</p>
+                <p class="text-[10px] text-slate-500">Extracts raw text via Python libraries & structures skills, education, experience, projects & links</p>
               </div>
             </div>
 
@@ -209,7 +236,7 @@
                 <i id="extractionStatusIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
                 <span id="extractionStatusText">Auto-extracting details...</span>
               </div>
-              <span class="text-[10px] uppercase font-bold text-emerald-400/80 tracking-wider">AI Parser</span>
+              <span id="extractionEngineBadge" class="text-[10px] uppercase font-bold text-emerald-400/80 tracking-wider">Gemini Parser</span>
             </div>
 
             <!-- Direct Paste Resume Text Option -->
@@ -219,15 +246,15 @@
                 <span>Or paste resume text directly</span>
               </summary>
               <div class="pt-2">
-                <textarea id="resumeTextInput" rows="3" placeholder="Paste resume text here (Name, Email, GitHub, LeetCode, Projects, Skills) to auto-extract..." class="w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none" oninput="debounceAutoExtractText()"></textarea>
+                <textarea id="resumeTextInput" rows="3" placeholder="Paste resume text here (Name, Email, GitHub, LeetCode, Education, Experience, Projects, Skills)..." class="w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none" oninput="debounceAutoExtractText()"></textarea>
               </div>
             </details>
           </div>
 
-          <!-- Candidate Contact Info -->
+          <!-- Candidate Contact & Links -->
           <div class="space-y-2">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Profile Details</span>
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Candidate Info & Links</span>
               <span class="text-[10px] text-slate-500">Auto-extracted or editable</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -262,7 +289,7 @@
 
           <!-- Target Role Domain -->
           <div>
-            <label class="text-xs font-semibold text-slate-300">Target Role</label>
+            <label class="text-xs font-semibold text-slate-300">Target Role Domain</label>
             <select id="domainSelect" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white focus:outline-none">
               <option value="All">All Tech Roles (Compare All)</option>
               <option value="Backend">Junior Backend Engineer (Python / Java / Go)</option>
@@ -273,12 +300,88 @@
             </select>
           </div>
 
+          <!-- STEP 4: ASK HOW THEY WANT TO CHOOSE A JOB -->
+          <div class="pt-2 border-t border-dark-700 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-bold text-white flex items-center space-x-1.5">
+                <i class="fa-solid fa-briefcase text-brand-400"></i>
+                <span>4. How Would You Like to Choose a Job?</span>
+              </label>
+              <span id="activeJobSelectionBadge" class="text-[10px] font-semibold text-brand-300 bg-brand-500/10 px-2 py-0.5 rounded border border-brand-500/20 truncate max-w-[150px]">Saved Job</span>
+            </div>
+
+            <!-- 4-Mode Selector Buttons -->
+            <div class="grid grid-cols-2 gap-1.5 bg-dark-900 p-1.5 rounded-xl border border-dark-700 text-[11px] font-semibold">
+              <button type="button" id="jobModeBtn-saved" onclick="switchJobChoiceMode('saved')" class="py-1.5 px-2 rounded-lg bg-brand-600 text-white transition flex items-center justify-center space-x-1">
+                <i class="fa-solid fa-bookmark text-[10px]"></i>
+                <span>Browse Saved Jobs</span>
+              </button>
+              <button type="button" id="jobModeBtn-ai" onclick="switchJobChoiceMode('ai')" class="py-1.5 px-2 rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center space-x-1">
+                <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>
+                <span>Find Jobs with AI</span>
+              </button>
+              <button type="button" id="jobModeBtn-link" onclick="switchJobChoiceMode('link')" class="py-1.5 px-2 rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center space-x-1">
+                <i class="fa-solid fa-link text-[10px]"></i>
+                <span>Use a Job Link</span>
+              </button>
+              <button type="button" id="jobModeBtn-paste" onclick="switchJobChoiceMode('paste')" class="py-1.5 px-2 rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center space-x-1">
+                <i class="fa-solid fa-paste text-[10px]"></i>
+                <span>Paste Job Description</span>
+              </button>
+            </div>
+
+            <!-- Panel 1: Browse Saved Jobs -->
+            <div id="jobModePanel-saved" class="space-y-2 bg-dark-900/60 p-3 rounded-xl border border-dark-700">
+              <input type="text" id="savedJobsFilterInput" oninput="filterSavedJobsList()" placeholder="Search saved jobs by title, company, or skill..." class="w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none">
+              <select id="assessmentSavedJobSelect" onchange="onAssessmentSavedJobChange()" class="w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none">
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+
+            <!-- Panel 2: Find Jobs with AI -->
+            <div id="jobModePanel-ai" class="hidden space-y-2 bg-dark-900/60 p-3 rounded-xl border border-dark-700">
+              <p class="text-[11px] text-slate-400">Search approved public job sources & CareerPilot corpus matched to your skills:</p>
+              <div class="flex space-x-1.5">
+                <input type="text" id="aiJobSearchQuery" placeholder="e.g. Python Backend, React, Data Engineer..." class="flex-1 bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none">
+                <button type="button" id="aiJobSearchBtn" onclick="findJobsWithAi()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition flex items-center space-x-1 shrink-0">
+                  <i class="fa-solid fa-magnifying-glass text-[10px]"></i>
+                  <span>Search</span>
+                </button>
+              </div>
+              <div id="aiFoundJobsContainer" class="space-y-1.5 max-h-40 overflow-y-auto pt-1">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Panel 3: Use a Job Link -->
+            <div id="jobModePanel-link" class="hidden space-y-2 bg-dark-900/60 p-3 rounded-xl border border-dark-700">
+              <p class="text-[11px] text-slate-400">Paste a job posting URL to retrieve details automatically (falls back to Paste JD if blocked):</p>
+              <div class="flex space-x-1.5">
+                <input type="url" id="customJobUrlInput" placeholder="https://boards.greenhouse.io/company/jobs/..." class="flex-1 bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none">
+                <button type="button" id="extractUrlJobBtn" onclick="extractJobFromUrl()" class="px-3 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition flex items-center space-x-1 shrink-0">
+                  <i class="fa-solid fa-cloud-arrow-down text-[10px]"></i>
+                  <span>Fetch Job</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Panel 4: Paste Job Description -->
+            <div id="jobModePanel-paste" class="hidden space-y-2 bg-dark-900/60 p-3 rounded-xl border border-dark-700">
+              <p id="pasteJobHintText" class="text-[11px] text-slate-400">Paste the job description text below (ideal if a job link requires login or cannot be accessed):</p>
+              <textarea id="customJobTextInput" rows="3" placeholder="Paste full job description (Role, Company, Responsibilities, Required Skills)..." class="w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg p-2 text-xs text-white placeholder-slate-500 focus:outline-none"></textarea>
+              <button type="button" id="extractTextJobBtn" onclick="extractJobFromPastedText()" class="w-full py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition flex items-center justify-center space-x-1.5">
+                <i class="fa-solid fa-microchip text-[10px]"></i>
+                <span>Extract Job & Match Resume</span>
+              </button>
+            </div>
+          </div>
+
           <!-- Actions -->
           <div class="space-y-2 pt-1">
             <div class="flex items-center space-x-2">
               <button id="runAssessBtn" onclick="runAssessmentPipeline()" class="flex-1 bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-brand-500/20 flex items-center justify-center space-x-2 text-xs">
                 <i class="fa-solid fa-bolt"></i>
-                <span>Check My Job Match</span>
+                <span>Match Resume to Selected Job</span>
               </button>
               <button onclick="saveCandidateInfo()" id="saveInfoBtn" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 font-semibold px-3.5 py-2.5 rounded-xl transition text-xs flex items-center space-x-1.5 shadow-sm">
                 <i class="fa-solid fa-floppy-disk"></i>
@@ -296,13 +399,16 @@
           </div>
         </div>
 
-        <!-- Right Column: Live Benchmark & Profile Dashboard (7 cols) -->
+        <!-- Right Column: Step 3 Structured Resume + Step 5 Job Match Analysis (7 cols) -->
         <div class="lg:col-span-7 space-y-5">
           <!-- Readiness Gauge & Summary Card -->
           <div class="bg-dark-800 border border-dark-700 rounded-2xl p-5 sm:p-6 shadow-xl">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div class="space-y-2 text-center sm:text-left">
-                <span class="text-xs uppercase tracking-wider font-semibold text-brand-400 bg-brand-500/10 px-2.5 py-1 rounded-md border border-brand-500/20">Your Readiness</span>
+                <div class="flex flex-wrap items-center gap-2 justify-center sm:justify-start">
+                  <span class="text-xs uppercase tracking-wider font-semibold text-brand-400 bg-brand-500/10 px-2.5 py-1 rounded-md border border-brand-500/20">Readiness Score</span>
+                  <span id="structuredByBadge" class="text-[10px] uppercase tracking-wider font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Structured JSON Ready</span>
+                </div>
                 <h3 id="candidateName" class="text-xl font-bold text-white">Ananya Sharma</h3>
                 <p id="candidateContact" class="text-xs text-slate-400">ananya.sharma@example.com • Bengaluru, India</p>
                 <div class="flex flex-wrap gap-2 pt-1 justify-center sm:justify-start">
@@ -330,9 +436,14 @@
               </div>
             </div>
 
-            <!-- Verified Skills Badges -->
-            <div class="mt-6 pt-5 border-t border-dark-700/80">
-              <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2.5">Skills Found on Your Profile</h4>
+            <!-- Step 3: Structured Candidate Information (Skills, Education, Experience, Projects) -->
+            <div class="mt-5 pt-4 border-t border-dark-700/80 space-y-3">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-1.5">
+                  <i class="fa-solid fa-code-branch text-brand-400"></i>
+                  <span>3. Structured Candidate Information (Skills, Education, Experience & Projects)</span>
+                </h4>
+              </div>
               <div id="verifiedSkillsContainer" class="flex flex-wrap gap-1.5">
                 <span class="text-xs px-2.5 py-1 rounded-md bg-dark-700 text-slate-200 border border-dark-600">Python</span>
                 <span class="text-xs px-2.5 py-1 rounded-md bg-dark-700 text-slate-200 border border-dark-600">FastAPI</span>
@@ -341,14 +452,93 @@
                 <span class="text-xs px-2.5 py-1 rounded-md bg-dark-700 text-slate-200 border border-dark-600">Git</span>
                 <span class="text-xs px-2.5 py-1 rounded-md bg-dark-700 text-slate-200 border border-dark-600">REST APIs</span>
               </div>
+
+              <!-- Structured Education & Projects Summary Grid -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div class="bg-dark-900/70 border border-dark-700 rounded-xl p-3 space-y-1">
+                  <div class="text-[10px] font-bold uppercase text-slate-400 flex items-center space-x-1">
+                    <i class="fa-solid fa-graduation-cap text-indigo-400"></i>
+                    <span>Extracted Education & Experience</span>
+                  </div>
+                  <div id="structuredEduExpBox" class="text-xs text-slate-200 space-y-1">
+                    <div class="font-semibold">B.Tech in Computer Science & Engineering</div>
+                    <div class="text-[11px] text-slate-400">2022 - 2026 • CGPA: 8.7/10</div>
+                  </div>
+                </div>
+                <div class="bg-dark-900/70 border border-dark-700 rounded-xl p-3 space-y-1">
+                  <div class="text-[10px] font-bold uppercase text-slate-400 flex items-center space-x-1">
+                    <i class="fa-solid fa-diagram-project text-emerald-400"></i>
+                    <span>Extracted Projects & Links</span>
+                  </div>
+                  <div id="structuredProjectsBox" class="text-xs text-slate-200 space-y-1">
+                    <div class="font-semibold">3 Engineering Projects Extracted</div>
+                    <div class="text-[11px] text-slate-400 truncate">REST API Backend • Collaborative Web App</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5: Match Resume to Selected Job (Evidence, Missing/Unverified Skills, Readiness & Next Steps) -->
+          <div id="selectedJobMatchCard" class="bg-dark-800 border border-dark-700 rounded-2xl p-5 shadow-xl space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-dark-700">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">5. Resume-to-Job Match Analysis</span>
+                <h4 id="matchSelectedJobTitle" class="text-sm font-bold text-white mt-0.5">Select or Assess a Job to View Detailed Match Evidence</h4>
+              </div>
+              <span id="matchSelectedJobScoreBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-brand-500/15 text-brand-300 border border-brand-500/30 self-start sm:self-auto">76% Readiness</span>
+            </div>
+
+            <!-- Matching Evidence vs Missing & Unverified Skills -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Matching Evidence -->
+              <div class="bg-dark-900/80 border border-dark-700 rounded-xl p-3.5 space-y-2">
+                <div class="text-xs font-bold text-emerald-400 flex items-center space-x-1.5">
+                  <i class="fa-solid fa-circle-check"></i>
+                  <span>Matching Skills & Resume Evidence</span>
+                </div>
+                <div id="matchingEvidenceList" class="space-y-2 text-xs text-slate-300 max-h-48 overflow-y-auto">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+              <!-- Missing or Unverified Skills -->
+              <div class="bg-dark-900/80 border border-dark-700 rounded-xl p-3.5 space-y-2">
+                <div class="text-xs font-bold text-amber-400 flex items-center space-x-1.5">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                  <span>Missing or Unverified Skills</span>
+                </div>
+                <div id="missingUnverifiedList" class="space-y-2 text-xs text-slate-300 max-h-48 overflow-y-auto">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="bg-brand-500/10 border border-brand-500/20 rounded-xl p-3.5 space-y-2">
+              <div class="text-xs font-bold text-brand-300 flex items-center space-x-1.5">
+                <i class="fa-solid fa-compass"></i>
+                <span>Recommended Next Steps for This Job</span>
+              </div>
+              <ul id="matchNextStepsList" class="list-disc list-inside text-xs text-slate-200 space-y-1">
+                <!-- Populated dynamically -->
+              </ul>
+              <div class="flex flex-wrap gap-2 pt-1">
+                <button type="button" onclick="switchTab('gaps')" class="text-[11px] font-semibold px-3 py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/40 text-indigo-200 border border-indigo-500/30 transition">
+                  <i class="fa-solid fa-graduation-cap mr-1"></i>2. Learn Missing Skills
+                </button>
+                <button type="button" onclick="switchTab('tailoring')" class="text-[11px] font-semibold px-3 py-1.5 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/40 text-emerald-200 border border-emerald-500/30 transition">
+                  <i class="fa-solid fa-file-lines mr-1"></i>3. Tailor Resume for This Job
+                </button>
+              </div>
             </div>
           </div>
 
           <!-- Target Postings Benchmark List -->
           <div class="bg-dark-800 border border-dark-700 rounded-2xl p-5 shadow-xl space-y-3">
             <div class="flex items-center justify-between">
-              <h4 class="text-xs font-bold text-white uppercase tracking-wider">How You Match Real Jobs Right Now</h4>
-              <span class="text-[11px] text-slate-400">Current Openings</span>
+              <h4 class="text-xs font-bold text-white uppercase tracking-wider">All Saved & Custom Jobs Benchmark (Click Any Job to Match)</h4>
+              <span class="text-[11px] text-slate-400">Click to inspect evidence</span>
             </div>
             <div id="benchmarkJobsList" class="space-y-2">
               <!-- Rendered dynamically -->
@@ -438,11 +628,11 @@
         <div id="tailoringAiNotice" class="bg-indigo-500/10 border border-indigo-500/25 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
           <div class="flex items-center space-x-2.5 text-indigo-200">
             <i id="tailoringAiIcon" class="fa-solid fa-shield-halved text-indigo-400 text-sm"></i>
-            <span id="tailoringAiText">Running in <strong>Built-in Heuristic Mode</strong>. Add your Gemini, Groq, or OpenAI API key to generate live LLM-tailored STAR bullets & cover letters.</span>
+            <span id="tailoringAiText">Currently running <strong>without an API key</strong>. Add your Gemini, Groq, or OpenAI API key to generate live AI-tailored STAR bullets &amp; cover letters, or continue without API.</span>
           </div>
           <button onclick="openAiConfigModal()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition shrink-0 flex items-center space-x-1.5 self-start sm:self-auto">
             <i class="fa-solid fa-key text-[10px]"></i>
-            <span id="tailoringAiBtnText">Configure API Key</span>
+            <span id="tailoringAiBtnText">Set Up AI API Key</span>
           </button>
         </div>
 
@@ -1016,8 +1206,8 @@
         <div class="flex items-center space-x-2.5">
           <span id="aiModalStatusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
           <div>
-            <div id="aiModalStatusTitle" class="font-bold text-white">Mode: Built-in Deterministic Heuristics</div>
-            <div id="aiModalStatusSub" class="text-[11px] text-slate-400">No external API key active. Add a key below for live LLM generation.</div>
+            <div id="aiModalStatusTitle" class="font-bold text-white">Mode: Continue without API</div>
+            <div id="aiModalStatusSub" class="text-[11px] text-slate-400">No API key active yet. Enter your API key below for full AI features, or click "Continue without API".</div>
           </div>
         </div>
         <span id="aiModalMaskedBadge" class="hidden font-mono text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"></span>
@@ -1031,15 +1221,15 @@
             <option value="gemini">Google Gemini (Recommended)</option>
             <option value="groq">Groq Cloud (Llama 3.3)</option>
             <option value="openai">OpenAI (GPT-4o)</option>
-            <option value="heuristic">Heuristic Fallback (No Key)</option>
+            <option value="heuristic">Continue without API (No API Key)</option>
           </select>
         </div>
         <div>
           <label class="text-xs font-semibold text-slate-300">Model</label>
           <select id="aiModelSelect" class="mt-1 w-full bg-dark-900 border border-dark-600 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-white focus:outline-none">
-            <option value="gemini-2.0-flash">Gemini 2.0 Flash (Fast & Recommended)</option>
-            <option value="gemini-1.5-flash">Gemini 1.5 Flash (Balanced)</option>
-            <option value="gemini-1.5-pro">Gemini 1.5 Pro (Deep Reasoning)</option>
+            <option value="gemini-2.5-flash">Gemini 2.5 Flash (Recommended)</option>
+            <option value="gemini-2.5-pro">Gemini 2.5 Pro (Advanced Reasoning)</option>
+            <option value="gemini-2.0-flash">Gemini 2.0 Flash (Fast)</option>
           </select>
         </div>
       </div>
@@ -1103,20 +1293,26 @@
       </div>
 
       <!-- Action Buttons -->
-      <div class="pt-2 border-t border-dark-700 flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center space-x-2">
-          <button type="button" id="aiTestBtn" onclick="testAiKeyConnection()" class="px-3 py-2 rounded-xl bg-dark-700 hover:bg-dark-600 text-slate-200 border border-dark-600 text-xs font-semibold transition flex items-center space-x-1.5">
-            <i class="fa-solid fa-plug-circle-check text-brand-400"></i>
-            <span>Test Key</span>
-          </button>
-          <button type="button" id="aiClearKeyBtn" onclick="clearAiKeyConfig()" class="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold transition flex items-center space-x-1.5">
-            <i class="fa-solid fa-trash-can text-[10px]"></i>
-            <span>Revoke Key</span>
+      <div class="pt-2 border-t border-dark-700 space-y-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center space-x-2">
+            <button type="button" id="aiTestBtn" onclick="testAiKeyConnection()" class="px-3 py-2 rounded-xl bg-dark-700 hover:bg-dark-600 text-slate-200 border border-dark-600 text-xs font-semibold transition flex items-center space-x-1.5">
+              <i class="fa-solid fa-plug-circle-check text-brand-400"></i>
+              <span>Test Key</span>
+            </button>
+            <button type="button" id="aiClearKeyBtn" onclick="clearAiKeyConfig()" class="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold transition flex items-center space-x-1.5">
+              <i class="fa-solid fa-trash-can text-[10px]"></i>
+              <span>Remove Key</span>
+            </button>
+          </div>
+          <button type="button" id="aiSaveBtn" onclick="saveAiConfiguration()" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition shadow-lg shadow-brand-500/25 flex items-center space-x-1.5">
+            <i class="fa-solid fa-shield-check"></i>
+            <span>Save &amp; Enable AI</span>
           </button>
         </div>
-        <button type="button" id="aiSaveBtn" onclick="saveAiConfiguration()" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition shadow-lg shadow-brand-500/25 flex items-center space-x-1.5">
-          <i class="fa-solid fa-shield-check"></i>
-          <span>Save & Activate AI</span>
+        <button type="button" onclick="continueWithoutApiKey()" class="w-full py-2 rounded-xl border border-dark-600 bg-dark-900/70 hover:bg-dark-700/70 text-xs text-slate-300 hover:text-white font-medium transition flex items-center justify-center space-x-1.5">
+          <i class="fa-regular fa-circle-right text-slate-400"></i>
+          <span>Continue without API</span>
         </button>
       </div>
 
@@ -1166,7 +1362,7 @@
       userAnswers: {},
       aiConfig: {
         provider: 'gemini',
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash',
         hasKey: false,
         maskedKey: '',
         source: 'heuristic'
@@ -1180,9 +1376,9 @@
         docsUrl: "https://aistudio.google.com/app/apikey",
         docsText: "Get a free Gemini API key",
         models: [
-          { id: "gemini-2.0-flash", label: "Gemini 2.0 Flash (Fast & Recommended)" },
-          { id: "gemini-1.5-flash", label: "Gemini 1.5 Flash (Balanced)" },
-          { id: "gemini-1.5-pro", label: "Gemini 1.5 Pro (Deep Reasoning)" }
+          { id: "gemini-2.5-flash", label: "Gemini 2.5 Flash (Recommended)" },
+          { id: "gemini-2.5-pro", label: "Gemini 2.5 Pro (Advanced Reasoning)" },
+          { id: "gemini-2.0-flash", label: "Gemini 2.0 Flash (Fast)" }
         ]
       },
       groq: {
@@ -1192,9 +1388,8 @@
         docsText: "Get a free Groq API key",
         models: [
           { id: "llama-3.3-70b-versatile", label: "Llama 3.3 70B Versatile (Recommended)" },
-          { id: "llama-3.1-70b-versatile", label: "Llama 3.1 70B Versatile" },
           { id: "llama-3.1-8b-instant", label: "Llama 3.1 8B Instant (Ultra-Fast)" },
-          { id: "mixtral-8x7b-32768", label: "Mixtral 8x7B" }
+          { id: "gemma2-9b-it", label: "Gemma 2 9B IT" }
         ]
       },
       openai: {
@@ -1203,17 +1398,18 @@
         docsUrl: "https://platform.openai.com/api-keys",
         docsText: "Get an OpenAI API key",
         models: [
-          { id: "gpt-4o-mini", label: "GPT-4o Mini (Fast & Cost-Effective)" },
-          { id: "gpt-4o", label: "GPT-4o (Flagship Reasoning)" }
+          { id: "gpt-4o-mini", label: "GPT-4o Mini (Fast & Recommended)" },
+          { id: "gpt-4o", label: "GPT-4o (Flagship Reasoning)" },
+          { id: "gpt-4.1-mini", label: "GPT-4.1 Mini" }
         ]
       },
       heuristic: {
-        name: "Built-in Heuristic Engine",
-        placeholder: "No API key needed in Heuristic Mode",
+        name: "Continue without API",
+        placeholder: "No API key needed — Continue without API",
         docsUrl: "#",
         docsText: "",
         models: [
-          { id: "deterministic-heuristics", label: "Deterministic Engineering Heuristics" }
+          { id: "continue-without-api", label: "Continue without API (Standard Mode)" }
         ]
       }
     };
@@ -1288,7 +1484,7 @@
       const headerDot = document.getElementById('aiHeaderDot');
 
       const provMeta = AI_MODELS_CATALOG[cfg.active_provider] || AI_MODELS_CATALOG.gemini;
-      const provShort = cfg.active_provider === 'gemini' ? 'Gemini' : (cfg.active_provider === 'groq' ? 'Groq' : (cfg.active_provider === 'openai' ? 'OpenAI' : 'Heuristics'));
+      const provShort = cfg.active_provider === 'gemini' ? 'Gemini' : (cfg.active_provider === 'groq' ? 'Groq' : (cfg.active_provider === 'openai' ? 'OpenAI' : 'Without API'));
 
       if (cfg.has_active_key && cfg.active_provider !== 'heuristic') {
         if (headerBtn) {
@@ -1302,8 +1498,40 @@
           headerBtn.className = "text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 transition flex items-center space-x-1.5 shadow-sm";
         }
         if (headerIcon) headerIcon.className = "fa-solid fa-key text-indigo-400";
-        if (headerLabel) headerLabel.textContent = "AI Config";
+        if (headerLabel) headerLabel.textContent = "Set Up AI Key";
         if (headerDot) headerDot.className = "w-2 h-2 rounded-full bg-amber-400";
+      }
+
+      // Update Assessment Tab Top AI Callout Banner
+      const aNotice = document.getElementById('assessmentAiNotice');
+      const aTitle = document.getElementById('assessmentAiTitle');
+      const aPill = document.getElementById('assessmentAiStatusPill');
+      const aSub = document.getElementById('assessmentAiSub');
+      const aBtnText = document.getElementById('assessmentAiBtnText');
+      const aContinueBtn = document.getElementById('assessmentContinueNoApiBtn');
+
+      if (aNotice) {
+        if (cfg.has_active_key && cfg.active_provider !== 'heuristic') {
+          aNotice.className = "bg-gradient-to-r from-emerald-950/50 via-dark-800 to-dark-800 border border-emerald-500/30 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg";
+          if (aTitle) aTitle.textContent = `AI Connected: ${provMeta.name} (${cfg.active_model})`;
+          if (aPill) {
+            aPill.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
+            aPill.textContent = `Key: ${cfg.masked_active_key}`;
+          }
+          if (aSub) aSub.textContent = "Your API key is encrypted and active for resume structuring, job matching, and tailoring.";
+          if (aBtnText) aBtnText.textContent = "Change AI Key";
+          if (aContinueBtn) aContinueBtn.classList.remove('hidden');
+        } else {
+          aNotice.className = "bg-gradient-to-r from-indigo-950/60 via-dark-800 to-dark-800 border border-indigo-500/30 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg";
+          if (aTitle) aTitle.textContent = "Enable AI (Gemini / Groq / OpenAI) or Continue Without API";
+          if (aPill) {
+            aPill.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30";
+            aPill.textContent = "Running Without API";
+          }
+          if (aSub) aSub.innerHTML = `Connect your free Gemini API key for AI resume structuring, job matching &amp; custom cover letters, or <strong>continue without API</strong> anytime.`;
+          if (aBtnText) aBtnText.textContent = "Set Up AI API Key";
+          if (aContinueBtn) aContinueBtn.classList.add('hidden');
+        }
       }
 
       // Update Modal Status Card
@@ -1315,15 +1543,15 @@
       if (cfg.has_active_key && cfg.active_provider !== 'heuristic') {
         if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0";
         if (title) title.textContent = `Active: ${provMeta.name} (${cfg.active_model})`;
-        if (sub) sub.textContent = "Secured API key active for Resume Tailoring, Roadmaps & Mock Interviews.";
+        if (sub) sub.textContent = "Secured API key active for Resume Structuring, Tailoring, Roadmaps & Mock Interviews.";
         if (badge) {
           badge.textContent = cfg.masked_active_key;
           badge.classList.remove('hidden');
         }
       } else {
         if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0";
-        if (title) title.textContent = "Mode: Built-in Deterministic Heuristics";
-        if (sub) sub.textContent = "No external API key active. Add a key below for live LLM generation.";
+        if (title) title.textContent = "Mode: Continue without API";
+        if (sub) sub.textContent = "No API key active yet. Enter your API key below for full AI features, or click 'Continue without API'.";
         if (badge) badge.classList.add('hidden');
       }
 
@@ -1341,8 +1569,8 @@
         } else {
           tNotice.className = "bg-indigo-500/10 border border-indigo-500/25 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs";
           if (tIcon) tIcon.className = "fa-solid fa-shield-halved text-indigo-400 text-sm";
-          tText.innerHTML = `Running in <strong>Built-in Heuristic Mode</strong>. Add your Gemini, Groq, or OpenAI API key to generate live LLM-tailored STAR bullets & cover letters.`;
-          if (tBtnText) tBtnText.textContent = "Configure API Key";
+          tText.innerHTML = `Currently running <strong>without an API key</strong>. Add your Gemini, Groq, or OpenAI API key to generate live AI-tailored STAR bullets &amp; cover letters, or continue without API.`;
+          if (tBtnText) tBtnText.textContent = "Set Up AI API Key";
         }
       }
     }
@@ -1454,7 +1682,7 @@
       const rawKey = document.getElementById('aiApiKeyInput').value.trim();
 
       if (prov === 'heuristic') {
-        showAiModalFeedback("Heuristic mode runs locally and does not require an API key.", "info");
+        showAiModalFeedback("You selected 'Continue without API'. No API key is needed.", "info");
         return;
       }
 
@@ -1493,7 +1721,7 @@
       const sessionOnly = document.getElementById('aiRememberSessionOnly')?.checked !== false;
 
       if (prov !== 'heuristic' && !rawKey && !appState.aiConfig.hasKey) {
-        showAiModalFeedback("Please enter your API key or select 'Heuristic Fallback'.", "error");
+        showAiModalFeedback("Please enter your API key or click 'Continue without API'.", "error");
         return;
       }
 
@@ -1536,15 +1764,16 @@
           document.getElementById('aiApiKeyInput').value = '';
           document.getElementById('aiApiKeyInput').type = 'password';
 
+          sessionStorage.setItem('careerpilot_ai_prompted', '1');
           updateAiStatusUI(res.config);
-          showAiModalFeedback("API key encrypted and activated!", "success");
-          showBanner(`AI configuration updated: ${prov === 'heuristic' ? 'Built-in Heuristics' : (res.config.active_provider.toUpperCase() + ' (' + res.config.masked_active_key + ')')}`, "success");
+          showAiModalFeedback(prov === 'heuristic' ? "Continuing without API key." : "API key encrypted and activated!", "success");
+          showBanner(`AI Setup: ${prov === 'heuristic' ? 'Continuing without API' : (res.config.active_provider.toUpperCase() + ' (' + res.config.masked_active_key + ')')}`, "success");
 
           // Re-run tailoring if profile is loaded so the user immediately sees LLM-generated output
           if (appState.profile && appState.jobs.length > 0) {
             await runTailoringPipeline();
           }
-          setTimeout(() => closeAiConfigModal(), 700);
+          setTimeout(() => closeAiConfigModal(), 600);
         } else {
           showAiModalFeedback(res.detail || "Unable to save AI configuration.", "error");
         }
@@ -1552,7 +1781,46 @@
         showAiModalFeedback("Error saving AI configuration: " + err.message, "error");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-shield-check"></i><span>Save & Activate AI</span>`;
+        btn.innerHTML = `<i class="fa-solid fa-shield-check"></i><span>Save &amp; Enable AI</span>`;
+      }
+    }
+
+    async function continueWithoutApiKey() {
+      sessionStorage.setItem('careerpilot_ai_prompted', '1');
+      sessionStorage.removeItem('careerpilot_ai_session');
+      localStorage.removeItem('careerpilot_ai_device');
+      const provSelect = document.getElementById('aiProviderSelect');
+      if (provSelect) provSelect.value = 'heuristic';
+      const keyInput = document.getElementById('aiApiKeyInput');
+      if (keyInput) {
+        keyInput.value = '';
+        keyInput.type = 'password';
+      }
+      try {
+        const resp = await fetch(`${API_BASE}/api/ai/config`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            provider: 'heuristic',
+            api_key: '',
+            model: ''
+          })
+        });
+        const res = await resp.json();
+        if (res && res.config) {
+          updateAiStatusUI(res.config);
+        }
+      } catch (e) {}
+      closeAiConfigModal();
+      showBanner("Continuing without API key. You can set up your Gemini, Groq, or OpenAI key anytime from 'Set Up AI Key'.", "info");
+    }
+
+    function promptAiConfigIfNeeded() {
+      const alreadyPrompted = sessionStorage.getItem('careerpilot_ai_prompted');
+      const hasStoredKey = Boolean(getStoredClientAiHeaders()['X-AI-Key']);
+      if (!alreadyPrompted && !hasStoredKey && !(appState.aiConfig && appState.aiConfig.hasKey)) {
+        sessionStorage.setItem('careerpilot_ai_prompted', '1');
+        openAiConfigModal();
       }
     }
 
@@ -1730,6 +1998,7 @@
           await loadUserProfile(u.username, u.email);
 
           showBanner(`Welcome back, ${u.name || u.username}! Your info is saved to your account.`, "success");
+          promptAiConfigIfNeeded();
 
           // Execute pending action if user was prompted to log in to save
           if (appState.pendingAction === 'profile') {
@@ -1800,6 +2069,7 @@
 
           // Automatically save current candidate info to initialize user profile
           await saveCandidateInfo();
+          promptAiConfigIfNeeded();
 
           if (appState.pendingAction === 'application') {
             appState.pendingAction = null;
@@ -1831,6 +2101,7 @@
         loadSampleProfile();
       }
       showBanner("Continuing in Guest Mode. All tools are unlocked for exploring. Log in anytime to save your info.", "info");
+      promptAiConfigIfNeeded();
     }
 
     function handleLogout() {
@@ -2058,6 +2329,7 @@
         appState.userEmail = auth.email || '';
         updateAuthUI();
         await loadUserProfile(auth.username, auth.email);
+        promptAiConfigIfNeeded();
       } else {
         // First entry / unauthenticated: immediately show Auth Gate Modal
         updateAuthUI();
@@ -2066,7 +2338,7 @@
     });
 
     function populateJobSelects() {
-      const ids = ['tailoringJobSelect', 'stagingJobSelect', 'interviewJobSelect'];
+      const ids = ['tailoringJobSelect', 'stagingJobSelect', 'interviewJobSelect', 'assessmentSavedJobSelect'];
       ids.forEach(id => {
         const select = document.getElementById(id);
         if (!select) return;
@@ -2074,12 +2346,26 @@
         appState.jobs.forEach(j => {
           const opt = document.createElement('option');
           opt.value = j.id;
-          opt.textContent = `${j.company} - ${j.title}`;
+          opt.textContent = `${j.company} - ${j.title}${j.location ? ' (' + j.location + ')' : ''}`;
           select.appendChild(opt);
         });
       });
       if (appState.jobs.length > 0 && !appState.activeJob) {
         appState.activeJob = appState.jobs[0];
+      }
+      if (appState.activeJob) {
+        ids.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = appState.activeJob.id;
+        });
+        updateActiveJobSelectionBadge(appState.activeJob);
+      }
+    }
+
+    function updateActiveJobSelectionBadge(job) {
+      const badge = document.getElementById('activeJobSelectionBadge');
+      if (badge && job) {
+        badge.textContent = `${job.company || 'Company'} - ${job.title || 'Role'}`;
       }
     }
 
@@ -2087,11 +2373,308 @@
       const job = appState.jobs.find(j => j.id === jobId);
       if (job) {
         appState.activeJob = job;
-        ['tailoringJobSelect', 'stagingJobSelect', 'interviewJobSelect'].forEach(id => {
+        ['tailoringJobSelect', 'stagingJobSelect', 'interviewJobSelect', 'assessmentSavedJobSelect'].forEach(id => {
           const el = document.getElementById(id);
           if (el) el.value = jobId;
         });
+        updateActiveJobSelectionBadge(job);
+        await matchCurrentProfileToJob(job);
         await runTailoringPipeline();
+      }
+    }
+
+    function switchJobChoiceMode(mode) {
+      const modes = ['saved', 'ai', 'link', 'paste'];
+      modes.forEach(m => {
+        const btn = document.getElementById(`jobModeBtn-${m}`);
+        const panel = document.getElementById(`jobModePanel-${m}`);
+        if (btn) {
+          if (m === mode) {
+            btn.className = "py-2 px-2 rounded-lg text-[11px] font-bold border transition bg-brand-600/20 border-brand-500 text-brand-300 flex items-center justify-center space-x-1";
+          } else {
+            btn.className = "py-2 px-2 rounded-lg text-[11px] font-semibold border transition bg-dark-900 border-dark-700 text-slate-400 hover:text-white flex items-center justify-center space-x-1";
+          }
+        }
+        if (panel) {
+          if (m === mode) panel.classList.remove('hidden');
+          else panel.classList.add('hidden');
+        }
+      });
+    }
+
+    function filterSavedJobsList() {
+      const q = (document.getElementById('savedJobsFilterInput')?.value || document.getElementById('savedJobSearchInput')?.value || '').trim().toLowerCase();
+      const select = document.getElementById('assessmentSavedJobSelect');
+      if (!select) return;
+      const filtered = appState.jobs.filter(j => {
+        if (!q) return true;
+        const hay = `${j.title || ''} ${j.company || ''} ${j.domain || ''} ${(j.required_skills || []).join(' ')}`.toLowerCase();
+        return hay.includes(q);
+      });
+      select.innerHTML = '';
+      filtered.forEach(j => {
+        const opt = document.createElement('option');
+        opt.value = j.id;
+        opt.textContent = `${j.company} - ${j.title}${j.location ? ' (' + j.location + ')' : ''}`;
+        select.appendChild(opt);
+      });
+      if (filtered.length > 0) {
+        select.value = filtered[0].id;
+        onAssessmentSavedJobChange();
+      }
+    }
+
+    async function onAssessmentSavedJobChange() {
+      const selId = document.getElementById('assessmentSavedJobSelect')?.value;
+      if (selId) {
+        await switchActiveJob(selId);
+      }
+    }
+
+    function addOrUpdateJobInState(job) {
+      if (!job || !job.id) return;
+      const existingIdx = appState.jobs.findIndex(j => j.id === job.id);
+      if (existingIdx >= 0) {
+        appState.jobs[existingIdx] = job;
+      } else {
+        appState.jobs.unshift(job);
+      }
+      appState.activeJob = job;
+      populateJobSelects();
+    }
+
+    async function findJobsWithAi() {
+      const query = (document.getElementById('aiJobSearchQuery')?.value || document.getElementById('aiJobSearchInput')?.value || '').trim() || document.getElementById('domainSelect')?.value || 'Software Engineer';
+      const container = document.getElementById('aiFoundJobsContainer');
+      if (container) {
+        container.innerHTML = `<div class="text-xs text-brand-300 p-2 flex items-center space-x-2"><i class="fa-solid fa-circle-notch fa-spin"></i><span>Searching Remotive API & CareerPilot Job Corpus...</span></div>`;
+      }
+      try {
+        const skills = (appState.profile && appState.profile.skills) || [];
+        const resp = await fetch(`${API_BASE}/api/jobs/search-ai`, {
+          method: 'POST',
+          headers: getAiHeaders({'Content-Type': 'application/json'}),
+          body: JSON.stringify({ query, skills, limit: 8 })
+        });
+        const res = await resp.json();
+        if (res.success && container) {
+          const jobs = res.jobs || [];
+          if (jobs.length === 0) {
+            container.innerHTML = `<div class="text-xs text-slate-400 p-2">No matching jobs found. Try another keyword.</div>`;
+            return;
+          }
+          container.innerHTML = '';
+          jobs.forEach(j => {
+            const row = document.createElement('div');
+            row.className = "p-2.5 rounded-lg bg-dark-900 border border-dark-700 hover:border-brand-500/60 cursor-pointer transition flex items-center justify-between";
+            row.onclick = async () => {
+              addOrUpdateJobInState(j);
+              showBanner(`Selected "${j.title}" at ${j.company}. Matching resume...`, 'success');
+              await matchCurrentProfileToJob(j);
+              await runTailoringPipeline();
+            };
+            row.innerHTML = `
+              <div class="pr-2">
+                <div class="text-xs font-bold text-white">${j.title}</div>
+                <div class="text-[10px] text-slate-400">${j.company} • ${j.location || 'Remote'} <span class="text-brand-400 ml-1">[${j.source || 'Job Source'}]</span></div>
+              </div>
+              <span class="text-[10px] font-bold px-2 py-1 rounded bg-brand-600/20 text-brand-300 border border-brand-500/30 shrink-0">Select & Match</span>
+            `;
+            container.appendChild(row);
+          });
+        }
+      } catch (err) {
+        console.error("AI Job Search error:", err);
+        if (container) {
+          container.innerHTML = `<div class="text-xs text-amber-400 p-2">Could not reach live job feed. Try browsing saved jobs or pasting a JD.</div>`;
+        }
+      }
+    }
+
+    async function extractJobFromUrl() {
+      const url = (document.getElementById('customJobUrlInput')?.value || '').trim();
+      const statusBox = document.getElementById('jobLinkStatusMsg');
+      if (!url) {
+        showBanner("Please enter a job posting URL first.", "warning");
+        return;
+      }
+      if (statusBox) {
+        statusBox.classList.remove('hidden');
+        statusBox.className = "text-[11px] p-2 rounded-lg border bg-brand-500/10 border-brand-500/30 text-brand-300";
+        statusBox.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Attempting to fetch job details from URL...`;
+      }
+      try {
+        const resp = await fetch(`${API_BASE}/api/jobs/custom`, {
+          method: 'POST',
+          headers: getAiHeaders({'Content-Type': 'application/json'}),
+          body: JSON.stringify({ url, strict_url_check: true })
+        });
+        const res = await resp.json();
+        if (res.fallback_to_paste) {
+          if (statusBox) {
+            statusBox.className = "text-[11px] p-2 rounded-lg border bg-amber-500/10 border-amber-500/30 text-amber-300";
+            statusBox.textContent = res.message || "Job link could not be accessed directly. Switching to Paste Job Description.";
+          }
+          switchJobChoiceMode('paste');
+          highlightField('customJobTextInput');
+          showBanner("Link blocked or inaccessible. Please paste the job description text directly.", "warning");
+          return;
+        }
+        if (res.success && res.job) {
+          if (statusBox) {
+            statusBox.className = "text-[11px] p-2 rounded-lg border bg-emerald-500/10 border-emerald-500/30 text-emerald-300";
+            statusBox.textContent = `Extracted: ${res.job.title} at ${res.job.company}`;
+          }
+          addOrUpdateJobInState(res.job);
+          showBanner(`Extracted "${res.job.title}" at ${res.job.company}. Matching against resume...`, "success");
+          await matchCurrentProfileToJob(res.job);
+          await runTailoringPipeline();
+        }
+      } catch (err) {
+        console.error("Extract job URL error:", err);
+        switchJobChoiceMode('paste');
+        showBanner("Could not access URL. Switched to Paste Job Description mode.", "warning");
+      }
+    }
+
+    async function extractJobFromPastedText() {
+      const raw_text = (document.getElementById('customJobTextInput')?.value || '').trim();
+      const url = (document.getElementById('customJobUrlInput')?.value || '').trim();
+      if (!raw_text) {
+        showBanner("Please paste a job description first.", "warning");
+        return;
+      }
+      try {
+        const resp = await fetch(`${API_BASE}/api/jobs/custom`, {
+          method: 'POST',
+          headers: getAiHeaders({'Content-Type': 'application/json'}),
+          body: JSON.stringify({ raw_text, url, strict_url_check: false })
+        });
+        const res = await resp.json();
+        if (res.success && res.job) {
+          addOrUpdateJobInState(res.job);
+          showBanner(`Parsed "${res.job.title}" at ${res.job.company} (${(res.job.required_skills || []).length} skills). Matching resume...`, "success");
+          await matchCurrentProfileToJob(res.job);
+          await runTailoringPipeline();
+        }
+      } catch (err) {
+        console.error("Extract pasted job error:", err);
+        showBanner("Failed to parse pasted job description.", "warning");
+      }
+    }
+
+    async function matchCurrentProfileToJob(job) {
+      if (!job) return;
+      try {
+        const resp = await fetch(`${API_BASE}/api/jobs/match`, {
+          method: 'POST',
+          headers: getAiHeaders({'Content-Type': 'application/json'}),
+          body: JSON.stringify({
+            job_id: job.id,
+            job: job,
+            profile: appState.profile || {}
+          })
+        });
+        const res = await resp.json();
+        if (res.success && res.match) {
+          if (appState.profile) {
+            appState.profile.selected_job_match = res.match;
+          }
+          renderSelectedJobMatchUI(res.match);
+        }
+      } catch (err) {
+        console.error("Job match error:", err);
+      }
+    }
+
+    function renderSelectedJobMatchUI(match) {
+      if (!match) return;
+      const titleEl = document.getElementById('matchSelectedJobTitle');
+      const scoreBadge = document.getElementById('matchSelectedJobScoreBadge');
+      const evidenceList = document.getElementById('matchingEvidenceList');
+      const missingUnverifiedList = document.getElementById('missingUnverifiedList');
+      const nextStepsList = document.getElementById('matchNextStepsList');
+
+      if (titleEl) {
+        titleEl.textContent = `${match.company || 'Target Company'} — ${match.title || 'Selected Role'}`;
+      }
+      if (scoreBadge) {
+        const score = match.readiness_score || 0;
+        scoreBadge.textContent = `${score}% Readiness`;
+        scoreBadge.className = `text-sm font-extrabold px-3 py-1 rounded-lg border ${
+          score >= 70
+            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+            : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+        }`;
+      }
+
+      if (evidenceList) {
+        const evItems = match.matching_evidence || [];
+        if (evItems.length === 0) {
+          evidenceList.innerHTML = `<div class="text-slate-500 text-[11px]">No direct skill matches found yet. Upload or update your resume to verify evidence.</div>`;
+        } else {
+          evidenceList.innerHTML = evItems.map(ev => {
+            const badgeColor = ev.verified
+              ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+              : 'bg-amber-500/10 text-amber-300 border-amber-500/30';
+            const icon = ev.verified ? 'fa-circle-check text-emerald-400' : 'fa-circle-exclamation text-amber-400';
+            const sources = (ev.sources || []).join(' • ');
+            return `
+              <div class="p-2 rounded-lg bg-dark-800/80 border border-dark-700 flex items-start justify-between gap-2">
+                <div>
+                  <span class="font-bold text-white"><i class="fa-solid ${icon} mr-1 text-[10px]"></i>${ev.skill}</span>
+                  <div class="text-[10px] text-slate-400 mt-0.5">${sources}</div>
+                </div>
+                <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded border shrink-0 ${badgeColor}">${ev.verified ? 'Verified Proof' : 'Resume Claim'}</span>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      if (missingUnverifiedList) {
+        const missing = match.missing_skills || [];
+        const unverified = match.unverified_skills || [];
+        let html = '';
+        missing.forEach(s => {
+          html += `
+            <div class="p-2 rounded-lg bg-rose-500/5 border border-rose-500/20 flex items-center justify-between">
+              <span class="font-bold text-rose-300"><i class="fa-solid fa-xmark text-rose-400 mr-1.5"></i>${s}</span>
+              <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30">Missing from Resume</span>
+            </div>
+          `;
+        });
+        unverified.forEach(u => {
+          const skillName = typeof u === 'string' ? u : u.skill;
+          const note = (typeof u === 'object' && u.reason) ? u.reason : 'Listed on resume without project or GitHub proof';
+          html += `
+            <div class="p-2 rounded-lg bg-amber-500/5 border border-amber-500/20 flex items-start justify-between gap-2">
+              <div>
+                <span class="font-bold text-amber-300"><i class="fa-solid fa-triangle-exclamation text-amber-400 mr-1.5"></i>${skillName}</span>
+                <div class="text-[10px] text-slate-400 mt-0.5">${note}</div>
+              </div>
+              <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 shrink-0">Unverified</span>
+            </div>
+          `;
+        });
+        if (!html) {
+          html = `<div class="text-emerald-400 text-[11px]"><i class="fa-solid fa-check-double mr-1"></i>All required skills for this job are present and backed by evidence!</div>`;
+        }
+        missingUnverifiedList.innerHTML = html;
+      }
+
+      if (nextStepsList) {
+        const steps = match.next_steps || [];
+        if (steps.length === 0) {
+          nextStepsList.innerHTML = `<li class="text-slate-400">Run assessment to generate personalized next steps.</li>`;
+        } else {
+          nextStepsList.innerHTML = steps.map((st, idx) => `
+            <li class="flex items-start space-x-2">
+              <span class="text-brand-400 font-bold">${idx + 1}.</span>
+              <span>${st}</span>
+            </li>
+          `).join('');
+        }
       }
     }
 
@@ -2161,6 +2744,7 @@
             formData.append('resume_text', text);
             const resp = await fetch(`${API_BASE}/api/resume/parse`, {
               method: 'POST',
+              headers: getAiHeaders(),
               body: formData
             });
             const res = await resp.json();
@@ -2172,6 +2756,49 @@
           }
         }
       }, 500);
+    }
+
+    function renderStructuredInfoSubpanels(data) {
+      const structuredByBadge = document.getElementById('structuredByBadge');
+      if (structuredByBadge && data.structured_by) {
+        structuredByBadge.textContent = data.structured_by;
+      }
+
+      const eduExpBox = document.getElementById('structuredEduExpBox');
+      if (eduExpBox) {
+        const eduList = data.education || [];
+        const expList = data.experience || [];
+        let html = '';
+        if (eduList.length > 0) {
+          html += `<div class="mb-1.5"><span class="text-slate-200 font-bold">Education:</span> ${eduList.map(e => `${e.degree || ''} ${e.institution ? '• ' + e.institution : ''} ${e.year ? '(' + e.year + ')' : ''}`).join('; ')}</div>`;
+        }
+        if (expList.length > 0) {
+          html += `<div><span class="text-slate-200 font-bold">Experience:</span> ${expList.map(ex => `${ex.role || ''} ${ex.company ? '@ ' + ex.company : ''} ${ex.duration ? '(' + ex.duration + ')' : ''}`).join('; ')}</div>`;
+        }
+        eduExpBox.innerHTML = html || 'No explicit education or internship lines detected yet.';
+      }
+
+      const projBox = document.getElementById('structuredProjectsBox');
+      if (projBox) {
+        const projects = data.projects || [];
+        const links = data.links || {};
+        let pHtml = '';
+        if (projects.length > 0) {
+          pHtml += `<div class="mb-1.5"><span class="text-slate-200 font-bold">Projects (${projects.length}):</span> ${projects.map(pr => pr.title || 'Project').join(' • ')}</div>`;
+        }
+        const linkItems = [];
+        const ghLink = links.github_handle || links.github || data.github_handle;
+        const lcLink = links.leetcode_handle || links.leetcode || data.leetcode_handle;
+        const liLink = links.linkedin_handle || links.linkedin || data.linkedin_handle;
+        if (ghLink) linkItems.push(`GitHub: @${ghLink}`);
+        if (lcLink) linkItems.push(`LeetCode: @${lcLink}`);
+        if (liLink) linkItems.push(`LinkedIn: @${liLink}`);
+        if (links.portfolio) linkItems.push(`Portfolio`);
+        if (linkItems.length > 0) {
+          pHtml += `<div class="text-brand-300 font-semibold">${linkItems.join(' • ')}</div>`;
+        }
+        projBox.innerHTML = pHtml || 'Upload a resume to extract projects and profile links.';
+      }
     }
 
     function applyExtractedData(data) {
@@ -2201,11 +2828,13 @@
         found.push(`LeetCode: @${data.leetcode_handle}`);
       }
 
+      renderStructuredInfoSubpanels(data);
+
       if (box && textEl) {
         box.classList.remove('hidden');
         box.className = "text-[11px] p-2.5 rounded-lg border bg-emerald-500/10 border-emerald-500/30 text-emerald-300 flex items-center justify-between";
         if (iconEl) iconEl.className = "fa-solid fa-circle-check text-emerald-400";
-        textEl.innerHTML = `Auto-extracted: <strong>${found.join(' • ') || 'Contact & Skills'}</strong> (${data.skills.length} skills recognized)`;
+        textEl.innerHTML = `Auto-extracted (${data.file_format || 'TEXT'}): <strong>${found.join(' • ') || 'Contact & Skills'}</strong> (${(data.skills || []).length} skills, ${(data.projects || []).length} projects)`;
       }
 
       showBanner(`Extracted details from resume: ${found.join(', ') || 'Ready'}!`, "success");
@@ -2231,7 +2860,7 @@
       if (textInput) textInput.value = "";
       const box = document.getElementById('extractionStatusBox');
       if (box) box.classList.add('hidden');
-      document.getElementById('fileLabel').innerHTML = "Click to upload or drag & drop your Resume (.PDF)";
+      document.getElementById('fileLabel').innerHTML = "Click to upload or drag & drop your Resume (.PDF or .DOCX)";
       showBanner("Form inputs cleared. Ready for your resume.", "info");
     }
 
@@ -2266,6 +2895,10 @@
       formData.append('github_handle', document.getElementById('githubHandleInput').value.trim());
       formData.append('leetcode_handle', document.getElementById('leetcodeHandleInput').value.trim());
       formData.append('target_domain', document.getElementById('domainSelect').value);
+      const selectedJobId = (appState.activeJob && appState.activeJob.id) || document.getElementById('assessmentSavedJobSelect')?.value || '';
+      if (selectedJobId) {
+        formData.append('selected_job_id', selectedJobId);
+      }
 
       try {
         const resp = await fetch(`${API_BASE}/api/assess`, {
@@ -2299,7 +2932,7 @@
 
           renderAssessmentUI();
           renderGapsUI();
-          showBanner("Assessment complete: Verified skills benchmarked against live postings.", "success");
+          showBanner("Assessment complete: Structured resume & matched against target job.", "success");
           
           if (appState.jobs.length > 0) {
             await runTailoringPipeline();
@@ -2342,16 +2975,25 @@
         skillContainer.appendChild(badge);
       });
 
-      // Benchmark Postings List (Clickable to immediately tailor for that job)
+      // Step 3: Structured Education, Experience, Projects & Links
+      renderStructuredInfoSubpanels(p);
+
+      // Step 5: Match Resume to Selected Job
+      const selectedMatch = p.selected_job_match || (p.benchmarks && p.benchmarks[0]);
+      if (selectedMatch) {
+        renderSelectedJobMatchUI(selectedMatch);
+      }
+
+      // Benchmark Postings List (Clickable to immediately select & match for that job)
       const bList = document.getElementById('benchmarkJobsList');
       bList.innerHTML = '';
       (p.benchmarks || []).forEach(b => {
         const item = document.createElement('div');
         item.className = "bg-dark-900/60 hover:bg-dark-800 p-3 rounded-xl border border-dark-700/80 hover:border-brand-500/50 flex items-center justify-between cursor-pointer transition group";
         item.onclick = () => {
+          renderSelectedJobMatchUI(b);
           switchActiveJob(b.job_id);
-          switchTab('tailoring');
-          showBanner(`Selected ${b.company} - ${b.title}. Tailoring resume now!`, 'info');
+          showBanner(`Matched resume against ${b.company} - ${b.title} (${b.readiness_score}% readiness).`, 'info');
         };
         item.innerHTML = `
           <div>
